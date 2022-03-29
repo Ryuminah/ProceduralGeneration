@@ -30,3 +30,35 @@
 *.exe
 *.out
 *.app
+
+.vs/
+BinObj/
+*.exe
+*.ilk
+*.pdb
+*.cso
+*.svn
+
+# DirectX Texture libraries
+!DirectXTex.lib
+!DirectXTex_Debug.lib
+
+# Fmod libraries
+!fmod.dll
+!fmod_vc.lib
+!fmod64_vc.lib
+!fmod64.dll
+
+# fbxsdk libraries
+!libfbxsdk_Debug.dll
+!libfbxsdk.dll
+!libfbxsdk-md_Debug.lib
+!libfbxsdk-md.lib
+
+# Except Resources To Be Copied
+Bin/
+Engine/
+!/GameEngine/Bin/
+!/Client3D/Bin/Mesh
+
+
