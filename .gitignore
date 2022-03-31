@@ -52,8 +52,9 @@ BinObj/
 # fbxsdk libraries
 !libfbxsdk_Debug.dll
 !libfbxsdk.dll
-!libfbxsdk-md_Debug.lib
 !libfbxsdk-md.lib
+/!libfbxsdk-md_Debug.lib
+
 
 # Except Resources To Be Copied
 Bin/
