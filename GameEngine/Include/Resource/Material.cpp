@@ -787,7 +787,7 @@ bool CMaterial::Init()
 
 	m_pCBuffer->Init();
 
-	SetShader("Standard3DShader");
+	SetShader("Standard2DTextureShader");
 
 	return true;
 }

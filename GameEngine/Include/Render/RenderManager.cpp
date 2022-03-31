@@ -311,10 +311,13 @@ void CRenderManager::Render(float DeltaTime)
 		m_vecLight[i]->ClearTarget();
 	}
 
+	if (m_RenderSpace == Render_Space::Render3D)
 	Render3D(DeltaTime);
 
-	if (m_RenderSpace == Render_Space::Render2D)
+	else
+	{
 		Render2D(DeltaTime);
+	}
 
 	// UI를 출력한다.
 	CScene* Scene = CSceneManager::GetInst()->GetScene();

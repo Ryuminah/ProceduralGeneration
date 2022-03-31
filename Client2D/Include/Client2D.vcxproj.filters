@@ -28,6 +28,9 @@
     <Filter Include="04. UI">
       <UniqueIdentifier>{44f68ea1-cd6d-4893-9b6b-58a3d86a702d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RandomMap">
+      <UniqueIdentifier>{bee1d2c5-3b32-467f-b809-9ce9aeaa487d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,6 +93,9 @@
     <ClCompile Include="Object\MainMap.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
+    <ClCompile Include="Object\RandomMap.cpp">
+      <Filter>RandomMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -151,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="Object\MainMap.h">
       <Filter>02. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\RandomMap.h">
+      <Filter>RandomMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

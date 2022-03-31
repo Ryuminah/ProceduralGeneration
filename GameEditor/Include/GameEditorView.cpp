@@ -100,7 +100,7 @@ void CGameEditorView::OnInitialUpdate()
 
 	// AfxGetInstanceHandle : HINSTANCE를 얻어온다.
 	CEngine::GetInst()->Init(AfxGetInstanceHandle(), m_hWnd, 1280, 720);
-	CEngine::GetInst()->SetEditor(true);
+	CEngine::GetInst()->SetEditor(false);
 
 	CIMGUIManager::GetInst()->AddWindow<CTestWindow>("TestWindow");
 	CIMGUIManager::GetInst()->AddWindow<CLogWindow>("LogWindow");

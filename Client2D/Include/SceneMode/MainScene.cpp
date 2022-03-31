@@ -9,7 +9,9 @@
 #include "Render/RenderManager.h"
 #include "../UI/MainHUDWidget.h"
 #include "Scene/Viewport.h"
+#include "../Object/RandomMap.h"
 #include "../Object/MainMap.h"
+
 
 CMainScene::CMainScene()
 {
@@ -40,8 +42,9 @@ bool CMainScene::Init()
 	pTeemo->SetRelativePos(500.f, 500.f, 0.f);
 
 	CPixelCollisionTest* pPixelCollisionTest = m_pScene->SpawnObject<CPixelCollisionTest>("PixelCollisionTest");
-
 	//CMainMap* MainMap = m_pScene->SpawnObject<CMainMap>("MainMap");
+
+	CRandomMap* RandomMap = m_pScene->SpawnObject<CRandomMap>("RandomMap");
 
 	//CTestParticle* pParticle = m_pScene->SpawnObject<CTestParticle>("PixelCollisionTest");
 
@@ -78,6 +81,19 @@ void CMainScene::CreateMaterial()
 		TEXT("Floors.png"));
 	m_pScene->GetResource()->SetMaterialTransparency("MainMapRect", true);
 	m_pScene->GetResource()->SetMaterialShader("MainMapRect", "TileMapShader");
+
+	// RandomMap Texture 
+	m_pScene->GetResource()->CreateMaterial("Tile_Land");
+	m_pScene->GetResource()->AddMaterialTexture("Tile_Land", "Tile_Land",
+		TEXT("RandomMap/Tile_Land.png"));
+	m_pScene->GetResource()->SetMaterialTransparency("Tile_Land", true);
+	m_pScene->GetResource()->SetMaterialShader("Tile_Land", "TileMapShader");
+
+	m_pScene->GetResource()->CreateMaterial("Tile_Sea");
+	m_pScene->GetResource()->AddMaterialTexture("Tile_Sea", "Tile_Sea",
+		TEXT("RandomMap/Tile_Sea.png"));
+	m_pScene->GetResource()->SetMaterialTransparency("Tile_Sea", true);
+	m_pScene->GetResource()->SetMaterialShader("Tile_Sea", "TileMapShader");
 }
 
 void CMainScene::CreateAnimationSequence2D()

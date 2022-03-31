@@ -171,6 +171,7 @@
     <ClCompile Include="Object\Particle2D.cpp" />
     <ClCompile Include="Object\PixelCollisionTest.cpp" />
     <ClCompile Include="Object\Player2D.cpp" />
+    <ClCompile Include="Object\RandomMap.cpp" />
     <ClCompile Include="Object\Teemo.cpp" />
     <ClCompile Include="Object\TestParticle.cpp" />
     <ClCompile Include="SceneMode\LoadingScene.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Object\Particle2D.h" />
     <ClInclude Include="Object\PixelCollisionTest.h" />
     <ClInclude Include="Object\Player2D.h" />
+    <ClInclude Include="Object\RandomMap.h" />
     <ClInclude Include="Object\Teemo.h" />
     <ClInclude Include="Object\TestParticle.h" />
     <ClInclude Include="resource.h" />

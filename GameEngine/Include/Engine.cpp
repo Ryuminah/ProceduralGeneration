@@ -222,7 +222,7 @@ void CEngine::Logic()
 	if (Update(DeltaTime))
 	{
 		if (m_Editor)
-			CIMGUIManager::GetInst()->Render();
+		CIMGUIManager::GetInst()->Render();
 		return;
 	}
 
@@ -235,12 +235,14 @@ void CEngine::Logic()
 
 	if (PostUpdate(DeltaTime))
 	{
+		//if (m_Editor)
 		CIMGUIManager::GetInst()->Render();
 		return;
 	}
 
 	if (Collision(DeltaTime))
 	{
+		//if (m_Editor)
 		CIMGUIManager::GetInst()->Render();
 		return;
 	}
