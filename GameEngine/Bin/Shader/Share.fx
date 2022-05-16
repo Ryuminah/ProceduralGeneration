@@ -7,16 +7,6 @@ struct PS_OUTPUT_SINGLE
 	float4  Color : SV_TARGET;
 };
 
-struct PS_OUTPUT_GBUFFER
-{
-	float4	Albedo		: SV_TARGET;
-	float4	GBuffer1	: SV_TARGET1;
-	float4	GBuffer2	: SV_TARGET2;
-	float4	GBuffer3	: SV_TARGET3;
-	float4	GBuffer4	: SV_TARGET4;
-	float4	GBuffer5	: SV_TARGET5;
-};
-
 cbuffer Transform : register(b0)
 {
 	matrix  g_matWorld;
@@ -25,10 +15,6 @@ cbuffer Transform : register(b0)
 	matrix  g_matWV;
 	matrix	g_matVP;
 	matrix  g_matWVP;
-	matrix	g_matInvView;
-	matrix	g_matInvProj;
-	matrix	g_matInvVP;
-	matrix	g_matInvWVP;
 	float3  g_vPivot;
 	int		g_Animation2DEnable;
 	float3  g_vMeshSize;
@@ -38,17 +24,11 @@ cbuffer Transform : register(b0)
 cbuffer Material : register(b1)
 {
 	float4  g_vMtrlBaseColor;
-	float4	g_vMtrlAmbientColor;
-	float4	g_vMtrlSpecularColor;
 	float4  g_vMtrlEmissiveColor;
 	float	g_MtrlOpacity;
 	int		g_MtrlPaperBurnEnable;
 	int		g_MtrlDistortionEnable;
-	int		g_MtrlBumpEnable;
-	int		g_MtrlAnimation3DEnable;
-	int		g_MtrlSpcTex;
-	int		g_MtrlEmvTex;
-	int		g_MtrlReceiveDecal;
+	float	g_MtrlEmpty;
 };
 
 cbuffer GlobalCBuffer : register(b2)
@@ -97,31 +77,12 @@ cbuffer Animation2D : register(b6)
 	float3	g_vAnimation2DEmpty;
 };
 
-cbuffer LightCBuffer : register(b7)
-{
-	float4	g_LightDiffuse;
-	float4	g_LightAmbient;
-	float4	g_LightSpecular;
-	int		g_LightLightType;
-	float3	g_LightPos;
-	float3	g_LightDir;
-	float	g_LightDistance;
-	float	g_LightAngleIn;
-	float	g_LightAngleOut;
-	float	g_LightAtt1;
-	float	g_LightAtt2;
-	float	g_LightAtt3;
-	float3	g_LightEmpty;
-};
-
 SamplerState    g_PointSmp  : register(s0);
 SamplerState    g_LinearSmp  : register(s1);
 SamplerState    g_AnisotropicSmp  : register(s2);
 
 Texture2D       g_BaseTexture   : register(t0);
 Texture2D       g_EmissiveTexture : register(t1);
-Texture2D		g_NormalTexture : register(t2);
-Texture2D		g_SpecularTexture : register(t3);
 
 Texture2D	g_RandNoiseTex	: register(t100);
 Texture2D	g_BurnTex	: register(t101);
@@ -129,152 +90,6 @@ Texture2D	g_DistortionNormalTex	: register(t102);
 Texture2D	g_DistortionFilterTex	: register(t103);
 Texture2D	g_SceneTex : register(t104);
 Texture2D	g_DistortionNoiseTex	: register(t105);
-
-StructuredBuffer<matrix>	g_SkinningBoneMatrixArray	: register(t106);
-
-
-float ConvertColor(float4 Color)
-{
-	uint4	Convert = (uint4)0;
-
-	Convert.r = uint(Color.r * 255);
-	Convert.g = uint(Color.g * 255);
-	Convert.b = uint(Color.b * 255);
-	Convert.a = uint(Color.a * 255);
-
-	uint	Result = 0;
-
-	Result = Convert.a;
-	Result = (Result << 8) | Convert.r;
-	Result = (Result << 8) | Convert.g;
-	Result = (Result << 8) | Convert.b;
-
-	return asfloat(Result);
-}
-
-float4 ConvertColor(float Color)
-{
-	uint Convert = asuint(Color);
-
-	float4	Result;
-	Result.b = (Convert & 0x000000ff) / 255.f;
-	Result.g = ((Convert >> 8) & 0x000000ff) / 255.f;
-	Result.r = ((Convert >> 16) & 0x000000ff) / 255.f;
-	Result.a = ((Convert >> 24) & 0x000000ff) / 255.f;
-
-	return Result;
-}
-
-
-
-// 조명 처리
-struct LightResult
-{
-	float4	Dif;
-	float4	Amb;
-	float4	Spc;
-	float4	Emv;
-};
-
-#define	LightTypeDir	0
-#define	LightTypePoint	1
-#define	LightTypeSpot	2
-
-float3 ComputeBumpNormal(float3 Normal, float3 Tangent, float3 Binormal, float2 UV)
-{
-	float3	result = Normal;
-
-	if (g_MtrlBumpEnable == 1)
-	{
-		float4	NormalColor = g_NormalTexture.Sample(g_AnisotropicSmp, UV);
-
-		float3	ConvertNormal = NormalColor.xyz * 2.f - 1.f;
-		ConvertNormal.z = 1.f;
-		ConvertNormal = normalize(ConvertNormal);
-
-		float3x3 mat =
-		{
-			Tangent,
-			Binormal,
-			Normal
-		};
-
-		result = normalize(mul(ConvertNormal, mat));
-	}
-
-	return result;
-}
-
-LightResult ComputeLight(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
-	float2 UV)
-{
-	LightResult	result = (LightResult)0.f;
-
-	float3	LightDir = (float3)0.f;
-	float	Attn = 1.f;
-
-	if (g_LightLightType == LightTypeDir)
-	{
-		LightDir = -g_LightDir;
-		LightDir = normalize(LightDir);
-	}
-
-	if (g_LightLightType == LightTypePoint)
-	{
-		LightDir = g_LightPos - Pos;
-		LightDir = normalize(LightDir);
-
-		float	Dist = distance(g_LightPos, Pos);
-
-		if (Dist > g_LightDistance)
-			Attn = 0.f;
-
-		else
-		{
-			Attn = 1.f / (g_LightAtt1 + g_LightAtt2 * Dist + g_LightAtt3 * (Dist * Dist));
-		}
-	}
-
-	if (g_LightLightType == LightTypeSpot)
-	{
-	}
-
-	float3	ViewNormal = ComputeBumpNormal(Normal, Tangent, Binormal, UV);
-	//ViewNormal = Normal;
-
-	float	Intensity = max(0.f, dot(ViewNormal, LightDir));
-
-	result.Dif = g_LightDiffuse * g_vMtrlBaseColor * Intensity * Attn;
-	result.Amb = g_LightAmbient * g_vMtrlAmbientColor * Attn;
-
-	// 비금속 표면에 대한 Specular 처리를 위해 반사벡터를 구한다.
-	float3	Reflect = 2.f * dot(ViewNormal, LightDir) * ViewNormal - LightDir;
-	Reflect = normalize(Reflect);
-
-	float3	View = -Pos;
-	View = normalize(View);
-
-	float4	MtrlSpc = g_vMtrlSpecularColor;
-
-	if (g_MtrlSpcTex)
-		MtrlSpc = g_SpecularTexture.Sample(g_AnisotropicSmp, UV).rrrr;
-
-	MtrlSpc.w = 1.f;
-
-	result.Spc = g_LightSpecular * MtrlSpc *
-		pow(max(0.f, dot(View, Reflect)), g_vMtrlSpecularColor.w) * Attn;
-
-
-	float4	MtrlEmv = g_vMtrlEmissiveColor;
-
-	if (g_MtrlEmvTex)
-		MtrlEmv = g_EmissiveTexture.Sample(g_AnisotropicSmp, UV);
-
-	result.Emv = MtrlEmv;
-
-	return result;
-}
-
 
 #define	Animation2DAtlas	0
 #define	Animation2DFrame	1
@@ -689,74 +504,3 @@ PS_OUTPUT_SINGLE FullScreenDistortionPS(VS_OUTPUT_NULLBUFFER input)
 
 	return output;
 }
-
-struct SkinningInfo
-{
-	float3	Pos;
-	float3	Normal;
-	float3	Tangent;
-	float3	Binormal;
-};
-
-matrix GetBoneMatrix(int Index)
-{
-	return g_SkinningBoneMatrixArray[Index];
-}
-
-SkinningInfo Skinning(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
-	float4 Weight, float4 Index)
-{
-	SkinningInfo	Info = (SkinningInfo)0;
-
-	if (g_MtrlAnimation3DEnable == 0)
-	{
-		Info.Pos = Pos;
-		Info.Normal = Normal;
-		Info.Tangent = Tangent;
-		Info.Binormal = Binormal;
-
-		return Info;
-	}
-
-	for (int i = 0; i < 4; ++i)
-	{
-		if (Weight[i] == 0.f)
-			continue;
-
-		matrix	matBone = GetBoneMatrix((int)Index[i]);
-
-		Info.Pos += (mul(float4(Pos, 1.f), matBone) * Weight[i]).xyz;
-		Info.Normal += (mul(float4(Normal, 0.f), matBone) * Weight[i]).xyz;
-		Info.Tangent += (mul(float4(Tangent, 0.f), matBone) * Weight[i]).xyz;
-		Info.Binormal += (mul(float4(Binormal, 0.f), matBone) * Weight[i]).xyz;
-	}
-
-	Info.Normal = normalize(Info.Normal);
-	Info.Tangent = normalize(Info.Tangent);
-	Info.Binormal = normalize(Info.Binormal);
-
-	return Info;
-}
-
-float3 SkinningShadow(float3 Pos, float4 Weight, float4 Index)
-{
-	float3	Info = (float3)0;
-
-	if (g_MtrlAnimation3DEnable == 0)
-	{
-		return Pos;
-	}
-
-	for (int i = 0; i < 4; ++i)
-	{
-		if (Weight[i] == 0.f)
-			continue;
-
-		matrix	matBone = GetBoneMatrix((int)Index[i]);
-
-		Info += (mul(float4(Pos, 1.f), matBone) * Weight[i]).xyz;
-	}
-
-	return Info;
-}
-

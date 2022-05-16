@@ -26,8 +26,7 @@ enum class SceneComponent_Type
     Scene,
     Primitive,
     Camera,
-    SpringArm,
-    Light
+    SpringArm
 };
 
 enum class ObjectComponent_Type
@@ -79,9 +78,7 @@ enum Render_Type_2D
 enum Render_Type_3D
 {
     RT3D_None = -1,
-    RT3D_TERRAIN,
     RT3D_Default,
-    RT3D_Decal,
     RT3D_Particle,
     RT3D_End
 };
@@ -120,8 +117,6 @@ enum class Texture_Link
 {
     BaseTexture,        // 0번 레지스터
     EmissiveTexture,    // 1번 레지스터
-    NormalTexture,      // 2번 레지스터
-    SpecularTexture,    // 3번 레지스터
     CustomTexture   // 이 옵션을 사용하면 레지스터를 원하는대로 지정해서 사용할 수 있다.
 };
 
@@ -157,9 +152,7 @@ enum class Collider_Shape
 {
     Box2D,
     Circle,
-    Pixel,
-    Sphere,
-    Cube
+    Pixel
 };
 
 enum class Render_Space
@@ -269,18 +262,4 @@ enum class Tile_Type
 {
     None,
     Wall
-};
-
-enum class Light_Type
-{
-    Dir,
-    Point,
-    Spot
-};
-
-enum class Transform_State
-{
-    None,
-    Ground,
-    Falling
 };

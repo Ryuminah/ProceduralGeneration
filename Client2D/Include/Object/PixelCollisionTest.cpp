@@ -34,7 +34,7 @@ bool CPixelCollisionTest::Init()
 	SetRootComponent(m_Sprite);
 
 	m_Sprite->SetRelativeScale(200.f, 200.f, 1.f);
-	m_Sprite->SetRelativePos(100.f, 500.f, 0.f);
+	m_Sprite->SetRelativePos(0.f, 0.f, 0.f);
 	m_Sprite->SetPivot(0.5f, 0.5f, 0.f);
 
 	//m_Body->SetRadius(sqrtf(50.f * 50.f));

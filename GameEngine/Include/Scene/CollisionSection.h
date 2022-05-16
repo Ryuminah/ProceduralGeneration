@@ -20,7 +20,6 @@ private:
 	int				m_IndexY;
 	int				m_IndexZ;
 	int				m_Index;
-	static Matrix	m_matView;
 
 public:
 	bool Init(int IndexX, int IndexY, int IndexZ, int Index,

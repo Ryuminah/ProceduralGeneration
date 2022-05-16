@@ -32,8 +32,6 @@ class CMaterial :
 	friend class CResourceManager;
 	friend class CSceneResource;
 	friend class CMesh;
-	friend class CStaticMesh;
-	friend class CAnimationMesh;
 
 protected:
 	CMaterial();
@@ -44,8 +42,6 @@ protected:
 	class CScene* m_pScene;
 	class CMaterialConstantBuffer* m_pCBuffer;
 	Vector4     m_BaseColor;
-	Vector4		m_AmbientColor;
-	Vector4		m_SpecularColor;
 	Vector4     m_EmissiveColor;
 	std::vector<MaterialTextureInfo*>	m_vecTexture;
 	CSharedPtr<CShader> m_pShader;
@@ -54,10 +50,6 @@ protected:
 	float		m_Opacity;
 	bool		m_PaperBurnEnable;
 	bool		m_DistortionEnable;
-	bool		m_Bump;
-	bool		m_Animation3D;
-	bool		m_SpecularTex;
-	bool		m_EmissiveTex;
 
 	std::list<MaterialCallback*>	m_SetMaterialList;
 	std::list<MaterialCallback*>	m_ResetMaterialList;
@@ -66,11 +58,6 @@ public:
 	const MaterialTextureInfo* GetMaterialTextureInfo(int Index = 0)	const
 	{
 		return m_vecTexture[Index];
-	}
-
-	bool EmptyMaterialTextureInfo()	const
-	{
-		return m_vecTexture.empty();
 	}
 
 public:
@@ -86,26 +73,11 @@ public:
 		m_Opacity = Opacity;
 	}
 
-	void EnableBump();
-	void EnableAnimation3D();
-
 public:
 	void SetBaseColor(const Vector4& Color);
 	void SetBaseColor(float r, float g, float b, float a);
 	void SetBaseColor(unsigned char r, unsigned char g, unsigned char b,
 		unsigned char a);
-
-	void SetAmbientColor(const Vector4& Color);
-	void SetAmbientColor(float r, float g, float b, float a);
-	void SetAmbientColor(unsigned char r, unsigned char g, unsigned char b,
-		unsigned char a);
-
-	void SetSpecularColor(const Vector4& Color);
-	void SetSpecularColor(float r, float g, float b, float a);
-	void SetSpecularColor(unsigned char r, unsigned char g, unsigned char b,
-		unsigned char a);
-
-	void SetSpecularPower(float Power);
 
 	void SetEmissiveColor(const Vector4& Color);
 	void SetEmissiveColor(float r, float g, float b, float a);
@@ -129,19 +101,19 @@ public:
 		const std::vector<const TCHAR*>& vecFullPath);
 
 	// 기존 Texture를 교체한다.
-	bool SetTexture(const std::string& FindName, const std::string& Name, const TCHAR* FileName,
+	bool SetTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
-	bool SetTexture(const std::string& FindName, const std::string& Name, class CTexture* Texture);
-	bool SetTextureFullPath(const std::string& FindName, const std::string& Name, const TCHAR* FullPath);
-	bool SetTexture(const std::string& FindName, const std::string& Name,
+	bool SetTexture(const std::string& Name, class CTexture* Texture);
+	bool SetTextureFullPath(const std::string& Name, const TCHAR* FullPath);
+	bool SetTexture(const std::string& Name,
 		const std::vector<const TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
-	bool SetTextureFullPath(const std::string& FindName, const std::string& Name,
+	bool SetTextureFullPath(const std::string& Name,
 		const std::vector<const TCHAR*>& vecFullPath);
-	bool SetTextureArray(const std::string& FindName, const std::string& Name,
+	bool SetTextureArray(const std::string& Name,
 		const std::vector<const TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
-	bool SetTextureArrayFullPath(const std::string& FindName, const std::string& Name,
+	bool SetTextureArrayFullPath(const std::string& Name,
 		const std::vector<const TCHAR*>& vecFullPath);
 
 	bool SetTextureLink(const std::string& Name, Texture_Link Link);
@@ -150,7 +122,6 @@ public:
 
 	void PaperBurnEnable(bool Enable);
 	void DistortionEnable(bool Enable);
-	void SetReceiveDecal(bool Enable);
 
 
 public:
@@ -160,8 +131,6 @@ public:
 	virtual void ResetMaterial();
 	virtual void SetMaterialEmptyShader();
 	virtual void ResetMaterialEmptyShader();
-	virtual void SetShadowMaterial();
-	virtual void ResetShadowMaterial();
 	virtual CMaterial* Clone();
 	void Save(const TCHAR* FileName, const std::string& PathName = MAP_PATH);
 	virtual void Save(FILE* pFile);

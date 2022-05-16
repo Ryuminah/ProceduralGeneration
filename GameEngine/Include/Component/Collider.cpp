@@ -4,26 +4,22 @@
 #include "../Scene/SceneCollision.h"
 #include "../CollisionManager.h"
 #include "../Resource/ColliderConstantBuffer.h"
-#include "../Render/RenderState.h"
 
 CCollider::CCollider()
 {
 	m_SceneComponentType = SceneComponent_Type::Primitive;
 	m_ColliderSpace = Collider_Space::Collider3D;
-	m_ColliderShape = Collider_Shape::Sphere;
 	m_PrimitiveType = PrimitiveComponent_Type::Primitive3D;
 	m_3DType = RT3D_Default;
 
 	m_Profile = nullptr;
 	m_CurrentSectionCheck = false;
 
-	m_DebugRender = true;
+	m_DebugRender = false;
 
 	m_CBuffer = nullptr;
 
 	m_MouseCollision = false;
-
-	m_WireFrame = nullptr;
 }
 
 CCollider::CCollider(const CCollider& com) :
@@ -39,8 +35,6 @@ CCollider::CCollider(const CCollider& com) :
 	m_DebugShader = com.m_DebugShader;
 	m_CBuffer = com.m_CBuffer->Clone();
 	m_DebugRender = com.m_DebugRender;
-
-	m_WireFrame = com.m_WireFrame;
 }
 
 CCollider::~CCollider()
@@ -251,9 +245,6 @@ void CCollider::Render(float DeltaTime)
 	{
 		CPrimitiveComponent::Render(DeltaTime);
 
-		if (m_WireFrame)
-			m_WireFrame->SetState();
-
 		if (m_PrevCollisionList.empty())
 			m_CBuffer->SetColor(Vector4(0.f, 1.f, 0.f, 1.f));
 
@@ -268,9 +259,6 @@ void CCollider::Render(float DeltaTime)
 		m_DebugShader->SetShader();
 
 		m_DebugMesh->Render();
-
-		if (m_WireFrame)
-			m_WireFrame->ResetState();
 	}
 }
 

@@ -11,7 +11,6 @@ CSceneComponent::CSceneComponent()
     m_pTransform->m_pOwner = this;
     m_pTransform->Init();
     m_pParent = nullptr;
-    m_BoneSocket = nullptr;
 
     m_SceneComponentType = SceneComponent_Type::Scene;
 
@@ -54,16 +53,6 @@ CSceneComponent::~CSceneComponent()
     SAFE_DELETE(m_pTransform);
 }
 
-Transform_State CSceneComponent::GetTransformState() const
-{
-    return m_pTransform->GetState();
-}
-
-void CSceneComponent::SetTransformState(Transform_State State)
-{
-    m_pTransform->SetState(State);
-}
-
 void CSceneComponent::Move(const Vector2& Target)
 {
     Move(Vector3(Target.x, Target.y, 0.f));
@@ -96,7 +85,6 @@ void CSceneComponent::Active(bool bActive)
 
 void CSceneComponent::AddChild(CSceneComponent* Child, const std::string& SocketName)
 {
-    m_SocketName = SocketName;
     Child->m_pParent = this;
     m_vecChild.push_back(Child);
 
@@ -107,8 +95,6 @@ void CSceneComponent::AddChild(CSceneComponent* Child, const std::string& Socket
     Child->m_pTransform->InheritScale();
     Child->m_pTransform->InheritRot();
     Child->m_pTransform->InheritPos();
-
-    // AnimationMeshComponent일 경우에만 Socket을 처리한다.
 }
 
 void CSceneComponent::DeleteChild(CSceneComponent* Child)
@@ -271,16 +257,10 @@ void CSceneComponent::Update(float DeltaTime)
     }
 }
 
-void CSceneComponent::PostTransformUpdate(float DeltaTime)
-{
-}
-
 void CSceneComponent::PostUpdate(float DeltaTime)
 {
     CComponent::PostUpdate(DeltaTime);
     m_pTransform->PostUpdate(DeltaTime);
-
-    PostTransformUpdate(DeltaTime);
 
     auto    iter = m_vecChild.begin();
     auto    iterEnd = m_vecChild.end();
@@ -344,11 +324,6 @@ void CSceneComponent::PrevRender(float DeltaTime)
 void CSceneComponent::Render(float DeltaTime)
 {
     // 출력 직전에 자신의 Transform 정보를 Shader로 보내준다.
-    m_pTransform->SetTransform();
-}
-
-void CSceneComponent::RenderDebug(float DeltaTime)
-{
     m_pTransform->SetTransform();
 }
 
@@ -552,11 +527,6 @@ Vector3 CSceneComponent::GetWorldPos() const
     return m_pTransform->GetWorldPos();
 }
 
-Vector3 CSceneComponent::GetPrevWorldPos() const
-{
-    return m_pTransform->GetPrevWorldPos();
-}
-
 Vector3 CSceneComponent::GetPivot() const
 {
     return m_pTransform->GetPivot();
@@ -695,26 +665,6 @@ void CSceneComponent::AddWorldPos(const Vector3& Pos)
 void CSceneComponent::AddWorldPos(float x, float y, float z)
 {
     m_pTransform->AddWorldPos(x, y, z);
-}
-
-void CSceneComponent::LookAt(const Vector3& Pos)
-{
-    m_pTransform->LookAt(Pos);
-}
-
-void CSceneComponent::LookAt(const Vector3& Pos, const Vector3& OriginDir)
-{
-    m_pTransform->LookAt(Pos, OriginDir);
-}
-
-void CSceneComponent::LookAtYAxis(const Vector3& Pos)
-{
-    m_pTransform->LookAtYAxis(Pos);
-}
-
-void CSceneComponent::LookAtYAxis(const Vector3& Pos, const Vector3& OriginDir)
-{
-    m_pTransform->LookAtYAxis(Pos, OriginDir);
 }
 
 void CSceneComponent::ClearTransformState()

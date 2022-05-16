@@ -45,7 +45,7 @@ bool CParticle2D::Init()
 	//m_Animation2D = m_Sprite->GetAnimation2D();
 
 	// 프레임 종료 콜백 설정
-	//m_Animation2D->SetFrameEndFunction<CPlayer2D>(this, &CPlayer2D::AnimationFrameEnd);
+	//m_Animation2D->SetFrameEndFunction<CMapCamera>(this, &CMapCamera::AnimationFrameEnd);
 
 	return true;
 }

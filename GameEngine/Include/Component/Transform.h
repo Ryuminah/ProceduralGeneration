@@ -21,28 +21,11 @@ private:
 	std::vector<CTransform*>    m_vecChild;
 	class CTransformConstantBuffer* m_pCBuffer;
 	float		m_DefaultZ;
-	class CBoneSocket* m_BoneSocket;
-	Transform_State	m_State;
 
 private:
 	bool    m_Animation2DEnable;
 
 public:
-	Transform_State GetState()	const
-	{
-		return m_State;
-	}
-
-	void SetState(Transform_State State)
-	{
-		m_State = State;
-	}
-
-	void SetSocket(class CBoneSocket* Socket)
-	{
-		m_BoneSocket = Socket;
-	}
-
 	void SetDefaultZ(float Z)
 	{
 		m_DefaultZ = Z;
@@ -199,20 +182,12 @@ private:    // World Data
 	Vector3 m_Pivot;
 	Vector3 m_MeshSize;
 
-	Vector3 m_prevWorldPos;
-
 	Matrix  m_matScale;
 	Matrix  m_matRot;
 	Matrix  m_matPos;
 	Matrix  m_matWorld;
 
-
 public:
-	Vector3 GetPrevWorldPos() const
-	{
-		return m_prevWorldPos;
-	}
-
 	Vector3 GetWorldScale() const
 	{
 		return m_WorldScale;
@@ -300,18 +275,11 @@ public:
 	void AddWorldPos(float x, float y, float z);
 
 public:
-	void LookAt(const Vector3& Pos);
-	void LookAt(const Vector3& Pos, const Vector3& OriginDir);
-	void LookAtYAxis(const Vector3& Pos);
-	void LookAtYAxis(const Vector3& Pos, const Vector3& OriginDir);
-
-public:
 	void Start();
 	bool Init();
 	void Update(float DeltaTime);
 	void PostUpdate(float DeltaTime);
 	void SetTransform();
-	void SetShadowTransform();
 	void ComputeWorld();
 	CTransform* Clone();
 	void ClearState();

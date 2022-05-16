@@ -9,8 +9,6 @@ CSpriteComponent::CSpriteComponent()
 {
 	m_PrimitiveType = PrimitiveComponent_Type::Primitive2D;
 	m_2DType = RT2D_Default;
-
-	SetTransformState(Transform_State::None);
 }
 
 CSpriteComponent::CSpriteComponent(const CSpriteComponent& com) :

@@ -18,7 +18,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
-    if (!CEngine::GetInst()->Init(TEXT("Client2D"), TEXT("Client2D"), hInstance, IDI_ICON1, IDI_ICON1,
+    if (!CEngine::GetInst()->Init(TEXT("Procedural Map Generation"), TEXT("Procedural Map Generation"), hInstance, IDI_ICON1, IDI_ICON1,
         1280, 720))
     {
         CEngine::DestroyInst();

@@ -10,8 +10,6 @@ matrix : 4x4 행렬
 float3x3 : 3x3 행렬 float타입
 */
 
-Texture2D	g_GBuffer2	: register(t50);
-
 
 struct VS_INPUT_COLOR
 {
@@ -136,47 +134,6 @@ PS_OUTPUT_SINGLE Standard2DTexturePS(VS_OUTPUT_UV input)
 	result = PaperBurn2D(result, input.UV);
 
 	result = Distortion(result, input.UV, input.ProjPos);
-
-	output.Color = result;
-
-	return output;
-}
-
-VS_OUTPUT_UV BillboardTextureVS(VS_INPUT_UV input)
-{
-	VS_OUTPUT_UV output = (VS_OUTPUT_UV)0;
-
-	// output.Pos 의 x, y, z 에는 input.Pos의 x, y, z 가 들어가고 w에는 1.f 이 들어가게 된다.
-	output.ProjPos = mul(float4(input.Pos, 1.f), g_matWVP);
-	output.Pos = output.ProjPos;
-	output.UV = input.UV;
-
-	return output;
-}
-
-
-PS_OUTPUT_SINGLE BillboardTexturePS(VS_OUTPUT_UV input)
-{
-	PS_OUTPUT_SINGLE    output = (PS_OUTPUT_SINGLE)0;
-
-	float4  BaseColor = g_BaseTexture.Sample(g_AnisotropicSmp, input.UV);
-
-	// 현재 화면에서의 UV를 구해준다.
-	float2	ScreenUV;
-	ScreenUV.x = input.ProjPos.x / input.ProjPos.w * 0.5f + 0.5f;
-	ScreenUV.y = input.ProjPos.y / input.ProjPos.w * -0.5f + 0.5f;
-
-	float4  GBuffer2 = g_GBuffer2.Sample(g_AnisotropicSmp, ScreenUV);
-
-	float	Alpha = 1.f;
-
-	if (GBuffer2.w > 0.f)
-		Alpha = (GBuffer2.y - input.ProjPos.w) / 0.5f;
-
-	float4	result = (float4)0.f;
-
-	result.rgb = BaseColor.rgb * g_vMtrlBaseColor.rgb;
-	result.a = BaseColor.a * g_MtrlOpacity * Alpha;
 
 	output.Color = result;
 

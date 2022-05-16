@@ -13,8 +13,6 @@ CWidgetComponent::CWidgetComponent()
 	m_Space = WidgetComponent_Space::Space2D;
 
 	m_AlphaBlend = nullptr;
-
-	SetTransformState(Transform_State::None);
 }
 
 CWidgetComponent::CWidgetComponent(const CWidgetComponent& com) :

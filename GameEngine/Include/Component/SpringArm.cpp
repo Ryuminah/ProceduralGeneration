@@ -7,8 +7,6 @@ CSpringArm::CSpringArm()
 	m_SceneComponentType = SceneComponent_Type::SpringArm;
 
 	m_TargetLength = 300.f;
-
-	SetTransformState(Transform_State::None);
 }
 
 CSpringArm::CSpringArm(const CSpringArm& com) :

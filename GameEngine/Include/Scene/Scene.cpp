@@ -1,6 +1,9 @@
 
 #include "Scene.h"
-#include "../Component/StaticMeshComponent.h"
+#include "SceneResource.h"
+#include "CameraManager.h"
+#include "SceneCollision.h"
+#include "Viewport.h"
 
 CScene::CScene()    :
     m_pSceneMode(nullptr),
@@ -8,7 +11,6 @@ CScene::CScene()    :
     m_pCameraManager(nullptr),
     m_pCollision(nullptr),
     m_pViewport(nullptr),
-    m_LightManager(nullptr),
     m_StartScene(false)
 {
 }
@@ -17,7 +19,6 @@ CScene::~CScene()
 {
     m_ObjList.clear();
 
-    SAFE_DELETE(m_LightManager);
     SAFE_DELETE(m_pViewport);
     SAFE_DELETE(m_pCollision);
     SAFE_DELETE(m_pCameraManager);
@@ -56,8 +57,6 @@ void CScene::Start()
     m_pViewport->Start();
 
     m_pCollision->Start();
-
-    m_Sky->Start();
 }
 
 bool CScene::Init()
@@ -74,13 +73,6 @@ bool CScene::Init()
     m_pSceneResource->m_pScene = this;
 
     if (!m_pSceneResource->Init())
-        return false;
-
-    m_LightManager = new CLightManager;
-
-    m_LightManager->m_pScene = this;
-
-    if (!m_LightManager->Init())
         return false;
 
     m_pCameraManager = new CCameraManager;
@@ -103,24 +95,6 @@ bool CScene::Init()
 
     if (!m_pViewport->Init())
         return false;
-
-    // 기본 Sky 생성
-    m_Sky = new CGameObject;
-
-    m_Sky->SetName("Sky");
-    m_Sky->m_pScene = this;
-
-    m_SkyMesh = m_Sky->CreateSceneComponent<CStaticMeshComponent>("SkyMesh");
-
-    m_Sky->SetRootComponent(m_SkyMesh);
-
-    m_SkyMesh->SetRelativeScale(100000.f, 100000.f, 100000.f);
-    m_SkyMesh->SetMesh("SpherePos");
-
-    m_SkyMesh->AddMaterial("DefaultSky");
-
-    m_Sky->Release();
-    m_SkyMesh->Release();
 
     return true;
 }
@@ -153,8 +127,6 @@ void CScene::Update(float DeltaTime)
     m_pCameraManager->Update(DeltaTime);
 
     m_pViewport->Update(DeltaTime);
-
-    m_Sky->Update(DeltaTime);
 }
 
 void CScene::PostUpdate(float DeltaTime)
@@ -185,15 +157,11 @@ void CScene::PostUpdate(float DeltaTime)
     m_pCameraManager->PostUpdate(DeltaTime);
 
     m_pViewport->PostUpdate(DeltaTime);
-
-    m_Sky->PostUpdate(DeltaTime);
 }
 
 void CScene::Collision(float DeltaTime)
 {
     m_pCollision->Collision(DeltaTime);
-
-    m_LightManager->Update(DeltaTime);
 
     /*auto    iter = m_ObjList.begin();
     auto    iterEnd = m_ObjList.end();

@@ -41,14 +41,8 @@ protected:
     std::vector<TextureResourceInfo*>   m_vecResourceInfo;
     Image_Type                          m_ImageType;
     ID3D11ShaderResourceView*           m_ArraySRV;
-    bool                                m_IsTarget;
 
 public:
-    bool IsRenderTarget()   const
-    {
-        return m_IsTarget;
-    }
-
     ID3D11ShaderResourceView* GetResource(int Index = 0) const
     {
         return m_vecResourceInfo[Index]->SRV;

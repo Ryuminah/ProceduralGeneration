@@ -46,7 +46,3 @@ void CComponent::PrevRender(float DeltaTime)
 void CComponent::Render(float DeltaTime)
 {
 }
-
-void CComponent::RenderDebug(float DeltaTime)
-{
-}

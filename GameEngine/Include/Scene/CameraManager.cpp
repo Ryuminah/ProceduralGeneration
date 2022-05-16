@@ -59,16 +59,13 @@ bool CCameraManager::Init()
     Camera->SetName("DefaultCamera");
     Camera->m_pScene = m_pScene;
     //Camera->m_pOwner = this;
-    Camera->SetCameraType(Camera_Type::Cam3D);
+    Camera->SetCameraType(Camera_Type::Cam2D);
 
     if (!Camera->Init())
     {
         SAFE_RELEASE(Camera);
         return false;
     }
-
-    Camera->SetRelativePos(64.f, 60.f, 64.f);
-    Camera->SetRelativeRotation(90.f, 0.f, 0.f);
 
     m_CameraList.push_back(Camera);
     Camera->Release();

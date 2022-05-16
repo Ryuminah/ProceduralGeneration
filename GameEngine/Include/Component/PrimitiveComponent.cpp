@@ -32,11 +32,6 @@ CPrimitiveComponent::~CPrimitiveComponent()
 {
 }
 
-void CPrimitiveComponent::AddChild(CSceneComponent* Child, const std::string& SocketName)
-{
-    CSceneComponent::AddChild(Child, SocketName);
-}
-
 void CPrimitiveComponent::SetMaterial(int SlotIndex, CMaterial* pMaterial)
 {
     m_vecMaterialSlot[SlotIndex] = pMaterial;
@@ -89,11 +84,6 @@ void CPrimitiveComponent::Update(float DeltaTime)
     CSceneComponent::Update(DeltaTime);
 }
 
-void CPrimitiveComponent::PostTransformUpdate(float DeltaTime)
-{
-    CSceneComponent::PostTransformUpdate(DeltaTime);
-}
-
 void CPrimitiveComponent::PostUpdate(float DeltaTime)
 {
     CSceneComponent::PostUpdate(DeltaTime);
@@ -116,17 +106,7 @@ void CPrimitiveComponent::Render(float DeltaTime)
     CSceneComponent::Render(DeltaTime);
 }
 
-void CPrimitiveComponent::RenderDebug(float DeltaTime)
-{
-    CSceneComponent::RenderDebug(DeltaTime);
-}
-
 CPrimitiveComponent* CPrimitiveComponent::Clone()
 {
     return new CPrimitiveComponent(*this);
-}
-
-void CPrimitiveComponent::RenderShadow(float DeltaTime)
-{
-    m_pTransform->SetShadowTransform();
 }

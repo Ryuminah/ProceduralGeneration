@@ -5,9 +5,6 @@
 #include "../Scene/Scene.h"
 #include "../Scene/CameraManager.h"
 #include "Camera.h"
-#include "../Resource/BoneSocket.h"
-#include "../Navigation3D.h"
-#include "../NavigationManager.h"
 
 CTransform::CTransform()    :
     m_Animation2DEnable(false),
@@ -22,9 +19,7 @@ CTransform::CTransform()    :
     m_UpdatePos(true),
     m_UpdatePosZ(false),
     m_DefaultZ(0.f),
-    m_PhysicsSimulate(false),
-    m_BoneSocket(nullptr),
-    m_State(Transform_State::Ground)
+    m_PhysicsSimulate(false)
 {
     for (int i = 0; i < AXIS_END; ++i)
     {
@@ -41,8 +36,6 @@ CTransform::CTransform(const CTransform& transform)
     *this = transform;
 
     m_pCBuffer = transform.m_pCBuffer->Clone();
-
-    m_State = Transform_State::Ground;
 }
 
 CTransform::~CTransform()
@@ -1497,68 +1490,6 @@ void CTransform::AddWorldPos(float x, float y, float z)
     }
 }
 
-void CTransform::LookAt(const Vector3& Pos)
-{
-    Vector3	Dir = Pos - m_WorldPos;
-    Dir.Normalize();
-
-    Vector3	RotAxis = m_Axis[AXIS_Z].Cross(Dir);
-    RotAxis.Normalize();
-
-    float   Angle = m_Axis[AXIS_Z].Angle(Dir);
-
-    m_matRot = XMMatrixRotationAxis(RotAxis.Convert(), DegreeToRadian(Angle));
-
-    m_UpdateRot = false;
-}
-
-void CTransform::LookAt(const Vector3& Pos, const Vector3& OriginDir)
-{
-    Vector3	Dir = Pos - m_WorldPos;
-    Dir.Normalize();
-
-    Vector3	RotAxis = OriginDir.Cross(Dir);
-    RotAxis.Normalize();
-
-    float   Angle = OriginDir.Angle(Dir);
-
-    m_matRot = XMMatrixRotationAxis(RotAxis.Convert(), DegreeToRadian(Angle));
-
-    m_UpdateRot = false;
-}
-
-void CTransform::LookAtYAxis(const Vector3& Pos)
-{
-    Vector3	Dir = Pos - m_WorldPos;
-    Dir.y = 0.f;
-    Dir.Normalize();
-
-    Vector3	RotAxis = m_Axis[AXIS_Z].Cross(Dir);
-    RotAxis.Normalize();
-
-    float   Angle = m_Axis[AXIS_Z].Angle(Dir);
-
-    m_matRot = XMMatrixRotationAxis(RotAxis.Convert(), DegreeToRadian(Angle));
-
-    m_UpdateRot = false;
-}
-
-void CTransform::LookAtYAxis(const Vector3& Pos, const Vector3& OriginDir)
-{
-    Vector3	Dir = Pos - m_WorldPos;
-    Dir.y = 0.f;
-    Dir.Normalize();
-
-    Vector3	RotAxis = OriginDir.Cross(Dir);
-    RotAxis.Normalize();
-
-    float   Angle = OriginDir.Angle(Dir);
-
-    m_matRot = XMMatrixRotationAxis(RotAxis.Convert(), DegreeToRadian(Angle));
-
-    m_UpdateRot = false;
-}
-
 void CTransform::Start()
 {
     m_VelocityScale = Vector3::Zero;
@@ -1588,21 +1519,6 @@ void CTransform::PostUpdate(float DeltaTime)
     // 중력을 적용한다.
     if (m_PhysicsSimulate)
     {
-    }
-
-    if (m_State == Transform_State::Ground)
-    {
-        // Y값을 구한다.
-        CNavigation3D* Nav = (CNavigation3D*)CNavigationManager::GetInst()->GetNavigation();
-
-        float Height = Nav->GetHeight(m_WorldPos);
-
-        if (m_WorldPos.y != Height)
-        {
-            m_WorldPos.y = Height;
-
-            InheritPos();
-        }
     }
 
     if (m_UpdatePosZ)
@@ -1651,9 +1567,6 @@ void CTransform::PostUpdate(float DeltaTime)
         m_matPos.Translation(m_WorldPos);
 
     m_matWorld = m_matScale * m_matRot * m_matPos;
-
-    if (m_BoneSocket)
-        m_matWorld *= m_BoneSocket->GetSocketMatrix();
 }
 
 void CTransform::SetTransform()
@@ -1669,30 +1582,6 @@ void CTransform::SetTransform()
     m_pCBuffer->SetViewMatrix(matView);
 
     Matrix  matProj = Camera->GetProjMatrix();
-
-    m_pCBuffer->SetProjMatrix(matProj);
-
-    m_pCBuffer->SetPivot(m_Pivot);
-    m_pCBuffer->SetMeshSize(m_MeshSize);
-
-    m_pCBuffer->UpdateCBuffer();
-    
-    m_prevWorldPos = m_WorldPos;
-}
-
-void CTransform::SetShadowTransform()
-{
-    m_pCBuffer->SetAnimation2DEnable(m_Animation2DEnable);
-
-    m_pCBuffer->SetWorldMatrix(m_matWorld);
-
-    CCamera* Camera = m_pScene->GetCameraManager()->GetCurrentCamera();
-
-    Matrix  matView = Camera->GetShadowViewMatrix();
-
-    m_pCBuffer->SetViewMatrix(matView);
-
-    Matrix  matProj = Camera->GetShadowProjMatrix();
 
     m_pCBuffer->SetProjMatrix(matProj);
 

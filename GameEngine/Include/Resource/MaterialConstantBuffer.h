@@ -24,16 +24,6 @@ public:
 		m_BufferData.BaseColor = Color;
 	}
 
-	void SetAmbientColor(const Vector4& Color)
-	{
-		m_BufferData.AmbientColor = Color;
-	}
-
-	void SetSpecularColor(const Vector4& Color)
-	{
-		m_BufferData.SpecularColor = Color;
-	}
-
 	void SetEmissiveColor(const Vector4& Color)
 	{
 		m_BufferData.EmissiveColor = Color;
@@ -52,31 +42,6 @@ public:
 	void DistortionEnable(bool Enable)
 	{
 		m_BufferData.Distortion = Enable ? 1 : 0;
-	}
-
-	void BumpEnable(bool Enable)
-	{
-		m_BufferData.BumpEnable = Enable ? 1 : 0;
-	}
-
-	void Animation3DEnable(bool Enable)
-	{
-		m_BufferData.Animation3DEnable = Enable ? 1 : 0;
-	}
-
-	void SpecularTexEnable(bool Enable)
-	{
-		m_BufferData.SpecularTex = Enable ? 1 : 0;
-	}
-
-	void EmissiveTexEnable(bool Enable)
-	{
-		m_BufferData.EmissiveTex = Enable ? 1 : 0;
-	}
-
-	void ReceiveDecal(bool Enable)
-	{
-		m_BufferData.ReceiveDecal = Enable ? 1 : 0;
 	}
 };
 

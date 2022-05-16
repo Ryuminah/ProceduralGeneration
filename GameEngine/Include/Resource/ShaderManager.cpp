@@ -5,7 +5,6 @@
 #include "Standard2DTextureShader.h"
 #include "ConstantBuffer.h"
 #include "ColliderShader.h"
-#include "Collider3DShader.h"
 #include "ParticleUpdateShader.h"
 #include "ParticleShader.h"
 #include "FullScreenShader.h"
@@ -15,19 +14,6 @@
 #include "NumberShader.h"
 #include "MouseShader.h"
 #include "TileMapShader.h"
-#include "Standard3DShader.h"
-#include "AnimationUpdateShader.h"
-#include "RenderTargetShader.h"
-#include "LightDirAccShader.h"
-#include "LightAccShader.h"
-#include "LightCombineShader.h"
-#include "LightCombineRenderShader.h"
-#include "BillboardShader.h"
-#include "SkyShader.h"
-#include "LandScapeShader.h"
-#include "DecalShader.h"
-#include "DecalDebugShader.h"
-#include "ShadowShader.h"
 
 DEFINITION_SINGLE(CShaderManager)
 
@@ -69,9 +55,6 @@ bool CShaderManager::Init()
     if (!CreateShader<CColliderShader>("ColliderShader"))
         return false;
 
-    if (!CreateShader<CCollider3DShader>("Collider3DShader"))
-        return false;
-
     if (!CreateShader<CParticleUpdateShader>("ParticleUpdateShader"))
         return false;
 
@@ -99,48 +82,9 @@ bool CShaderManager::Init()
     if (!CreateShader<CTileMapShader>("TileMapShader"))
         return false;
 
-    if (!CreateShader<CStandard3DShader>("Standard3DShader"))
-        return false;
-
-    if (!CreateShader<CAnimationUpdateShader>("AnimationUpdateShader"))
-        return false;
-
-    if (!CreateShader<CRenderTargetShader>("RenderTargetShader"))
-        return false;
-
-    if (!CreateShader<CLightDirAccShader>("LightDirAccShader"))
-        return false;
-
-    if (!CreateShader<CLightAccShader>("LightAccShader"))
-        return false;
-
-    if (!CreateShader<CLightCombineShader>("LightCombineShader"))
-        return false;
-
-    if (!CreateShader<CLightCombineRenderShader>("LightCombineRenderShader"))
-        return false;
-
-    if (!CreateShader<CSkyShader>("SkyShader"))
-        return false;
-
-    if (!CreateShader<CLandScapeShader>("LandScapeShader"))
-        return false;
-
-    if (!CreateShader<CBillboardShader>("BillboardShader"))
-        return false;
-
-    if (!CreateShader<CDecalShader>("DecalShader"))
-        return false;
-
-    if (!CreateShader<CDecalDebugShader>("DecalDebugShader"))
-        return false;
-
-    if (!CreateShader<CShadowShader>("ShadowShader"))
-        return false;
-
     // 상수버퍼를 만들어준다.
     CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0, CBT_ALL);
-    CreateConstantBuffer("MaterialCBuffer", sizeof(MaterialCBuffer), 1, CBT_VERTEX | CBT_PIXEL);
+    CreateConstantBuffer("MaterialCBuffer", sizeof(MaterialCBuffer), 1, CBT_PIXEL);
     CreateConstantBuffer("Animation2DCBuffer", sizeof(Animation2DCBuffer), 6, CBT_ALL);
     CreateConstantBuffer("ColliderCBuffer", sizeof(ColliderCBuffer), 11, CBT_PIXEL);
     CreateConstantBuffer("ParticleCBuffer", sizeof(ParticleCBuffer), 11, CBT_COMPUTE);
@@ -153,11 +97,6 @@ bool CShaderManager::Init()
     CreateConstantBuffer("ProgressBarCBuffer", sizeof(ProgressBarCBuffer), 12, CBT_VERTEX);
     CreateConstantBuffer("NumberCBuffer", sizeof(NumberCBuffer), 13, CBT_VERTEX);
     CreateConstantBuffer("TileMapCBuffer", sizeof(TileMapCBuffer), 10, CBT_VERTEX);
-    CreateConstantBuffer("AnimationCBuffer", sizeof(AnimationCBuffer), 11, CBT_COMPUTE);
-    CreateConstantBuffer("LightCBuffer", sizeof(LightCBuffer), 7, CBT_PIXEL);
-    CreateConstantBuffer("RenderTargetCBuffer", sizeof(RenderTargetCBuffer), 11, CBT_VERTEX);
-    CreateConstantBuffer("LandScapeCBuffer", sizeof(LandScapeCBuffer), 11, CBT_VERTEX | CBT_PIXEL);
-    CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 12, CBT_VERTEX | CBT_PIXEL);
 
     return true;
 }

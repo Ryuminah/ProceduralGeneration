@@ -87,7 +87,7 @@ bool CDevice::Init(HWND hWnd, int Width, int Height, bool ScreenMode)
 	SwapDesc.BufferCount = 1;
 	SwapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	SwapDesc.OutputWindow = hWnd;
-	SwapDesc.SampleDesc.Count = 1;
+	SwapDesc.SampleDesc.Count = 2;
 	SwapDesc.SampleDesc.Quality = 0;
 	SwapDesc.Windowed = ScreenMode;
 	SwapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -127,7 +127,7 @@ bool CDevice::Init(HWND hWnd, int Width, int Height, bool ScreenMode)
 	DepthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	DepthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	DepthDesc.Usage = D3D11_USAGE_DEFAULT;
-	DepthDesc.SampleDesc.Count = 1;
+	DepthDesc.SampleDesc.Count = 2;
 	DepthDesc.SampleDesc.Quality = 0;
 	DepthDesc.MipLevels = 1;
 

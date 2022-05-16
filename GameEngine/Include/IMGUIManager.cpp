@@ -63,8 +63,6 @@ void CIMGUIManager::Update(float DeltaTime)
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	//ImGui::Begin("TestIMGUIWindow");
-	//ImGui::End()
 	auto	iter = m_mapWindow.begin();
 	auto	iterEnd = m_mapWindow.end();
 
@@ -73,9 +71,10 @@ void CIMGUIManager::Update(float DeltaTime)
 		iter->second->Update(DeltaTime);
 	}
 
-	//// 위에서 IMGUI에서 제공한 gui 들을 그려냈다면 실제 화면에 그려낸것이 아니라
-	//// IMGUI 버퍼에 그려진 정보들이 들어가 있다.
-	//// 나중에 출력할때 그 정보들을 화면에 렌더링하는 방식이다.
+
+	// 위에서 IMGUI에서 제공한 gui 들을 그려냈다면 실제 화면에 그려낸것이 아니라
+	// IMGUI 버퍼에 그려진 정보들이 들어가 있다.
+	// 나중에 출력할때 그 정보들을 화면에 렌더링하는 방식이다.
 	ImGui::Render();
 }
 

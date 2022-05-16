@@ -2,13 +2,6 @@
 #include "CollisionSection.h"
 #include "../Component/Collider.h"
 #include "../Input.h"
-#include "../Component/Camera.h"
-#include "CameraManager.h"
-#include "Scene.h"
-#include "SceneManager.h"
-#include "../Collision.h"
-
-Matrix CCollisionSection::m_matView;
 
 CCollisionSection::CCollisionSection()
 {
@@ -57,7 +50,6 @@ void CCollisionSection::Clear()
 void CCollisionSection::Collision(float DeltaTime)
 {
 	size_t	Size = m_vecCollider.size();
-	CCollision::deltaTime = DeltaTime;
 
 	//for (size_t i = 0; i < Size; ++i)
 	//{
@@ -150,21 +142,6 @@ CCollider* CCollisionSection::CollisionMouse(bool Is2D, float DeltaTime)
 
 	else
 	{
-		size_t	Size = m_vecCollider.size();
-
-		if (Size > 1)
-		{
-			m_matView = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetViewMatrix();
-
-			qsort(&m_vecCollider[0], Size, (size_t)sizeof(CCollider*),
-				CCollisionSection::SortZ);
-		}
-
-		for (size_t i = 0; i < Size; ++i)
-		{
-			if (m_vecCollider[i]->CollisionMouse(Vector2()))
-				return m_vecCollider[i];
-		}
 	}
 
 	return nullptr;
@@ -189,17 +166,5 @@ int CCollisionSection::SortY(const void* Src, const void* Dest)
 
 int CCollisionSection::SortZ(const void* Src, const void* Dest)
 {
-	CCollider* SrcCollider = *((CCollider**)Src);
-	CCollider* DestCollider = *((CCollider**)Dest);
-
-	float	SrcZ = SrcCollider->GetWorldPos().TransformCoord(m_matView).z;
-	float	DestZ = SrcCollider->GetWorldPos().TransformCoord(m_matView).z;
-
-	if (SrcZ < DestZ)
-		return -1;
-
-	else if (SrcZ > DestZ)
-		return 1;
-
 	return 0;
 }

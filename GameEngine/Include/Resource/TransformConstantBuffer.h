@@ -27,15 +27,11 @@ public:
     void SetViewMatrix(const Matrix& matView)
     {
         m_BufferData.matView = matView;
-        m_BufferData.matInvView = matView;
-        m_BufferData.matInvView.Inverse();
     }
 
     void SetProjMatrix(const Matrix& matProj)
     {
         m_BufferData.matProj = matProj;
-        m_BufferData.matInvProj = matProj;
-        m_BufferData.matInvProj.Inverse();
     }
 
     void SetPivot(const Vector3& Pivot)

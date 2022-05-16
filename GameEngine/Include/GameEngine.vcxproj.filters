@@ -229,69 +229,6 @@
     <Filter Include="01. Engine\12. Navigation">
       <UniqueIdentifier>{ab998863-f145-40c7-ba3a-2d768a8a2573}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Resource\01. Mesh\01. FBXLoader">
-      <UniqueIdentifier>{f451f84e-484f-4858-9475-5d350ad98bb1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\07. Standard3D">
-      <UniqueIdentifier>{f17322d8-eeec-4903-9b53-087ba727061d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\05. Animation\02. 3D">
-      <UniqueIdentifier>{c84dcca0-7e64-412d-aa27-33a9a7d14034}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\02. ConstantBuffer\12. Animation3DBuffer">
-      <UniqueIdentifier>{0f4a730f-261c-4e61-9bc1-01fc68d0d21a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\08. AnimationUpdate">
-      <UniqueIdentifier>{369fa61e-920b-4bde-bca2-13c58a60661f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Component\01. SceneComponent\04. Light">
-      <UniqueIdentifier>{bd17b537-7730-4967-9c00-f23025400d08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\02. ConstantBuffer\13. LightCBuffer">
-      <UniqueIdentifier>{061c0370-96a3-41a8-b2e1-d8cca057bce6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Scene\06. Light">
-      <UniqueIdentifier>{130403f1-b03f-4bc2-81a3-973aa21dfd3f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\02. ConstantBuffer\14. RenderTargetCBuffer">
-      <UniqueIdentifier>{0835a9cb-7ad8-4c98-ae02-32ef32febe29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\09. RenderTarget">
-      <UniqueIdentifier>{b04369b2-7659-4e77-911e-c5a3d88ae3d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\10. Light">
-      <UniqueIdentifier>{a2a6e2ef-37d3-49c4-8460-565dd50a1e81}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\11. Sky">
-      <UniqueIdentifier>{f48ed8a6-3599-4758-a650-6407008f39b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Component\01. SceneComponent\01. PrimitiveComponent\07. LandScape">
-      <UniqueIdentifier>{b9dcf717-0457-48d4-9bc3-7fc95225265d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\12. LandScape">
-      <UniqueIdentifier>{f72619a6-af9b-41e6-b4d9-4a7d91303a91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\02. ConstantBuffer\15. LandScape">
-      <UniqueIdentifier>{e1387d26-bec1-42e9-9bd7-e03f13a40a61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Component\01. SceneComponent\01. PrimitiveComponent\08. Billboard">
-      <UniqueIdentifier>{66a3552f-3f90-4355-bdfa-17d3e8ed8123}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\13. Billboard">
-      <UniqueIdentifier>{8d7d6e8f-e5a3-4d8b-a345-757b3db8b9e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. Component\01. SceneComponent\01. PrimitiveComponent\09. Decal">
-      <UniqueIdentifier>{c2836395-a894-430f-b1c0-8e2e2bb958db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\14. Decal">
-      <UniqueIdentifier>{c910a6b7-adc7-41a9-8fc3-f916a9146766}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\03. Shader\15. Shadow">
-      <UniqueIdentifier>{5b9610f0-301d-4779-8e6a-580229eef2e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Resource\02. Shader\02. ConstantBuffer\16. Shadow">
-      <UniqueIdentifier>{5354254f-0eb8-42a2-8d78-9fa1b0d25e8f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameEngine.h">
@@ -428,6 +365,9 @@
     </ClInclude>
     <ClInclude Include="Resource\AnimationSequence2D.h">
       <Filter>02. Resource\05. Animation\01. 2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Animation2D.h">
+      <Filter>02. Resource\05. Animation</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Animation2DConstantBuffer.h">
       <Filter>02. Resource\02. Shader\02. ConstantBuffer\03. Animation2DCBuffer</Filter>
@@ -714,111 +654,6 @@
     <ClInclude Include="ThreadNavigation.h">
       <Filter>01. Engine\10. Thread</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\FBXLoader.h">
-      <Filter>02. Resource\01. Mesh\01. FBXLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Standard3DShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\07. Standard3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\AnimationMeshComponent.h">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\01. Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\StaticMeshComponent.h">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\01. Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Animation2D.h">
-      <Filter>02. Resource\05. Animation\01. 2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\AnimationSequence.h">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Animation.h">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Skeleton.h">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\AnimationUpdateConstantBuffer.h">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\12. Animation3DBuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\AnimationUpdateShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\08. AnimationUpdate</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\BoneSocket.h">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\LightComponent.h">
-      <Filter>05. Component\01. SceneComponent\04. Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\LightConstantBuffer.h">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\13. LightCBuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\LightManager.h">
-      <Filter>03. Scene\06. Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\RenderTargetShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\09. RenderTarget</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\RenderTargetCBuffer.h">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\14. RenderTargetCBuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\LightDirAccShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\LightAccShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\LightCombineShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\SkyShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\11. Sky</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\LightCombineRenderShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\LandScapeComponent.h">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\07. LandScape</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\LandScapeShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\12. LandScape</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\LandScapeCBuffer.h">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\15. LandScape</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\SpringArm3D.h">
-      <Filter>05. Component\01. SceneComponent\03. Arm</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\BillboardComponent.h">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\08. Billboard</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\BillboardShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\13. Billboard</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\ColliderSphere.h">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\03. Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Collider3DShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\02. Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\DecalComponent.h">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\09. Decal</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\DecalDebugShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\14. Decal</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\DecalShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\14. Decal</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\ShadowShader.h">
-      <Filter>02. Resource\02. Shader\03. Shader\15. Shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\ShadowCBuffer.h">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\16. Shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\ColliderCube.h">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\03. Collider</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -937,6 +772,9 @@
     </ClCompile>
     <ClCompile Include="Resource\AnimationSequence2D.cpp">
       <Filter>02. Resource\05. Animation\01. 2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Animation2D.cpp">
+      <Filter>02. Resource\05. Animation</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Animation2DConstantBuffer.cpp">
       <Filter>02. Resource\02. Shader\02. ConstantBuffer\03. Animation2DCBuffer</Filter>
@@ -1199,111 +1037,6 @@
     <ClCompile Include="ThreadNavigation.cpp">
       <Filter>01. Engine\10. Thread</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\FBXLoader.cpp">
-      <Filter>02. Resource\01. Mesh\01. FBXLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Standard3DShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\07. Standard3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\AnimationMeshComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\01. Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\StaticMeshComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\01. Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Animation2D.cpp">
-      <Filter>02. Resource\05. Animation\01. 2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\AnimationSequence.cpp">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Animation.cpp">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Skeleton.cpp">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\AnimationUpdateConstantBuffer.cpp">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\12. Animation3DBuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\AnimationUpdateShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\08. AnimationUpdate</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\BoneSocket.cpp">
-      <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\LightComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\04. Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\LightConstantBuffer.cpp">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\13. LightCBuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\LightManager.cpp">
-      <Filter>03. Scene\06. Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\RenderTargetShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\09. RenderTarget</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\RenderTargetCBuffer.cpp">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\14. RenderTargetCBuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\LightDirAccShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\LightAccShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\LightCombineShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\SkyShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\11. Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\LightCombineRenderShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\10. Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\LandScapeComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\07. LandScape</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\LandScapeShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\12. LandScape</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\LandScapeCBuffer.cpp">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\15. LandScape</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\SpringArm3D.cpp">
-      <Filter>05. Component\01. SceneComponent\03. Arm</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\BillboardComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\08. Billboard</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\BillboardShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\13. Billboard</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\ColliderSphere.cpp">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\03. Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Collider3DShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\02. Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\DecalComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\09. Decal</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\DecalDebugShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\14. Decal</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\DecalShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\14. Decal</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\ShadowShader.cpp">
-      <Filter>02. Resource\02. Shader\03. Shader\15. Shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\ShadowCBuffer.cpp">
-      <Filter>02. Resource\02. Shader\02. ConstantBuffer\16. Shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\ColliderCube.cpp">
-      <Filter>05. Component\01. SceneComponent\01. PrimitiveComponent\03. Collider</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\Share.fx">
@@ -1322,30 +1055,6 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\TileMap.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Standard3D.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\AnimationUpdate.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\RenderTarget.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Light.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Sky.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\LandScape.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Decal.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Shadow.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

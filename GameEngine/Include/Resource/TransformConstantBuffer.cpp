@@ -29,11 +29,6 @@ void CTransformConstantBuffer::UpdateCBuffer()
     m_BufferData.matWV = m_BufferData.matWorld * m_BufferData.matView;
     m_BufferData.matVP = m_BufferData.matView * m_BufferData.matProj;
     m_BufferData.matWVP = m_BufferData.matWV * m_BufferData.matProj;
-    m_BufferData.matInvVP = m_BufferData.matView * m_BufferData.matProj;
-    m_BufferData.matInvVP.Inverse();
-    m_BufferData.matInvWVP = m_BufferData.matWVP;
-    m_BufferData.matInvWVP.Inverse();
-
 
     // Shader에서는 행렬을 사용할때 C++에서 사용하는 행과 열의 반대로 사용이 된다.
     // 그래서 C++에서 사용하는 행렬 정보를 Shader에 넘겨줄때에는 반드시 Transpose를 해서
@@ -44,10 +39,6 @@ void CTransformConstantBuffer::UpdateCBuffer()
     m_BufferData.matWV.Transpose();
     m_BufferData.matVP.Transpose();
     m_BufferData.matWVP.Transpose();
-    m_BufferData.matInvView.Transpose();
-    m_BufferData.matInvProj.Transpose();
-    m_BufferData.matInvVP.Transpose();
-    m_BufferData.matInvWVP.Transpose();
 
     m_pBuffer->UpdateBuffer(&m_BufferData);
 }

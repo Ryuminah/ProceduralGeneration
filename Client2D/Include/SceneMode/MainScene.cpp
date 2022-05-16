@@ -9,8 +9,9 @@
 #include "Render/RenderManager.h"
 #include "../UI/MainHUDWidget.h"
 #include "Scene/Viewport.h"
-#include "../Object/RandomMap.h"
 #include "../Object/MainMap.h"
+#include "../Object/RandomMap.h"
+#include "../Object/ImageObject.h"
 
 
 CMainScene::CMainScene()
@@ -27,28 +28,26 @@ bool CMainScene::Init()
 	CreateAnimationSequence2D();
 	CreateParticle();
 
-	m_pScene->GetResource()->LoadSound("UI", false, "ButtonMouseOn",
-		"TeemoSmile.mp3");
-	m_pScene->GetResource()->LoadSound("UI", false, "ButtonClick",
-		"TeemoStartClicck.mp3");
-	
-	//CRenderManager::GetInst()->SetWorldRenderState("WireFrame");
+	//m_pScene->GetResource()->LoadSound("UI", false, "ButtonMouseOn",
+	//	"TeemoSmile.mp3");
+	//m_pScene->GetResource()->LoadSound("UI", false, "ButtonClick",
+	//	"TeemoStartClicck.mp3");
 
+	/*CPixelCollisionTest* pPixelCollisionTest = m_pScene->SpawnObject<CPixelCollisionTest>("PixelCollisionTest");
+	pPixelCollisionTest->SetRelativePos(100.f, 200.f, 0.f);*/
 
-	CPlayer2D* pPlayer = m_pScene->SpawnObject<CPlayer2D>("Player");
-
-	CTeemo* pTeemo = m_pScene->SpawnObject<CTeemo>("Teemo");
-
-	pTeemo->SetRelativePos(500.f, 500.f, 0.f);
-
-	CPixelCollisionTest* pPixelCollisionTest = m_pScene->SpawnObject<CPixelCollisionTest>("PixelCollisionTest");
-	//CMainMap* MainMap = m_pScene->SpawnObject<CMainMap>("MainMap");
+	CImageObject* pImageObject = m_pScene->SpawnObject<CImageObject>("BackGround");
+	pImageObject->SetRelativePos(-2000.f, -1000.f, 0.f);
 
 	CRandomMap* RandomMap = m_pScene->SpawnObject<CRandomMap>("RandomMap");
+	RandomMap->SetRelativePos(0.f, 0.f, 0.01f);
+
+	CMapCamera* pPlayer = m_pScene->SpawnObject<CMapCamera>("MapCamera");
+	//CMainMap* MainMap = m_pScene->SpawnObject<CMainMap>("MainMap");
 
 	//CTestParticle* pParticle = m_pScene->SpawnObject<CTestParticle>("PixelCollisionTest");
 
-	CMainHUDWidget* Widget = m_pScene->GetViewport()->AddWindow<CMainHUDWidget>("MainHUD");
+	/*CMainHUDWidget* Widget = m_pScene->GetViewport()->AddWindow<CMainHUDWidget>("MainHUD");*/
 
 	return true;
 }
@@ -82,22 +81,28 @@ void CMainScene::CreateMaterial()
 	m_pScene->GetResource()->SetMaterialTransparency("MainMapRect", true);
 	m_pScene->GetResource()->SetMaterialShader("MainMapRect", "TileMapShader");
 
-	// RandomMap Texture 
-	m_pScene->GetResource()->CreateMaterial("Tile_Land");
-	m_pScene->GetResource()->AddMaterialTexture("Tile_Land", "Tile_Land",
-		TEXT("RandomMap/Tile_Land.png"));
-	m_pScene->GetResource()->SetMaterialTransparency("Tile_Land", true);
-	m_pScene->GetResource()->SetMaterialShader("Tile_Land", "TileMapShader");
-
-	m_pScene->GetResource()->CreateMaterial("Tile_Sea");
-	m_pScene->GetResource()->AddMaterialTexture("Tile_Sea", "Tile_Sea",
-		TEXT("RandomMap/Tile_Sea.png"));
-	m_pScene->GetResource()->SetMaterialTransparency("Tile_Sea", true);
-	m_pScene->GetResource()->SetMaterialShader("Tile_Sea", "TileMapShader");
+	// BackGround
+	m_pScene->GetResource()->CreateMaterial("Background");
+	m_pScene->GetResource()->AddMaterialTexture("Background", "Background",
+		TEXT("Background.png"));
+	m_pScene->GetResource()->SetMaterialTransparency("Background", true);
 }
 
 void CMainScene::CreateAnimationSequence2D()
 {
+	// Create Image
+	m_pScene->GetResource()->CreateAnimationSequence2D("Image_Background");
+	m_pScene->GetResource()->SetAnimationSequence2DTexture("Image_Background",
+		"Image_Background", TEXT("RandomMap/Background.png"));
+	m_pScene->GetResource()->AddAnimationSequence2DFrame("Image_Background",
+		Vector2(0.f, 0.f), Vector2(7200.f, 5000.f));
+
+	m_pScene->GetResource()->CreateAnimationSequence2D("Image_BackgroundWhite");
+	m_pScene->GetResource()->SetAnimationSequence2DTexture("Image_BackgroundWhite",
+		"Image_BackgroundWhite", TEXT("RandomMap/Background_White.png"));
+	m_pScene->GetResource()->AddAnimationSequence2DFrame("Image_BackgroundWhite",
+		Vector2(0.f, 0.f), Vector2(7200.f, 5000.f));
+
 	m_pScene->GetResource()->CreateAnimationSequence2D("PlayerIdle");
 	m_pScene->GetResource()->SetAnimationSequence2DTexture("PlayerIdle",
 		"PlayerAtlas", TEXT("Monster.png"));

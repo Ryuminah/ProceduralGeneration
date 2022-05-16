@@ -23,8 +23,6 @@ CParticleSystemComponent::CParticleSystemComponent()    :
     m_2DType = RT2D_Particle;
 
     m_pTransform->SetDefaultZ(0.f);
-
-    SetTransformState(Transform_State::None);
 }
 
 CParticleSystemComponent::CParticleSystemComponent(const CParticleSystemComponent& com) :

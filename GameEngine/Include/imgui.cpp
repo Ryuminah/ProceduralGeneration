@@ -12640,7 +12640,7 @@ static ImGuiDockNode* ImGui::DockContextFindNodeByID(ImGuiContext* ctx, ImGuiID 
 
 ImGuiID ImGui::DockContextGenNodeID(ImGuiContext* ctx)
 {
-    // Generate an ID for new node (the exact ID value doesn't matter as long as it is not already used)
+    // GenerateWorld an ID for new node (the exact ID value doesn't matter as long as it is not already used)
     // FIXME-OPT FIXME-DOCK: This is suboptimal, even if the node count is small enough not to be a worry.0
     // We should poke in ctx->Nodes to find a suitable ID faster. Even more so trivial that ctx->Nodes lookup is already sorted.
     ImGuiID id = 0x0001;
@@ -12651,7 +12651,7 @@ ImGuiID ImGui::DockContextGenNodeID(ImGuiContext* ctx)
 
 static ImGuiDockNode* ImGui::DockContextAddNode(ImGuiContext* ctx, ImGuiID id)
 {
-    // Generate an ID for the new node (the exact ID value doesn't matter as long as it is not already used) and add the first window.
+    // GenerateWorld an ID for the new node (the exact ID value doesn't matter as long as it is not already used) and add the first window.
     if (id == 0)
         id = DockContextGenNodeID(ctx);
     else

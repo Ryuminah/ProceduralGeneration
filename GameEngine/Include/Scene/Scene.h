@@ -3,11 +3,6 @@
 #include "../GameEngine.h"
 #include "../GameObject.h"
 #include "SceneMode.h"
-#include "SceneResource.h"
-#include "CameraManager.h"
-#include "SceneCollision.h"
-#include "Viewport.h"
-#include "LightManager.h"
 
 class CScene
 {
@@ -18,12 +13,11 @@ private:
     ~CScene();
 
 private:
-    CSceneMode* m_pSceneMode;
-    CSceneResource* m_pSceneResource;
-    CCameraManager* m_pCameraManager;
-    CSceneCollision* m_pCollision;
-    CViewport* m_pViewport;
-    CLightManager* m_LightManager;
+    class CSceneMode* m_pSceneMode;
+    class CSceneResource* m_pSceneResource;
+    class CCameraManager* m_pCameraManager;
+    class CSceneCollision* m_pCollision;
+    class CViewport* m_pViewport;
 
 private:
     bool m_StartScene;
@@ -41,42 +35,30 @@ public:
         return (T*)m_pSceneMode;
     }
 
-    CSceneResource* GetResource() const
+    class CSceneResource* GetResource() const
     {
         return m_pSceneResource;
     }
 
-    CCameraManager* GetCameraManager()    const
+    class CCameraManager* GetCameraManager()    const
     {
         return m_pCameraManager;
     }
 
-    CSceneCollision* GetCollisionManager()    const
+    class CSceneCollision* GetCollisionManager()    const
     {
         return m_pCollision;
     }
 
-    CViewport* GetViewport()  const
+    class CViewport* GetViewport()  const
     {
         return m_pViewport;
     }
 
-    CLightManager* GetLightManager()  const
-    {
-        return m_LightManager;
-    }
-
 private:
     std::list<CSharedPtr<CGameObject>>  m_ObjList;
-    CSharedPtr<CGameObject> m_Sky;
-    CSharedPtr<class CStaticMeshComponent>   m_SkyMesh;
 
 public:
-    class CStaticMeshComponent* GetSkyMesh() const
-    {
-        return m_SkyMesh;
-    }
-
     CGameObject* FindObject(const std::string& Name);
 
 public:

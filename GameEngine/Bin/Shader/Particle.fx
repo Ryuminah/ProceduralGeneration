@@ -55,8 +55,6 @@ struct ParticleInfoShared
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
 RWStructuredBuffer<ParticleInfoShared>	g_ParticleShare	: register(u1);
 
-Texture2D	g_GBuffer2	: register(t50);
-
 [numthreads(64, 1, 1)]
 void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 {
@@ -280,7 +278,7 @@ void ParticleGS(point VS_OUTPUT_PARTICLE input[1],
 
 	float3	Scale = lerp(g_ParticleShareInput[0].StartScale,
 		g_ParticleShareInput[0].EndScale,
-		float3(Ratio, Ratio, Ratio)).xyz;
+		float4(Ratio, Ratio, Ratio, Ratio)).xyz;
 
 	float4	Color = lerp(g_ParticleShareInput[0].StartColor,
 		g_ParticleShareInput[0].EndColor,
@@ -318,19 +316,8 @@ float4 ParticlePS(GS_PARTICLE_OUTPUT input) : SV_Target
 	float4  BaseColor = g_BaseTexture.Sample(g_AnisotropicSmp, input.UV);
 	float4	EmissiveColor = g_EmissiveTexture.Sample(g_AnisotropicSmp, input.UV);
 
-	float2	ScreenUV;
-	ScreenUV.x = input.ProjPos.x / input.ProjPos.w * 0.5f + 0.5f;
-	ScreenUV.y = input.ProjPos.y / input.ProjPos.w * -0.5f + 0.5f;
-
-	float4  GBuffer2 = g_GBuffer2.Sample(g_AnisotropicSmp, ScreenUV);
-
-	float	Alpha = 1.f;
-
-	if (GBuffer2.w > 0.f)
-		Alpha = (GBuffer2.y - input.ProjPos.w) / 2.5f;
-
 	Color.rgb = BaseColor.rgb * g_vMtrlBaseColor.rgb * input.Color.rgb + EmissiveColor.rgb * g_vMtrlEmissiveColor.rgb;
-	Color.a = BaseColor.a * g_MtrlOpacity * input.Color.a * Alpha;
+	Color.a = BaseColor.a * g_MtrlOpacity * input.Color.a;
 
 	Color = Distortion(Color, input.UV, input.ProjPos);
 

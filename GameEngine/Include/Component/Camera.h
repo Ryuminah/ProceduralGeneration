@@ -18,14 +18,11 @@ protected:
 	Camera_Type m_CameraType;
 	Matrix  m_matView;
 	Matrix  m_matProj;
-	Matrix	m_matShadowView;
-	Matrix	m_matShadowProj;
 	float   m_ViewAngle;
 	float   m_Distance;
 	float	m_CameraBottom;	// 2D 전용
 	float	m_CameraLeft;	// 2D 전용
 	Resolution	m_RS;
-	CSharedPtr<class CLightComponent>	m_ShadowTargetLight;
 
 public:
 	Resolution GetResolution()	const
@@ -58,19 +55,7 @@ public:
 		return m_matProj;
 	}
 
-	Matrix GetShadowViewMatrix()  const
-	{
-		return m_matShadowView;
-	}
-
-	Matrix GetShadowProjMatrix()  const
-	{
-		return m_matShadowProj;
-	}
-
 public:
-	void SetShadowTargetLight(class CLightComponent* Light);
-
 	void SetViewAngle(float Angle)
 	{
 		m_ViewAngle = Angle;

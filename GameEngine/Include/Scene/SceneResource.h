@@ -5,7 +5,6 @@
 #include "../Resource/Material.h"
 #include "../Resource/Texture.h"
 #include "../Resource/AnimationSequence2D.h"
-#include "../Resource/AnimationSequence.h"
 #include "../Resource/ParticleSystem.h"
 #include "../Resource/Sound.h"
 
@@ -28,7 +27,6 @@ private:
     std::unordered_map<std::string, CMaterial*>   m_mapMaterial;
     std::unordered_map<std::string, CTexture*>   m_mapTexture;
     std::unordered_map<std::string, CAnimationSequence2D*>   m_mapAnimationSequence2D;
-    std::unordered_map<std::string, CAnimationSequence*>   m_mapAnimationSequence;
     std::unordered_map<std::string, CParticleSystem*>   m_mapParticle;
     std::unordered_map<std::string, CSound*>   m_mapSound;
 
@@ -36,12 +34,6 @@ public:
     bool CreateMesh(Mesh_Type Type, const std::string& Name, void* pVertices, int VtxCount, int VtxSize, D3D11_USAGE VtxUsage, D3D11_PRIMITIVE_TOPOLOGY Primitive,
         void* pIndices = nullptr, int IdxCount = 0, int IdxSize = 0, D3D11_USAGE IdxUsage = D3D11_USAGE_DEFAULT,
         DXGI_FORMAT Fmt = DXGI_FORMAT_UNKNOWN);
-    bool LoadMesh(Mesh_Type Type, const std::string& Name, const TCHAR* Filename, const std::string& PathName = MESH_PATH);
-    bool LoadMeshFullPath(Mesh_Type Type, const std::string& Name, const TCHAR* FullPath);
-    bool LoadMeshMultibyte(Mesh_Type Type, const std::string& Name, const char* Filename, const std::string& PathName = MESH_PATH);
-    bool LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name, const char* FullPath);
-    bool SetAnimationMeshSkeleton(const std::string& MeshName, const std::string& Name, const TCHAR* FileName, const std::string& PathName = MESH_PATH);
-    bool SetAnimationMeshSkeleton(const std::string& MeshName, class CSkeleton* Skeleton);
 
     class CMesh* FindMesh(const std::string& Name);
 
@@ -88,23 +80,23 @@ public:
 
     // 기존 Texture를 교체한다.
     bool SetMaterialTexture(const std::string& MaterialName,
-        const std::string& FindName, const std::string& TextureName, const TCHAR* FileName,
+        const std::string& TextureName, const TCHAR* FileName,
         const std::string& PathName = TEXTURE_PATH);
     bool SetMaterialTextureFullPath(const std::string& MaterialName,
-        const std::string& FindName, const std::string& TextureName, const TCHAR* FullPath);
+        const std::string& TextureName, const TCHAR* FullPath);
     bool SetMaterialTexture(const std::string& MaterialName,
-        const std::string& FindName, const std::string& TextureName,
+        const std::string& TextureName,
         const std::vector<const TCHAR*>& vecFileName,
         const std::string& PathName = TEXTURE_PATH);
     bool SetMaterialTextureFullPath(const std::string& MaterialName,
-        const std::string& FindName, const std::string& TextureName,
+        const std::string& TextureName,
         const std::vector<const TCHAR*>& vecFullPath);
     bool SetMaterialTextureArray(const std::string& MaterialName,
-        const std::string& FindName, const std::string& TextureName,
+        const std::string& TextureName,
         const std::vector<const TCHAR*>& vecFileName,
         const std::string& PathName = TEXTURE_PATH);
     bool SetMaterialTextureArrayFullPath(const std::string& MaterialName,
-        const std::string& FindName, const std::string& TextureName,
+        const std::string& TextureName,
         const std::vector<const TCHAR*>& vecFullPath);
 
     bool SetMaterialTextureLink(const std::string& MaterialName,
@@ -203,20 +195,5 @@ public:
 
     FMOD::ChannelGroup* FindSoundChannelGroup(const std::string& Name);
     class CSound* FindSound(const std::string& Name);
-
-
-public:
-    bool LoadAnimationSequence(const std::string& Name, bool Loop,
-        struct _tagFbxAnimationClip* Clip);
-    bool LoadAnimationSequence(const std::string& Name, bool Loop,
-        int StartFrame, int EndFrame, float PlayTime,
-        const std::vector<BoneKeyFrame*>& vecFrame);
-    bool LoadAnimationSequence(const std::string& Name, const TCHAR* FileName,
-        const std::string& PathName = ANIMATION_PATH);
-    bool LoadAnimationSequenceFullPath(const std::string& Name, const TCHAR* FullPath);
-    bool LoadAnimationSequenceMultibyte(const std::string& Name, const char* FileName,
-        const std::string& PathName = ANIMATION_PATH);
-    bool LoadAnimationSequenceFullPathMultibyte(const std::string& Name, const char* FullPath);
-    CAnimationSequence* FindAnimationSequence(const std::string& Name);
 };
 

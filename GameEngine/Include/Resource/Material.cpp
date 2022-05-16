@@ -13,16 +13,12 @@ CMaterial::CMaterial()  :
 	m_bTransparency(false),
 	m_PaperBurnEnable(false),
 	m_DistortionEnable(false),
-	m_Bump(false),
-	m_Animation3D(false),
 	m_pCBuffer(nullptr),
 	m_pScene(nullptr),
 	m_BaseColor(1.f, 1.f, 1.f, 1.f),
 	m_EmissiveColor(0.f, 0.f, 0.f, 0.f),
 	m_RenderState{},
-	m_Opacity(1.f),
-	m_SpecularTex(false),
-	m_EmissiveTex(false)
+	m_Opacity(1.f)
 {
 }
 
@@ -98,20 +94,6 @@ void CMaterial::SetTransparency(bool bTransparency)
 		m_RenderState[RST_Blend] = CRenderStateManager::GetInst()->FindRenderState("AlphaBlend");
 }
 
-void CMaterial::EnableBump()
-{
-	m_Bump = true;
-
-	m_pCBuffer->BumpEnable(m_Bump);
-}
-
-void CMaterial::EnableAnimation3D()
-{
-	m_Animation3D = true;
-
-	m_pCBuffer->Animation3DEnable(m_Animation3D);
-}
-
 void CMaterial::SetBaseColor(const Vector4& Color)
 {
 	m_BaseColor = Color;
@@ -132,55 +114,6 @@ void CMaterial::SetBaseColor(unsigned char r, unsigned char g,
 	m_BaseColor = Vector4(r / 255.f, g / 255.f, b / 255.f, a / 255.f);
 
 	m_pCBuffer->SetBaseColor(m_BaseColor);
-}
-
-void CMaterial::SetAmbientColor(const Vector4& Color)
-{
-	m_AmbientColor = Color;
-
-	m_pCBuffer->SetAmbientColor(m_AmbientColor);
-}
-
-void CMaterial::SetAmbientColor(float r, float g, float b, float a)
-{
-	m_AmbientColor = Vector4(r, g, b, a);
-
-	m_pCBuffer->SetAmbientColor(m_AmbientColor);
-}
-
-void CMaterial::SetAmbientColor(unsigned char r, unsigned char g,
-	unsigned char b, unsigned char a)
-{
-	m_AmbientColor = Vector4(r / 255.f, g / 255.f, b / 255.f, a / 255.f);
-
-	m_pCBuffer->SetAmbientColor(m_AmbientColor);
-}
-
-void CMaterial::SetSpecularColor(const Vector4& Color)
-{
-	m_SpecularColor = Color;
-
-	m_pCBuffer->SetSpecularColor(m_SpecularColor);
-}
-
-void CMaterial::SetSpecularColor(float r, float g, float b, float a)
-{
-	m_SpecularColor = Vector4(r, g, b, a);
-
-	m_pCBuffer->SetSpecularColor(m_SpecularColor);
-}
-
-void CMaterial::SetSpecularColor(unsigned char r, unsigned char g,
-	unsigned char b, unsigned char a)
-{
-	m_SpecularColor = Vector4(r / 255.f, g / 255.f, b / 255.f, a / 255.f);
-
-	m_pCBuffer->SetSpecularColor(m_SpecularColor);
-}
-
-void CMaterial::SetSpecularPower(float Power)
-{
-	m_SpecularColor.w = Power;
 }
 
 void CMaterial::SetEmissiveColor(const Vector4& Color)
@@ -387,7 +320,7 @@ bool CMaterial::AddTextureArrayFullPath(const std::string& Name, const std::vect
 	return true;
 }
 
-bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name, const TCHAR* FileName, const std::string& PathName)
+bool CMaterial::SetTexture(const std::string& Name, const TCHAR* FileName, const std::string& PathName)
 {
 	MaterialTextureInfo* pInfo = nullptr;
 
@@ -395,7 +328,7 @@ bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name,
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		if (m_vecTexture[i]->Name == FindName)
+		if (m_vecTexture[i]->Name == Name)
 		{
 			pInfo = m_vecTexture[i];
 			break;
@@ -422,12 +355,11 @@ bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name,
 	}
 
 	pInfo->pTexture = pTexture;
-	pInfo->Name = Name;
 
 	return true;
 }
 
-bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name, CTexture* Texture)
+bool CMaterial::SetTexture(const std::string& Name, CTexture* Texture)
 {
 	MaterialTextureInfo* pInfo = nullptr;
 
@@ -435,7 +367,7 @@ bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name,
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		if (m_vecTexture[i]->Name == FindName)
+		if (m_vecTexture[i]->Name == Name)
 		{
 			pInfo = m_vecTexture[i];
 			break;
@@ -446,12 +378,11 @@ bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name,
 		return false;
 
 	pInfo->pTexture = Texture;
-	pInfo->Name = Name;
 
 	return true;
 }
 
-bool CMaterial::SetTextureFullPath(const std::string& FindName, const std::string& Name, const TCHAR* FullPath)
+bool CMaterial::SetTextureFullPath(const std::string& Name, const TCHAR* FullPath)
 {
 	MaterialTextureInfo* pInfo = nullptr;
 
@@ -459,7 +390,7 @@ bool CMaterial::SetTextureFullPath(const std::string& FindName, const std::strin
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		if (m_vecTexture[i]->Name == FindName)
+		if (m_vecTexture[i]->Name == Name)
 		{
 			pInfo = m_vecTexture[i];
 			break;
@@ -486,12 +417,11 @@ bool CMaterial::SetTextureFullPath(const std::string& FindName, const std::strin
 	}
 
 	pInfo->pTexture = pTexture;
-	pInfo->Name = Name;
 
 	return true;
 }
 
-bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name, const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
+bool CMaterial::SetTexture(const std::string& Name, const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
 {
 	MaterialTextureInfo* pInfo = nullptr;
 
@@ -499,7 +429,7 @@ bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name,
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		if (m_vecTexture[i]->Name == FindName)
+		if (m_vecTexture[i]->Name == Name)
 		{
 			pInfo = m_vecTexture[i];
 			break;
@@ -526,12 +456,11 @@ bool CMaterial::SetTexture(const std::string& FindName, const std::string& Name,
 	}
 
 	pInfo->pTexture = pTexture;
-	pInfo->Name = Name;
 
 	return true;
 }
 
-bool CMaterial::SetTextureFullPath(const std::string& FindName, const std::string& Name,
+bool CMaterial::SetTextureFullPath(const std::string& Name, 
 	const std::vector<const TCHAR*>& vecFullPath)
 {
 	MaterialTextureInfo* pInfo = nullptr;
@@ -540,7 +469,7 @@ bool CMaterial::SetTextureFullPath(const std::string& FindName, const std::strin
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		if (m_vecTexture[i]->Name == FindName)
+		if (m_vecTexture[i]->Name == Name)
 		{
 			pInfo = m_vecTexture[i];
 			break;
@@ -567,12 +496,11 @@ bool CMaterial::SetTextureFullPath(const std::string& FindName, const std::strin
 	}
 
 	pInfo->pTexture = pTexture;
-	pInfo->Name = Name;
 
 	return true;
 }
 
-bool CMaterial::SetTextureArray(const std::string& FindName, const std::string& Name, const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
+bool CMaterial::SetTextureArray(const std::string& Name, const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
 {
 	MaterialTextureInfo* pInfo = nullptr;
 
@@ -580,7 +508,7 @@ bool CMaterial::SetTextureArray(const std::string& FindName, const std::string& 
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		if (m_vecTexture[i]->Name == FindName)
+		if (m_vecTexture[i]->Name == Name)
 		{
 			pInfo = m_vecTexture[i];
 			break;
@@ -607,12 +535,11 @@ bool CMaterial::SetTextureArray(const std::string& FindName, const std::string& 
 	}
 
 	pInfo->pTexture = pTexture;
-	pInfo->Name = Name;
 
 	return true;
 }
 
-bool CMaterial::SetTextureArrayFullPath(const std::string& FindName, const std::string& Name,
+bool CMaterial::SetTextureArrayFullPath(const std::string& Name,
 	const std::vector<const TCHAR*>& vecFullPath)
 {
 	MaterialTextureInfo* pInfo = nullptr;
@@ -648,7 +575,6 @@ bool CMaterial::SetTextureArrayFullPath(const std::string& FindName, const std::
 	}
 
 	pInfo->pTexture = pTexture;
-	pInfo->Name = Name;
 
 	return true;
 }
@@ -677,28 +603,7 @@ bool CMaterial::SetTextureLink(const std::string& Name, Texture_Link Link)
 		pInfo->Register = 0;
 
 	else if (Link == Texture_Link::EmissiveTexture)
-	{
 		pInfo->Register = 1;
-		m_EmissiveTex = true;
-
-		m_pCBuffer->EmissiveTexEnable(true);
-	}
-
-	else if (Link == Texture_Link::NormalTexture)
-	{
-		pInfo->Register = 2;
-		m_Bump = true;
-
-		m_pCBuffer->BumpEnable(true);
-	}
-
-	else if (Link == Texture_Link::SpecularTexture)
-	{
-		pInfo->Register = 3;
-		m_SpecularTex = true;
-
-		m_pCBuffer->SpecularTexEnable(true);
-	}
 
 	return true;
 }
@@ -728,12 +633,6 @@ bool CMaterial::SetTextureRegister(const std::string& Name, int Register)
 
 	else if (Register == 1)
 		pInfo->Link = Texture_Link::EmissiveTexture;
-
-	else if (Register == 2)
-		pInfo->Link = Texture_Link::NormalTexture;
-
-	else if (Register == 3)
-		pInfo->Link = Texture_Link::SpecularTexture;
 
 	else
 		pInfo->Link = Texture_Link::CustomTexture;
@@ -776,11 +675,6 @@ void CMaterial::DistortionEnable(bool Enable)
 	m_pCBuffer->DistortionEnable(Enable);
 }
 
-void CMaterial::SetReceiveDecal(bool Enable)
-{
-	m_pCBuffer->ReceiveDecal(Enable);
-}
-
 bool CMaterial::Init()
 {
 	m_pCBuffer = new CMaterialConstantBuffer;
@@ -800,8 +694,6 @@ void CMaterial::SetShader(const std::string& Name)
 void CMaterial::SetMaterial()
 {
 	m_pCBuffer->SetBaseColor(m_BaseColor);
-	m_pCBuffer->SetAmbientColor(m_AmbientColor);
-	m_pCBuffer->SetSpecularColor(m_SpecularColor);
 	m_pCBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_pCBuffer->SetOpacity(m_Opacity);
 	m_pCBuffer->UpdateCBuffer();
@@ -905,30 +797,6 @@ void CMaterial::ResetMaterialEmptyShader()
 	}
 }
 
-void CMaterial::SetShadowMaterial()
-{
-	m_pCBuffer->UpdateCBuffer();
-
-	auto	iter = m_SetMaterialList.begin();
-	auto	iterEnd = m_SetMaterialList.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-		(*iter)->Func();
-	}
-}
-
-void CMaterial::ResetShadowMaterial()
-{
-	auto	iter = m_ResetMaterialList.begin();
-	auto	iterEnd = m_ResetMaterialList.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-		(*iter)->Func();
-	}
-}
-
 CMaterial* CMaterial::Clone()
 {
 	return new CMaterial(*this);
@@ -962,18 +830,12 @@ void CMaterial::Save(FILE* pFile)
 	fwrite(ShaderName.c_str(), 1, Length, pFile);
 
 	fwrite(&m_BaseColor, sizeof(Vector4), 1, pFile);
-	fwrite(&m_AmbientColor, sizeof(Vector4), 1, pFile);
-	fwrite(&m_SpecularColor, sizeof(Vector4), 1, pFile);
 	fwrite(&m_EmissiveColor, sizeof(Vector4), 1, pFile);
 
 	fwrite(&m_bTransparency, sizeof(bool), 1, pFile);
 	fwrite(&m_PaperBurnEnable, sizeof(bool), 1, pFile);
 	fwrite(&m_DistortionEnable, sizeof(bool), 1, pFile);
 	fwrite(&m_Opacity, sizeof(float), 1, pFile);
-	fwrite(&m_Bump, sizeof(bool), 1, pFile);
-	fwrite(&m_Animation3D, sizeof(bool), 1, pFile);
-	fwrite(&m_SpecularTex, sizeof(bool), 1, pFile);
-	fwrite(&m_EmissiveTex, sizeof(bool), 1, pFile);
 
 	for (int i = 0; i < RST_End; ++i)
 	{
@@ -1070,31 +932,19 @@ void CMaterial::Load(FILE* pFile)
 	m_pShader = CShaderManager::GetInst()->FindShader(ShaderName);
 
 	fread(&m_BaseColor, sizeof(Vector4), 1, pFile);
-	fread(&m_AmbientColor, sizeof(Vector4), 1, pFile);
-	fread(&m_SpecularColor, sizeof(Vector4), 1, pFile);
 	fread(&m_EmissiveColor, sizeof(Vector4), 1, pFile);
 
 	m_pCBuffer->SetBaseColor(m_BaseColor);
-	m_pCBuffer->SetAmbientColor(m_AmbientColor);
-	m_pCBuffer->SetSpecularColor(m_SpecularColor);
 	m_pCBuffer->SetEmissiveColor(m_EmissiveColor);
 
 	fread(&m_bTransparency, sizeof(bool), 1, pFile);
 	fread(&m_PaperBurnEnable, sizeof(bool), 1, pFile);
 	fread(&m_DistortionEnable, sizeof(bool), 1, pFile);
 	fread(&m_Opacity, sizeof(float), 1, pFile);
-	fread(&m_Bump, sizeof(bool), 1, pFile);
-	fread(&m_Animation3D, sizeof(bool), 1, pFile);
-	fread(&m_SpecularTex, sizeof(bool), 1, pFile);
-	fread(&m_EmissiveTex, sizeof(bool), 1, pFile);
 
 	m_pCBuffer->PaperBurnEnable(m_PaperBurnEnable);
 	m_pCBuffer->DistortionEnable(m_DistortionEnable);
 	m_pCBuffer->SetOpacity(m_Opacity);
-	m_pCBuffer->BumpEnable(m_Bump);
-	m_pCBuffer->Animation3DEnable(m_Animation3D);
-	m_pCBuffer->SpecularTexEnable(m_SpecularTex);
-	m_pCBuffer->EmissiveTexEnable(m_EmissiveTex);
 
 	for (int i = 0; i < RST_End; ++i)
 	{

@@ -29,12 +29,14 @@ bool CClientManager::Init()
     CInput::GetInst()->CreateKey("MoveDown", 'S');
     CInput::GetInst()->CreateKey("RotationZ", 'A');
     CInput::GetInst()->CreateKey("RotationZInv", 'D');
-    CInput::GetInst()->CreateKey("Fire", VK_SPACE);
-    CInput::GetInst()->CreateKey("Skill1", '1');
-    CInput::GetInst()->CreateKey("Skill2", '2');
-    CInput::GetInst()->SetControlKey("Skill2", true);
     CInput::GetInst()->CreateKey("MouseLButton", VK_LBUTTON);
     CInput::GetInst()->CreateKey("MouseRButton", VK_RBUTTON);
+    CInput::GetInst()->CreateKey("Space", VK_SPACE);
+    CInput::GetInst()->CreateKey("Enter", VK_RETURN);
+    CInput::GetInst()->CreateKey("1", '1');
+    CInput::GetInst()->CreateKey("2", '2');
+
+
 
     CCollisionManager::GetInst()->CreateChannel("PlayerAttack", Collision_Interaction::Block);
     CCollisionManager::GetInst()->CreateChannel("MonsterAttack", Collision_Interaction::Block);
@@ -56,9 +58,10 @@ bool CClientManager::Init()
     CCollisionManager::GetInst()->SetProfileChannelState("MonsterAttack", Collision_Channel::Custom2,
         Collision_Interaction::Ignore);
 
-    CSceneManager::GetInst()->SetSceneMode<CStartScene>();
+    CSceneManager::GetInst()->SetSceneMode<CMainScene>();
 
-    CreateMouse();
+    // 마우스 거슬려서 없애버렷
+    //CreateMouse();
 
     return true;
 }

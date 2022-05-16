@@ -32,7 +32,6 @@ public:
     virtual void Collision(float DeltaTime);
     virtual void PrevRender(float DeltaTime);
     virtual void Render(float DeltaTime);
-    virtual void RenderDebug(float DeltaTime);
     virtual CComponent* Clone() = 0;
 };
 

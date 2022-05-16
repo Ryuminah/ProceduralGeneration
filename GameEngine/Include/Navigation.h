@@ -12,7 +12,6 @@ protected:
 	virtual ~CNavigation() = 0;
 
 public:
-	virtual float GetHeight(const Vector3& Pos);
 	virtual bool FindPath(const Vector3& Start, const Vector3& Goal,
 		std::vector<Vector3>& vecPath) = 0;
 };

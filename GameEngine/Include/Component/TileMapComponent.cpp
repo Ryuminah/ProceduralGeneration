@@ -18,13 +18,11 @@ CTileMapComponent::CTileMapComponent()	:
 	m_FrameMaxX(1),
 	m_FrameMaxY(1),
 	m_RenderCount(0),
-	m_EditorMode(true)
+	m_EditorMode(false)
 {
 	m_PrimitiveType = PrimitiveComponent_Type::Primitive2D;
 	m_2DType = RT2D_MAP;
 	m_3DType = RT3D_Default;
-
-	SetTransformState(Transform_State::None);
 }
 
 CTileMapComponent::CTileMapComponent(const CTileMapComponent& com)	:

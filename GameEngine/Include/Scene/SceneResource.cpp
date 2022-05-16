@@ -74,17 +74,6 @@ CSceneResource::~CSceneResource()
 			CResourceManager::GetInst()->ReleaseSound(iter->first);
 		}
 	}
-
-	{
-		auto    iter = m_mapAnimationSequence.begin();
-		auto    iterEnd = m_mapAnimationSequence.end();
-
-		for (; iter != iterEnd; ++iter)
-		{
-			iter->second->Release();
-			CResourceManager::GetInst()->ReleaseAnimationSequence(iter->first);
-		}
-	}
 }
 
 bool CSceneResource::Init()
@@ -125,42 +114,6 @@ bool CSceneResource::Init()
 		m_mapMesh.insert(std::make_pair("ColliderCircle", pMesh));
 	}
 
-	pMesh = CResourceManager::GetInst()->FindMesh("SpherePos");
-
-	if (pMesh)
-	{
-		pMesh->m_pScene = m_pScene;
-		pMesh->AddRef();
-		m_mapMesh.insert(std::make_pair("SpherePos", pMesh));
-	}
-
-	pMesh = CResourceManager::GetInst()->FindMesh("CubeLine");
-
-	if (pMesh)
-	{
-		pMesh->m_pScene = m_pScene;
-		pMesh->AddRef();
-		m_mapMesh.insert(std::make_pair("CubeLine", pMesh));
-	}
-
-	pMesh = CResourceManager::GetInst()->FindMesh("Cube");
-
-	if (pMesh)
-	{
-		pMesh->m_pScene = m_pScene;
-		pMesh->AddRef();
-		m_mapMesh.insert(std::make_pair("Cube", pMesh));
-	}
-
-	pMesh = CResourceManager::GetInst()->FindMesh("BillboardMesh");
-
-	if (pMesh)
-	{
-		pMesh->m_pScene = m_pScene;
-		pMesh->AddRef();
-		m_mapMesh.insert(std::make_pair("BillboardMesh", pMesh));
-	}
-
 	CMaterial* pMaterial = CResourceManager::GetInst()->FindMaterial("DefaultMaterial");
 
 	if (pMaterial)
@@ -168,33 +121,6 @@ bool CSceneResource::Init()
 		pMaterial->m_pScene = m_pScene;
 		pMaterial->AddRef();
 		m_mapMaterial.insert(std::make_pair("DefaultMaterial", pMaterial));
-	}
-
-	pMaterial = CResourceManager::GetInst()->FindMaterial("DefaultSky");
-
-	if (pMaterial)
-	{
-		pMaterial->m_pScene = m_pScene;
-		pMaterial->AddRef();
-		m_mapMaterial.insert(std::make_pair("DefaultSky", pMaterial));
-	}
-	
-	pMaterial = CResourceManager::GetInst()->FindMaterial("DefaultDecal");
-
-	if (pMaterial)
-	{
-		pMaterial->m_pScene = m_pScene;
-		pMaterial->AddRef();
-		m_mapMaterial.insert(std::make_pair("DefaultDecal", pMaterial));
-	}
-	
-	pMaterial = CResourceManager::GetInst()->FindMaterial("DefaultDecalDebug");
-
-	if (pMaterial)
-	{
-		pMaterial->m_pScene = m_pScene;
-		pMaterial->AddRef();
-		m_mapMaterial.insert(std::make_pair("DefaultDecalDebug", pMaterial));
 	}
 
 	return true;
@@ -223,97 +149,6 @@ bool CSceneResource::CreateMesh(Mesh_Type Type, const std::string& Name,
 	m_mapMesh.insert(std::make_pair(Name, pMesh));
 
 	return true;
-}
-
-bool CSceneResource::LoadMesh(Mesh_Type Type, const std::string& Name, const TCHAR* Filename, 
-	const std::string& PathName)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadMesh(m_pScene, Type, Name, Filename, PathName))
-		return false;
-
-	pMesh = CResourceManager::GetInst()->FindMesh(Name);
-
-	pMesh->m_pScene = m_pScene;
-	pMesh->AddRef();
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CSceneResource::LoadMeshFullPath(Mesh_Type Type, const std::string& Name, const TCHAR* FullPath)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadMeshFullPath(m_pScene, Type, Name, FullPath))
-		return false;
-
-	pMesh = CResourceManager::GetInst()->FindMesh(Name);
-
-	pMesh->m_pScene = m_pScene;
-	pMesh->AddRef();
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CSceneResource::LoadMeshMultibyte(Mesh_Type Type, const std::string& Name, const char* Filename, const std::string& PathName)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadMeshMultibyte(m_pScene, Type, Name, Filename, PathName))
-		return false;
-
-	pMesh = CResourceManager::GetInst()->FindMesh(Name);
-
-	pMesh->m_pScene = m_pScene;
-	pMesh->AddRef();
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CSceneResource::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name, const char* FullPath)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadMeshFullPathMultibyte(m_pScene, Type, Name, FullPath))
-		return false;
-
-	pMesh = CResourceManager::GetInst()->FindMesh(Name);
-
-	pMesh->m_pScene = m_pScene;
-	pMesh->AddRef();
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CSceneResource::SetAnimationMeshSkeleton(const std::string& MeshName, const std::string& Name, const TCHAR* FileName, const std::string& PathName)
-{
-	return CResourceManager::GetInst()->SetAnimationMeshSkeleton(m_pScene, MeshName, Name, FileName, PathName);
-}
-
-bool CSceneResource::SetAnimationMeshSkeleton(const std::string& MeshName, CSkeleton* Skeleton)
-{
-	return CResourceManager::GetInst()->SetAnimationMeshSkeleton(m_pScene, MeshName, Skeleton);
 }
 
 CMesh* CSceneResource::FindMesh(const std::string& Name)
@@ -540,7 +375,7 @@ bool CSceneResource::AddMaterialTextureArrayFullPath(
 }
 
 bool CSceneResource::SetMaterialTexture(const std::string& MaterialName, 
-	const std::string& FindName, const std::string& TextureName, const TCHAR* FileName,
+	const std::string& TextureName, const TCHAR* FileName, 
 	const std::string& PathName)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -548,26 +383,26 @@ bool CSceneResource::SetMaterialTexture(const std::string& MaterialName,
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTexture(FindName, TextureName, FileName, PathName);
+	pMaterial->SetTexture(TextureName, FileName, PathName);
 
 	return true;
 }
 
 bool CSceneResource::SetMaterialTextureFullPath(const std::string& MaterialName, 
-	const std::string& FindName, const std::string& TextureName, const TCHAR* FullPath)
+	const std::string& TextureName, const TCHAR* FullPath)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
 
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureFullPath(FindName, TextureName, FullPath);
+	pMaterial->SetTextureFullPath(TextureName, FullPath);
 
 	return true;
 }
 
 bool CSceneResource::SetMaterialTexture(const std::string& MaterialName, 
-	const std::string& FindName, const std::string& TextureName,
+	const std::string& TextureName, 
 	const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -575,13 +410,13 @@ bool CSceneResource::SetMaterialTexture(const std::string& MaterialName,
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTexture(FindName, TextureName, vecFileName, PathName);
+	pMaterial->SetTexture(TextureName, vecFileName, PathName);
 
 	return true;
 }
 
 bool CSceneResource::SetMaterialTextureFullPath(const std::string& MaterialName, 
-	const std::string& FindName, const std::string& TextureName,
+	const std::string& TextureName, 
 	const std::vector<const TCHAR*>& vecFullPath)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -589,13 +424,13 @@ bool CSceneResource::SetMaterialTextureFullPath(const std::string& MaterialName,
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureFullPath(FindName, TextureName, vecFullPath);
+	pMaterial->SetTextureFullPath(TextureName, vecFullPath);
 
 	return true;
 }
 
 bool CSceneResource::SetMaterialTextureArray(const std::string& MaterialName, 
-	const std::string& FindName, const std::string& TextureName,
+	const std::string& TextureName, 
 	const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -603,13 +438,13 @@ bool CSceneResource::SetMaterialTextureArray(const std::string& MaterialName,
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureArray(FindName, TextureName, vecFileName, PathName);
+	pMaterial->SetTextureArray(TextureName, vecFileName, PathName);
 
 	return true;
 }
 
 bool CSceneResource::SetMaterialTextureArrayFullPath(
-	const std::string& FindName, const std::string& MaterialName, const std::string& TextureName,
+	const std::string& MaterialName, const std::string& TextureName,
 	const std::vector<const TCHAR*>& vecFullPath)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -617,7 +452,7 @@ bool CSceneResource::SetMaterialTextureArrayFullPath(
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureArrayFullPath(FindName, TextureName, vecFullPath);
+	pMaterial->SetTextureArrayFullPath(TextureName, vecFullPath);
 
 	return true;
 }
@@ -1363,144 +1198,6 @@ CSound* CSceneResource::FindSound(const std::string& Name)
 	auto    iter = m_mapSound.find(Name);
 
 	if (iter == m_mapSound.end())
-		return nullptr;
-
-	return iter->second;
-}
-
-bool CSceneResource::LoadAnimationSequence(const std::string& Name, bool Loop, 
-	_tagFbxAnimationClip* Clip)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadAnimationSequence(Name, Loop, Clip))
-		return false;
-
-	pSequence = CResourceManager::GetInst()->FindAnimationSequence(Name);
-
-	pSequence->m_Scene = m_pScene;
-	pSequence->AddRef();
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CSceneResource::LoadAnimationSequence(const std::string& Name, bool Loop,
-	int StartFrame, int EndFrame, float PlayTime, 
-	const std::vector<BoneKeyFrame*>& vecFrame)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadAnimationSequence(Name, Loop, StartFrame,
-		EndFrame, PlayTime, vecFrame))
-		return false;
-
-	pSequence = CResourceManager::GetInst()->FindAnimationSequence(Name);
-
-	pSequence->m_Scene = m_pScene;
-	pSequence->AddRef();
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CSceneResource::LoadAnimationSequence(const std::string& Name, 
-	const TCHAR* FileName, const std::string& PathName)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadAnimationSequence(Name, FileName, PathName))
-		return false;
-
-	pSequence = CResourceManager::GetInst()->FindAnimationSequence(Name);
-
-	pSequence->m_Scene = m_pScene;
-	pSequence->AddRef();
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CSceneResource::LoadAnimationSequenceFullPath(const std::string& Name,
-	const TCHAR* FullPath)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadAnimationSequenceFullPath(Name, FullPath))
-		return false;
-
-	pSequence = CResourceManager::GetInst()->FindAnimationSequence(Name);
-
-	pSequence->m_Scene = m_pScene;
-	pSequence->AddRef();
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CSceneResource::LoadAnimationSequenceMultibyte(const std::string& Name,
-	const char* FileName, const std::string& PathName)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadAnimationSequenceMultibyte(Name, FileName, PathName))
-		return false;
-
-	pSequence = CResourceManager::GetInst()->FindAnimationSequence(Name);
-
-	pSequence->m_Scene = m_pScene;
-	pSequence->AddRef();
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CSceneResource::LoadAnimationSequenceFullPathMultibyte(const std::string& Name,
-	const char* FullPath)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	if (!CResourceManager::GetInst()->LoadAnimationSequenceFullPathMultibyte(Name, FullPath))
-		return false;
-
-	pSequence = CResourceManager::GetInst()->FindAnimationSequence(Name);
-
-	pSequence->m_Scene = m_pScene;
-	pSequence->AddRef();
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-CAnimationSequence* CSceneResource::FindAnimationSequence(const std::string& Name)
-{
-	auto    iter = m_mapAnimationSequence.find(Name);
-
-	if (iter == m_mapAnimationSequence.end())
 		return nullptr;
 
 	return iter->second;

@@ -1,10 +1,6 @@
 
 #include "RenderTarget.h"
 #include "../Device.h"
-#include "../Scene/SceneManager.h"
-#include "../Scene/Scene.h"
-#include "../Scene/CameraManager.h"
-#include "../Component/Camera.h"
 
 CRenderTarget::CRenderTarget()	:
 	m_TargetView(nullptr),
@@ -13,10 +9,8 @@ CRenderTarget::CRenderTarget()	:
 	m_PrevDepthView(nullptr),
 	m_Surface(nullptr),
 	m_ClearColor{},
-	m_DebugRender(false),
-	m_Scale(100.f, 100.f, 1.f)
+	m_DebugRender(false)
 {
-	m_IsTarget = true;
 }
 
 CRenderTarget::~CRenderTarget()
@@ -38,7 +32,7 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 	Desc.Height = Height;
 	Desc.ArraySize = 1;
 	Desc.MipLevels = 1;
-	Desc.SampleDesc.Count = 1;
+	Desc.SampleDesc.Count = 2;
 	Desc.SampleDesc.Quality = 0;
 	Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	Desc.Format = PixelFormat;
@@ -88,26 +82,4 @@ void CRenderTarget::ResetTarget()
 	CONTEXT->OMSetRenderTargets(1, &m_PrevTargetView, m_PrevDepthView);
 	SAFE_RELEASE(m_PrevDepthView);
 	SAFE_RELEASE(m_PrevTargetView);
-}
-
-void CRenderTarget::SetTargetShader()
-{
-	CCamera* Camera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetUICamera();
-
-	Matrix	matScale, matTrans;
-
-	matScale.Scaling(m_Scale);
-	matTrans.Translation(m_Pos);
-
-	m_matDebugWVP = matScale * matTrans * Camera->GetProjMatrix();
-
-	m_matDebugWVP.Transpose();
-
-	CONTEXT->PSSetShaderResources(0, 1, &m_vecResourceInfo[0]->SRV);
-}
-
-void CRenderTarget::ResetTargetShader()
-{
-	ID3D11ShaderResourceView* SRV = nullptr;
-	CONTEXT->PSSetShaderResources(0, 1, &SRV);
 }

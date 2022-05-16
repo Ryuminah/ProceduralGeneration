@@ -19,14 +19,8 @@ protected:
     SceneComponent_Type m_SceneComponentType;
     std::vector<Vector3>        m_vecNavPath;
     float       m_MoveSpeed;
-    class CBoneSocket* m_BoneSocket;
-    std::string         m_SocketName;
 
 public:
-    Transform_State GetTransformState() const;
-
-    void SetTransformState(Transform_State State);
-
     void SetMoveSpeed(float Speed)
     {
         m_MoveSpeed = Speed;
@@ -48,7 +42,7 @@ public:
 
 public:
     virtual void Active(bool bActive);
-    virtual void AddChild(CSceneComponent* Child, const std::string& SocketName = "");
+    void AddChild(CSceneComponent* Child, const std::string& SocketName = "");
     void DeleteChild(CSceneComponent* Child);
     void GetAllComponentName(std::vector<HierarchyName>& vecName);
     void GetAllComponent(std::vector<CSceneComponent*>& vecComponent);
@@ -59,12 +53,10 @@ public:
     virtual void Start();
     virtual bool Init();
     virtual void Update(float DeltaTime);
-    virtual void PostTransformUpdate(float DeltaTime);
     virtual void PostUpdate(float DeltaTime);
     virtual void Collision(float DeltaTime);
     virtual void PrevRender(float DeltaTime);
     virtual void Render(float DeltaTime);
-    virtual void RenderDebug(float DeltaTime);
     virtual CSceneComponent* Clone();
 
 public:
@@ -119,7 +111,6 @@ public:
     Vector3 GetWorldScale() const;
     Vector3 GetWorldRotation()  const;
     Vector3 GetWorldPos()   const;
-    Vector3 GetPrevWorldPos() const;
     Vector3 GetPivot()  const;
     Vector3 GetMeshSize()   const;
     Matrix GetScaleMatrix() const;
@@ -152,12 +143,6 @@ public:
     void AddWorldRotationZ(float z);
     void AddWorldPos(const Vector3& Pos);
     void AddWorldPos(float x, float y, float z);
-
-public:
-    void LookAt(const Vector3& Pos);
-    void LookAt(const Vector3& Pos, const Vector3& OriginDir);
-    void LookAtYAxis(const Vector3& Pos);
-    void LookAtYAxis(const Vector3& Pos, const Vector3& OriginDir);
 
 public:
     void ClearTransformState();

@@ -31,11 +31,6 @@ public:
         return m_vecMaterialSlot[SlotIndex].Get();
     }
 
-    int GetMaterialCount()  const
-    {
-        return (int)m_vecMaterialSlot.size();
-    }
-
     PrimitiveComponent_Type GetPrimitiveType()  const
     {
         return m_PrimitiveType;
@@ -67,7 +62,6 @@ public:
     }
 
 public:
-    virtual void AddChild(CSceneComponent* Child, const std::string& SocketName = "");
     virtual void SetMaterial(int SlotIndex, CMaterial* pMaterial);
     virtual void SetMaterial(int SlotIndex, const std::string& Name);
     virtual void AddMaterial(CMaterial* pMaterial);
@@ -82,13 +76,10 @@ public:
     virtual void Start();
     virtual bool Init();
     virtual void Update(float DeltaTime);
-    virtual void PostTransformUpdate(float DeltaTime);
     virtual void PostUpdate(float DeltaTime);
     virtual void Collision(float DeltaTime);
     virtual void PrevRender(float DeltaTime);
     virtual void Render(float DeltaTime);
-    virtual void RenderDebug(float DeltaTime);
     virtual CPrimitiveComponent* Clone();
-    virtual void RenderShadow(float DeltaTime);
 };
 

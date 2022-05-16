@@ -14,12 +14,6 @@ private:
 	unsigned int	m_PrevStencilRef;
 
 public:
-	void SetStencilRef(unsigned int StencilRef)
-	{
-		m_StencilRef = StencilRef;
-	}
-
-public:
 	bool CreateState(bool DepthEnable, 
 		D3D11_DEPTH_WRITE_MASK DepthWriteMask,
 		D3D11_COMPARISON_FUNC DepthFunc,

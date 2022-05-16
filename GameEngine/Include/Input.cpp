@@ -166,41 +166,11 @@ void CInput::UpdateMouse(float DeltaTime)
 	MousePos.x = ptMouse.x * ResolutionRatio.x;
 	MousePos.y = ptMouse.y * ResolutionRatio.y;
 
-	Vector2	OriginMousePos = MousePos;
-
 	MousePos.y = CDevice::GetInst()->GetResolution().Height - MousePos.y;
 
 	m_MouseMove = MousePos - m_MousePos;
 
 	m_MousePos = MousePos;
-
-	// Ray를 구한다.
-	CScene* Scene = CSceneManager::GetInst()->GetScene();
-
-	CCameraManager* CameraManager = Scene->GetCameraManager();
-
-	CCamera* Camera = CameraManager->GetCurrentCamera();
-
-	m_Ray.Pos = Camera->GetWorldPos();
-
-	// 1280 x 720 일 경우 이 값을 -1 ~ 1 사이로 변환한다.
-	Resolution	RS = CDevice::GetInst()->GetResolution();
-
-	Matrix	matProj = Camera->GetProjMatrix();
-	Matrix	matView = Camera->GetViewMatrix();
-
-	matView.Inverse();
-	
-	m_Ray.Dir.x = (OriginMousePos.x / (RS.Width * 0.5f) - 1.f) / matProj._11;
-	m_Ray.Dir.y = (OriginMousePos.y / (RS.Height * -0.5f) + 1.f) / matProj._22;
-	m_Ray.Dir.z = 1.f;
-
-	m_Ray.Dir.Normalize();
-
-	// 방향을 월드공간으로 변환한다.
-	m_Ray.Dir = m_Ray.Dir.TransformNormal(matView);
-
-	m_Ray.Dir.Normalize();
 }
 
 void CInput::UpdateWindowKeyState(float DeltaTime)

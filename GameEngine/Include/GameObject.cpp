@@ -209,10 +209,6 @@ void CGameObject::Animation2DNotify(const std::string& Name)
 {
 }
 
-void CGameObject::AnimationNotify(const std::string& Name)
-{
-}
-
 void CGameObject::ClearTransformState()
 {
 	auto    iter = m_SceneComponentList.begin();
@@ -233,17 +229,6 @@ void CGameObject::Move(const Vector3& Target)
 {
 	m_RootComponent->Move(Target);
 }
-
-Transform_State CGameObject::GetTransformState() const
-{
-	return m_RootComponent->GetTransformState();
-}
-
-void CGameObject::SetTransformState(Transform_State State)
-{
-	m_RootComponent->SetTransformState(State);
-}
-
 
 Vector3 CGameObject::GetVelocityScale() const
 {
@@ -435,11 +420,6 @@ Vector3 CGameObject::GetWorldPos() const
 	return m_RootComponent.Get()->GetWorldPos();
 }
 
-Vector3 CGameObject::GetPrevWorldPos() const
-{
-	return m_RootComponent.Get()->GetPrevWorldPos();
-}
-
 Vector3 CGameObject::GetPivot() const
 {
 	return m_RootComponent.Get()->GetPivot();
@@ -583,24 +563,4 @@ void CGameObject::AddWorldPos(float x, float y, float z)
 void CGameObject::AddCamera(CCamera* Camera)
 {
 	m_pScene->GetCameraManager()->AddCamera(Camera);
-}
-
-void CGameObject::LookAt(const Vector3& Pos)
-{
-	m_RootComponent->LookAt(Pos);
-}
-
-void CGameObject::LookAt(const Vector3& Pos, const Vector3& OriginDir)
-{
-	m_RootComponent->LookAt(Pos, OriginDir);
-}
-
-void CGameObject::LookAtYAxis(const Vector3& Pos)
-{
-	m_RootComponent->LookAtYAxis(Pos);
-}
-
-void CGameObject::LookAtYAxis(const Vector3& Pos, const Vector3& OriginDir)
-{
-	m_RootComponent->LookAtYAxis(Pos, OriginDir);
 }

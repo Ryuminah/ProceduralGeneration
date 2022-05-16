@@ -75,26 +75,22 @@
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)_Debug</TargetName>
-    <IncludePath>Resource/fbxsdk/;Resource/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
-    <IncludePath>Resource/fbxsdk/;Resource/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)_Debug</TargetName>
-    <IncludePath>Resource/fbxsdk/;Resource/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
-    <IncludePath>Resource/fbxsdk/;Resource/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -179,20 +175,13 @@
   <ItemGroup>
     <ClInclude Include="Collision.h" />
     <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="Component\AnimationMeshComponent.h" />
-    <ClInclude Include="Component\BillboardComponent.h" />
     <ClInclude Include="Component\Camera.h" />
     <ClInclude Include="Component\Collider.h" />
     <ClInclude Include="Component\ColliderBox2D.h" />
     <ClInclude Include="Component\ColliderCircle.h" />
-    <ClInclude Include="Component\ColliderCube.h" />
     <ClInclude Include="Component\ColliderPixel.h" />
-    <ClInclude Include="Component\ColliderSphere.h" />
     <ClInclude Include="Component\Component.h" />
-    <ClInclude Include="Component\DecalComponent.h" />
     <ClInclude Include="Component\DistortionComponent.h" />
-    <ClInclude Include="Component\LandScapeComponent.h" />
-    <ClInclude Include="Component\LightComponent.h" />
     <ClInclude Include="Component\ObjectComponent.h" />
     <ClInclude Include="Component\PaperBurnComponent.h" />
     <ClInclude Include="Component\ParticleSystemComponent.h" />
@@ -200,9 +189,7 @@
     <ClInclude Include="Component\SceneComponent.h" />
     <ClInclude Include="Component\SpringArm.h" />
     <ClInclude Include="Component\SpringArm2D.h" />
-    <ClInclude Include="Component\SpringArm3D.h" />
     <ClInclude Include="Component\SpriteComponent.h" />
-    <ClInclude Include="Component\StaticMeshComponent.h" />
     <ClInclude Include="Component\Tile.h" />
     <ClInclude Include="Component\TileMapComponent.h" />
     <ClInclude Include="Component\Transform.h" />
@@ -255,38 +242,21 @@
     <ClInclude Include="Render\RenderManager.h" />
     <ClInclude Include="Render\RenderState.h" />
     <ClInclude Include="Render\RenderStateManager.h" />
-    <ClInclude Include="Resource\Animation.h" />
     <ClInclude Include="Resource\Animation2D.h" />
     <ClInclude Include="Resource\Animation2DConstantBuffer.h" />
     <ClInclude Include="Resource\AnimationMesh.h" />
-    <ClInclude Include="Resource\AnimationSequence.h" />
     <ClInclude Include="Resource\AnimationSequence2D.h" />
-    <ClInclude Include="Resource\AnimationUpdateConstantBuffer.h" />
-    <ClInclude Include="Resource\AnimationUpdateShader.h" />
-    <ClInclude Include="Resource\BillboardShader.h" />
-    <ClInclude Include="Resource\BoneSocket.h" />
-    <ClInclude Include="Resource\Collider3DShader.h" />
     <ClInclude Include="Resource\ColliderConstantBuffer.h" />
     <ClInclude Include="Resource\ColliderShader.h" />
     <ClInclude Include="Resource\ComputeShader.h" />
     <ClInclude Include="Resource\ConstantBuffer.h" />
     <ClInclude Include="Resource\ConstantBufferData.h" />
-    <ClInclude Include="Resource\DecalDebugShader.h" />
-    <ClInclude Include="Resource\DecalShader.h" />
     <ClInclude Include="Resource\DirectXTex.h" />
     <ClInclude Include="Resource\DistortionCBuffer.h" />
-    <ClInclude Include="Resource\FBXLoader.h" />
     <ClInclude Include="Resource\FullScreenDistortionShader.h" />
     <ClInclude Include="Resource\FullScreenShader.h" />
     <ClInclude Include="Resource\GlobalCBuffer.h" />
     <ClInclude Include="Resource\GraphicShader.h" />
-    <ClInclude Include="Resource\LandScapeCBuffer.h" />
-    <ClInclude Include="Resource\LandScapeShader.h" />
-    <ClInclude Include="Resource\LightAccShader.h" />
-    <ClInclude Include="Resource\LightCombineRenderShader.h" />
-    <ClInclude Include="Resource\LightCombineShader.h" />
-    <ClInclude Include="Resource\LightConstantBuffer.h" />
-    <ClInclude Include="Resource\LightDirAccShader.h" />
     <ClInclude Include="Resource\Material.h" />
     <ClInclude Include="Resource\MaterialConstantBuffer.h" />
     <ClInclude Include="Resource\Mesh.h" />
@@ -302,20 +272,13 @@
     <ClInclude Include="Resource\ProgressBarCBuffer.h" />
     <ClInclude Include="Resource\ProgressBarShader.h" />
     <ClInclude Include="Resource\RenderTarget.h" />
-    <ClInclude Include="Resource\RenderTargetCBuffer.h" />
-    <ClInclude Include="Resource\RenderTargetShader.h" />
     <ClInclude Include="Resource\ResourceManager.h" />
     <ClInclude Include="Resource\Shader.h" />
     <ClInclude Include="Resource\ShaderManager.h" />
-    <ClInclude Include="Resource\ShadowCBuffer.h" />
-    <ClInclude Include="Resource\ShadowShader.h" />
-    <ClInclude Include="Resource\Skeleton.h" />
-    <ClInclude Include="Resource\SkyShader.h" />
     <ClInclude Include="Resource\Sound.h" />
     <ClInclude Include="Resource\SpriteMesh.h" />
     <ClInclude Include="Resource\Standard2DShader.h" />
     <ClInclude Include="Resource\Standard2DTextureShader.h" />
-    <ClInclude Include="Resource\Standard3DShader.h" />
     <ClInclude Include="Resource\StaticMesh.h" />
     <ClInclude Include="Resource\StructuredBuffer.h" />
     <ClInclude Include="Resource\Texture.h" />
@@ -327,7 +290,6 @@
     <ClInclude Include="Resource\UITransformConstantBuffer.h" />
     <ClInclude Include="Scene\CameraManager.h" />
     <ClInclude Include="Scene\CollisionSection.h" />
-    <ClInclude Include="Scene\LightManager.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneCollision.h" />
     <ClInclude Include="Scene\SceneManager.h" />
@@ -356,20 +318,13 @@
   <ItemGroup>
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="Component\AnimationMeshComponent.cpp" />
-    <ClCompile Include="Component\BillboardComponent.cpp" />
     <ClCompile Include="Component\Camera.cpp" />
     <ClCompile Include="Component\Collider.cpp" />
     <ClCompile Include="Component\ColliderBox2D.cpp" />
     <ClCompile Include="Component\ColliderCircle.cpp" />
-    <ClCompile Include="Component\ColliderCube.cpp" />
     <ClCompile Include="Component\ColliderPixel.cpp" />
-    <ClCompile Include="Component\ColliderSphere.cpp" />
     <ClCompile Include="Component\Component.cpp" />
-    <ClCompile Include="Component\DecalComponent.cpp" />
     <ClCompile Include="Component\DistortionComponent.cpp" />
-    <ClCompile Include="Component\LandScapeComponent.cpp" />
-    <ClCompile Include="Component\LightComponent.cpp" />
     <ClCompile Include="Component\ObjectComponent.cpp" />
     <ClCompile Include="Component\PaperBurnComponent.cpp" />
     <ClCompile Include="Component\ParticleSystemComponent.cpp" />
@@ -377,9 +332,7 @@
     <ClCompile Include="Component\SceneComponent.cpp" />
     <ClCompile Include="Component\SpringArm.cpp" />
     <ClCompile Include="Component\SpringArm2D.cpp" />
-    <ClCompile Include="Component\SpringArm3D.cpp" />
     <ClCompile Include="Component\SpriteComponent.cpp" />
-    <ClCompile Include="Component\StaticMeshComponent.cpp" />
     <ClCompile Include="Component\Tile.cpp" />
     <ClCompile Include="Component\TileMapComponent.cpp" />
     <ClCompile Include="Component\Transform.cpp" />
@@ -421,37 +374,20 @@
     <ClCompile Include="Render\RenderManager.cpp" />
     <ClCompile Include="Render\RenderState.cpp" />
     <ClCompile Include="Render\RenderStateManager.cpp" />
-    <ClCompile Include="Resource\Animation.cpp" />
     <ClCompile Include="Resource\Animation2D.cpp" />
     <ClCompile Include="Resource\Animation2DConstantBuffer.cpp" />
     <ClCompile Include="Resource\AnimationMesh.cpp" />
-    <ClCompile Include="Resource\AnimationSequence.cpp" />
     <ClCompile Include="Resource\AnimationSequence2D.cpp" />
-    <ClCompile Include="Resource\AnimationUpdateConstantBuffer.cpp" />
-    <ClCompile Include="Resource\AnimationUpdateShader.cpp" />
-    <ClCompile Include="Resource\BillboardShader.cpp" />
-    <ClCompile Include="Resource\BoneSocket.cpp" />
-    <ClCompile Include="Resource\Collider3DShader.cpp" />
     <ClCompile Include="Resource\ColliderConstantBuffer.cpp" />
     <ClCompile Include="Resource\ColliderShader.cpp" />
     <ClCompile Include="Resource\ComputeShader.cpp" />
     <ClCompile Include="Resource\ConstantBuffer.cpp" />
     <ClCompile Include="Resource\ConstantBufferData.cpp" />
-    <ClCompile Include="Resource\DecalDebugShader.cpp" />
-    <ClCompile Include="Resource\DecalShader.cpp" />
     <ClCompile Include="Resource\DistortionCBuffer.cpp" />
-    <ClCompile Include="Resource\FBXLoader.cpp" />
     <ClCompile Include="Resource\FullScreenDistortionShader.cpp" />
     <ClCompile Include="Resource\FullScreenShader.cpp" />
     <ClCompile Include="Resource\GlobalCBuffer.cpp" />
     <ClCompile Include="Resource\GraphicShader.cpp" />
-    <ClCompile Include="Resource\LandScapeCBuffer.cpp" />
-    <ClCompile Include="Resource\LandScapeShader.cpp" />
-    <ClCompile Include="Resource\LightAccShader.cpp" />
-    <ClCompile Include="Resource\LightCombineRenderShader.cpp" />
-    <ClCompile Include="Resource\LightCombineShader.cpp" />
-    <ClCompile Include="Resource\LightConstantBuffer.cpp" />
-    <ClCompile Include="Resource\LightDirAccShader.cpp" />
     <ClCompile Include="Resource\Material.cpp" />
     <ClCompile Include="Resource\MaterialConstantBuffer.cpp" />
     <ClCompile Include="Resource\Mesh.cpp" />
@@ -467,20 +403,13 @@
     <ClCompile Include="Resource\ProgressBarCBuffer.cpp" />
     <ClCompile Include="Resource\ProgressBarShader.cpp" />
     <ClCompile Include="Resource\RenderTarget.cpp" />
-    <ClCompile Include="Resource\RenderTargetCBuffer.cpp" />
-    <ClCompile Include="Resource\RenderTargetShader.cpp" />
     <ClCompile Include="Resource\ResourceManager.cpp" />
     <ClCompile Include="Resource\Shader.cpp" />
     <ClCompile Include="Resource\ShaderManager.cpp" />
-    <ClCompile Include="Resource\ShadowCBuffer.cpp" />
-    <ClCompile Include="Resource\ShadowShader.cpp" />
-    <ClCompile Include="Resource\Skeleton.cpp" />
-    <ClCompile Include="Resource\SkyShader.cpp" />
     <ClCompile Include="Resource\Sound.cpp" />
     <ClCompile Include="Resource\SpriteMesh.cpp" />
     <ClCompile Include="Resource\Standard2DShader.cpp" />
     <ClCompile Include="Resource\Standard2DTextureShader.cpp" />
-    <ClCompile Include="Resource\Standard3DShader.cpp" />
     <ClCompile Include="Resource\StaticMesh.cpp" />
     <ClCompile Include="Resource\StructuredBuffer.cpp" />
     <ClCompile Include="Resource\Texture.cpp" />
@@ -492,7 +421,6 @@
     <ClCompile Include="Resource\UITransformConstantBuffer.cpp" />
     <ClCompile Include="Scene\CameraManager.cpp" />
     <ClCompile Include="Scene\CollisionSection.cpp" />
-    <ClCompile Include="Scene\LightManager.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneCollision.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -517,20 +445,6 @@
     <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\Shader\AnimationUpdate.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AnimationUpdateCS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnimationUpdateCS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AnimationUpdateCS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AnimationUpdateCS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
     <FxCompile Include="..\Bin\Shader\Collider.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ColliderVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
@@ -542,48 +456,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ColliderVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Decal.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DecalVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">DecalVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DecalVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DecalVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\LandScape.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LandScapeVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LandScapeVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LandScapeVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LandScapeVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Light.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LightAccVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LightAccVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LightAccVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LightAccVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
@@ -605,53 +477,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\RenderTarget.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RenderTargetVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">RenderTargetVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">RenderTargetVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">RenderTargetVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Shadow.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ShadowVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ShadowVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShadowVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShadowVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
     <FxCompile Include="..\Bin\Shader\Share.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Sky.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SkyVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SkyVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SkyVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SkyVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Standard2D.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Standard2DColorVS</EntryPointName>
@@ -664,20 +494,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Standard2DColorVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Standard3D.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Standard3DVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Standard3DVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Standard3DVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Standard3DVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>

@@ -151,13 +151,13 @@ void CSceneCollision::CreateSection3D()
 	m_Section3D->CountX = 5;
 	m_Section3D->CountY = 5;
 	m_Section3D->CountZ = 5;
-	m_Section3D->SectionSize = Vector3(300.f, 300.f, 300.f);
-	m_Section3D->SectionTotalSize = Vector3(1500.f, 1500.f, 1500.f);
+	m_Section3D->SectionSize = Vector3(300.f, 300.f, 1.f);
+	m_Section3D->SectionTotalSize = Vector3(1500.f, 1500.f, 1.f);
 
 	m_SectionTotalSize = m_Section3D->SectionTotalSize;
 
-	m_Section3D->Min = Vector3(-750.f, -750.f, -750.f);
-	m_Section3D->Max = Vector3(750.f, 750.f, 750.f);
+	m_Section3D->Min = Vector3(-750.f, -750.f, 0.f);
+	m_Section3D->Max = Vector3(750.f, 750.f, 0.f);
 
 	for (int k = 0; k < m_Section3D->CountZ; ++k)
 	{
@@ -171,12 +171,12 @@ void CSceneCollision::CreateSection3D()
 
 				Section->m_SectionSize = m_Section3D->SectionSize;
 				Section->m_SectionTotalSize = m_Section3D->SectionTotalSize;
-				Section->m_Min = m_Section3D->Min + m_Section3D->SectionSize * Vector3((float)j, (float)i, (float)k);
+				Section->m_Min = m_Section3D->Min + m_Section3D->SectionSize * Vector3((float)j, (float)i, 0.f);
 				Section->m_Max = Section->m_Min + m_Section3D->SectionSize;
 				Section->m_IndexX = j;
 				Section->m_IndexY = i;
-				Section->m_IndexZ = k;
-				Section->m_Index = k * (5 * 5) + i * 5 + j;
+				Section->m_IndexZ = 0;
+				Section->m_Index = i * 5 + j;
 			}
 		}
 	}
@@ -424,29 +424,6 @@ void CSceneCollision::CollisionMouse(float DeltaTime)
 
 		else
 		{
-			int	Count = m_Section3D->CountX * m_Section3D->CountY * m_Section3D->CountZ;
-
-			for (int i = 0; i < Count; ++i)
-			{
-				CCollider* MouseCollisionCollider = m_Section3D->vecSection[i]->CollisionMouse(false, DeltaTime);
-
-				if (MouseCollisionCollider)
-				{
-					MouseCollision = true;
-
-					MouseCollisionCollider->CallCollisionMouseCallback(Collision_State::Begin,
-						MousePos);
-
-					if (m_MouseCollisionCollider &&
-						m_MouseCollisionCollider != MouseCollisionCollider)
-					{
-						m_MouseCollisionCollider->CallCollisionMouseCallback(Collision_State::End,
-							MousePos);
-					}
-
-					m_MouseCollisionCollider = MouseCollisionCollider;
-				}
-			}			
 		}
 	}
 

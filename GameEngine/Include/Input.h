@@ -53,14 +53,8 @@ private:
     bool                m_ShiftState;
     Vector2             m_MousePos;
     Vector2             m_MouseMove;
-    Ray                 m_Ray;
 
 public:
-    const Ray& GetRay() const
-    {
-        return m_Ray;
-    }
-
     Vector2 GetMousePos()   const
     {
         return m_MousePos;

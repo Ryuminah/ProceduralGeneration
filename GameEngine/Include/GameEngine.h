@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <crtdbg.h>
 #include <functional>
 #include <string>
@@ -44,12 +45,10 @@
 #ifdef _DEBUG
 
 #pragma comment(lib, "DirectXTex_Debug.lib")
-#pragma comment(lib, "libfbxsdk-md_Debug.lib")
 
 #else
 
 #pragma comment(lib, "DirectXTex.lib")
-#pragma comment(lib, "libfbxsdk-md.lib")
 
 #endif // _DEBUG
 
@@ -60,8 +59,6 @@
 #define	FONT_PATH		"FontPath"
 #define	SOUND_PATH		"SoundPath"
 #define	MAP_PATH		"MapPath"
-#define	MESH_PATH		"MeshPath"
-#define	ANIMATION_PATH	"AnimationPath"
 
 struct Resolution
 {
@@ -148,17 +145,6 @@ struct VertexUV
 	}
 };
 
-struct Vertex3D
-{
-	Vector3 Pos;
-	Vector3	Normal;
-	Vector2 UV;
-	Vector3	Tangent;
-	Vector3	Binormal;
-	Vector4	BlendWeight;
-	Vector4	BlendIndex;
-};
-
 struct HierarchyName
 {
 	std::string Name;
@@ -173,10 +159,6 @@ struct TransformCBuffer
 	Matrix  matWV;
 	Matrix	matVP;
 	Matrix  matWVP;
-	Matrix  matInvView;
-	Matrix	matInvProj;
-	Matrix  matInvVP;
-	Matrix	matInvWVP;
 	Vector3 Pivot;
 	int     Animation2DEnable;
 	Vector3 MeshSize;
@@ -186,17 +168,11 @@ struct TransformCBuffer
 struct MaterialCBuffer
 {
 	Vector4 BaseColor;
-	Vector4	AmbientColor;
-	Vector4	SpecularColor;
 	Vector4 EmissiveColor;
 	float   Opacity;
 	int		PaperBurn;
 	int		Distortion;
-	int		BumpEnable;
-	int		Animation3DEnable;
-	int		SpecularTex;
-	int		EmissiveTex;
-	int		ReceiveDecal;
+	float	Empty;
 };
 
 struct Animation2DCBuffer
@@ -264,24 +240,6 @@ struct PixelInfo
 		Pixel = nullptr;
 		memset(Color, 0, sizeof(unsigned char) * 4);
 	}
-};
-
-struct SphereInfo
-{
-	Vector3	Center;
-	float	Radius;
-	Vector3	Min;
-	Vector3	Max;
-};
-
-struct CubeInfo
-{
-	Vector3 Center;
-	Vector3 Axis[3];
-	float   Length[3];
-	Vector3	Min;
-	Vector3	Max;
-	Vector3 PointPos[8];
 };
 
 
@@ -506,60 +464,4 @@ struct NavMessage
 
 #pragma pack(pop)
 
-struct AnimationCBuffer
-{
-	int	BoneCount;
-	int	CurrentFrame;
-	int	NextFrame;
-	float	Ratio;
-	int	FrameCount;
-	int	RowIndex;
-	int	ChangeAnimation;
-	float	ChangeRatio;
-	int		ChangeFrameCount;
-	Vector3	Empty;
-};
-
-struct LightCBuffer
-{
-	Vector4	Diffuse;
-	Vector4	Ambient;
-	Vector4	Specular;
-	int		LightType;
-	Vector3	Pos;
-	Vector3	Dir;
-	float	Distance;
-	float	AngleIn;
-	float	AngleOut;
-	float	Att1;
-	float	Att2;
-	float	Att3;
-	Vector3	Empty;
-};
-
-struct RenderTargetCBuffer
-{
-	Matrix	matWVP;
-};
-
-struct LandScapeCBuffer
-{
-	float	DetailLevel;
-	int		SplatCount;
-	Vector2	Empty;
-};
-
-struct Ray
-{
-	Vector3	Pos;
-	Vector3	Dir;
-};
-
-struct ShadowCBuffer
-{
-	Matrix	matShadow;
-	Matrix	matShadowInvVP;
-	float	ShadowBias;
-	Vector3	ShadowEmpty;
-};
 

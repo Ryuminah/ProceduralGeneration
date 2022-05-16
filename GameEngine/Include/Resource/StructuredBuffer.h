@@ -29,11 +29,6 @@ public:
 		return m_Name;
 	}
 
-	ID3D11Buffer* GetBuffer()	const
-	{
-		return m_Buffer;
-	}
-
 public:
 	bool Init(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,

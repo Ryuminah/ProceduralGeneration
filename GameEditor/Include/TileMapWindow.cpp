@@ -579,7 +579,7 @@ void CTileMapWindow::CreateTileButton()
 
 	if (m_TileTexture)
 	{
-		TileMap->GetMaterial(0)->SetTexture("MainMap", "MainMap", m_TileTexture);
+		TileMap->GetMaterial(0)->SetTexture("MainMap", m_TileTexture);
 		TileMap->UpdateInfo();
 	}
 
@@ -678,11 +678,11 @@ void CTileMapWindow::LoadTileImage()
 
 		if (m_TileMap)
 		{
-			m_TileMap->GetMaterial(0)->SetTexture("MainMap", "MainMap", m_TileTexture);
+			m_TileMap->GetMaterial(0)->SetTexture("MainMap", m_TileTexture);
 
 			if (m_TileTexture)
 			{
-				m_TileMap->GetMaterial(0)->SetTexture("MainMap", "MainMap", m_TileTexture);
+				m_TileMap->GetMaterial(0)->SetTexture("MainMap", m_TileTexture);
 				m_TileMap->UpdateInfo();
 			}
 		}

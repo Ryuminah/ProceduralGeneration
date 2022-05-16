@@ -12,7 +12,6 @@
 #include "RenderTarget.h"
 #include "Sound.h"
 #include "../PathManager.h"
-#include "RenderTargetCBuffer.h"
 
 DEFINITION_SINGLE(CResourceManager)
 
@@ -137,23 +136,11 @@ CResourceManager::~CResourceManager()
 		}
 	}
 
-	{
-		auto    iter = m_mapAnimationSequence.begin();
-		auto    iterEnd = m_mapAnimationSequence.end();
-
-		for (; iter != iterEnd; ++iter)
-		{
-			SAFE_RELEASE(iter->second);
-		}
-	}
-
 	if (m_System)
 	{
 		m_System->close();
 		m_System->release();
 	}
-
-	SAFE_DELETE(m_TargetCBuffer);
 
 	SAFE_RELEASE(m_WriteFactory);
 
@@ -164,12 +151,6 @@ bool CResourceManager::Init()
 {
 	if (!CShaderManager::GetInst()->Init())
 		return false;
-
-	m_TargetShader = CShaderManager::GetInst()->FindShader("RenderTargetShader");
-
-	m_TargetCBuffer = new CRenderTargetCBuffer;
-
-	m_TargetCBuffer->Init();
 
 	// fmod 초기화
 	FMOD_RESULT	FMODResult = FMOD::System_Create(&m_System);
@@ -260,22 +241,6 @@ bool CResourceManager::Init()
 		sizeof(Vector3), D3D11_USAGE_IMMUTABLE,
 		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST))
 		return false;
-
-	VertexUV BillboardMesh[4] =
-	{
-		VertexUV(-0.5f, 0.5f, 0.f, 0.f, 0.f),
-		VertexUV(0.5f, 0.5f, 0.f, 1.f, 0.f),
-		VertexUV(-0.5f, -0.5f, 0.f, 0.f, 1.f),
-		VertexUV(0.5f, -0.5f, 0.f, 1.f, 1.f)
-	};
-
-	if (!CreateMesh(Mesh_Type::StaticMesh, "BillboardMesh", BillboardMesh, 4, sizeof(VertexUV),
-		D3D11_USAGE_DEFAULT,
-		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, IdxRect, 6, sizeof(int), D3D11_USAGE_DEFAULT,
-		DXGI_FORMAT_R32_UINT))
-		return false;
-
-
 
 
 	if (!CreateMaterial("DefaultMaterial"))
@@ -382,89 +347,6 @@ bool CResourceManager::Init()
 	CreateTextFormat("Default", FontFaceName, 600, 20.f, TEXT("ko"));
 
 
-	// 구 생성
-	std::vector<Vertex3D>	vecSphere;
-	std::vector<Vector3>	vecSpherePos;
-	std::vector<int>	vecSphereIndex;
-
-	CreateSphere(vecSphere, vecSphereIndex, 1.f, 10);
-
-	size_t	SphereSize = vecSphere.size();
-	vecSpherePos.resize(SphereSize);
-
-	for (size_t i = 0; i < SphereSize; ++i)
-	{
-		vecSpherePos[i] = vecSphere[i].Pos;
-	}
-
-	CreateMesh(Mesh_Type::StaticMesh, "SpherePos", &vecSpherePos[0], SphereSize, sizeof(Vector3),
-		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecSphereIndex[0], vecSphereIndex.size(),
-		sizeof(int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
-
-
-	Vector3	Cube[8] =
-	{
-		Vector3(-0.5f, 0.5f, -0.5f),
-		Vector3(0.5f, 0.5f, -0.5f),
-		Vector3(-0.5f, -0.5f, -0.5f),
-		Vector3(0.5f, -0.5f, -0.5f),
-		Vector3(-0.5f, 0.5f, 0.5f),
-		Vector3(0.5f, 0.5f, 0.5f),
-		Vector3(-0.5f, -0.5f, 0.5f),
-		Vector3(0.5f, -0.5f, 0.5f)
-	};
-
-	int	CubeLineIdx[24] =
-	{
-		0, 1, 1, 3, 2, 3, 0, 2, 4, 5, 5, 7, 6, 7, 4, 6, 4, 0, 5, 1, 7, 3, 6, 2
-	};
-
-	CreateMesh(Mesh_Type::StaticMesh, "CubeLine", Cube, 8, sizeof(Vector3),
-		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, &CubeLineIdx[0], 24,
-		sizeof(int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
-
-	int	CubeIdx[36] =
-	{
-		0, 1, 3, 0, 3, 2,
-		1, 5, 7, 1, 7, 3,
-		5, 4, 6, 5, 6, 7,
-		4, 0, 2, 4, 2, 6,
-		4, 5, 1, 4, 1, 0,
-		7, 6, 2, 7, 2, 3
-	};
-
-	CreateMesh(Mesh_Type::StaticMesh, "Cube", Cube, 8, sizeof(Vector3),
-		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &CubeIdx[0], 36,
-		sizeof(int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
-
-
-	CreateMaterial("DefaultSky");
-
-	CMaterial* SkyMtrl = FindMaterial("DefaultSky");
-
-	SkyMtrl->SetShader("SkyShader");
-	SkyMtrl->AddTexture("DefaultSky", TEXT("Sky/Sky.dds"));
-	SkyMtrl->SetTextureRegister("DefaultSky", 20);
-	SkyMtrl->SetTextureLink("DefaultSky", Texture_Link::CustomTexture);
-
-	CreateMaterial("DefaultDecal");
-
-	CMaterial* DecalMtrl = FindMaterial("DefaultDecal");
-
-	DecalMtrl->SetShader("DecalShader");
-	DecalMtrl->AddTexture("DefaultDecal", TEXT("Decal/Decal1.png"));
-	DecalMtrl->AddTexture("DefaultDecalNormal", TEXT("Decal/Decal1_NRM.png"));
-	DecalMtrl->AddTexture("DefaultDecalSpecular", TEXT("Decal/Decal1_SPEC.png"));
-	DecalMtrl->SetTextureLink("DefaultDecal", Texture_Link::BaseTexture);
-	DecalMtrl->SetTextureLink("DefaultDecalNormal", Texture_Link::NormalTexture);
-	DecalMtrl->SetTextureLink("DefaultDecalSpecular", Texture_Link::SpecularTexture);
-
-	CreateMaterial("DefaultDecalDebug");
-
-	DecalMtrl = FindMaterial("DefaultDecalDebug");
-
-	DecalMtrl->SetShader("DecalDebugShader");
-
 	return true;
 }
 
@@ -501,170 +383,7 @@ bool CResourceManager::CreateMesh(Mesh_Type Type, const std::string& Name, void*
 		return false;
 	}
 
-	pMesh->SetName(Name);
-
 	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CResourceManager::LoadMesh(class CScene* Scene, Mesh_Type Type, const std::string& Name, const TCHAR* Filename,
-	const std::string& PathName)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	switch (Type)
-	{
-	case Mesh_Type::Sprite:
-		pMesh = new CSpriteMesh;
-		break;
-	case Mesh_Type::StaticMesh:
-		pMesh = new CStaticMesh;
-		break;
-	case Mesh_Type::AnimationMesh:
-		pMesh = new CAnimationMesh;
-		break;
-	}
-
-	pMesh->SetName(Name);
-	pMesh->m_pScene = Scene;
-
-	if (!pMesh->LoadMesh(Filename, PathName))
-	{
-		SAFE_RELEASE(pMesh);
-		return false;
-	}
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CResourceManager::LoadMeshFullPath(class CScene* Scene, Mesh_Type Type, const std::string& Name, const TCHAR* FullPath)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	switch (Type)
-	{
-	case Mesh_Type::Sprite:
-		pMesh = new CSpriteMesh;
-		break;
-	case Mesh_Type::StaticMesh:
-		pMesh = new CStaticMesh;
-		break;
-	case Mesh_Type::AnimationMesh:
-		pMesh = new CAnimationMesh;
-		break;
-	}
-
-	pMesh->SetName(Name);
-	pMesh->m_pScene = Scene;
-
-	if (!pMesh->LoadMeshFullPath(FullPath))
-	{
-		SAFE_RELEASE(pMesh);
-		return false;
-	}
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CResourceManager::LoadMeshMultibyte(class CScene* Scene, Mesh_Type Type, const std::string& Name, const char* Filename, const std::string& PathName)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	switch (Type)
-	{
-	case Mesh_Type::Sprite:
-		pMesh = new CSpriteMesh;
-		break;
-	case Mesh_Type::StaticMesh:
-		pMesh = new CStaticMesh;
-		break;
-	case Mesh_Type::AnimationMesh:
-		pMesh = new CAnimationMesh;
-		break;
-	}
-
-	pMesh->SetName(Name);
-	pMesh->m_pScene = Scene;
-
-	if (!pMesh->LoadMeshMultibyte(Filename, PathName))
-	{
-		SAFE_RELEASE(pMesh);
-		return false;
-	}
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CResourceManager::LoadMeshFullPathMultibyte(class CScene* Scene, Mesh_Type Type, const std::string& Name, const char* FullPath)
-{
-	CMesh* pMesh = FindMesh(Name);
-
-	if (pMesh)
-		return true;
-
-	switch (Type)
-	{
-	case Mesh_Type::Sprite:
-		pMesh = new CSpriteMesh;
-		break;
-	case Mesh_Type::StaticMesh:
-		pMesh = new CStaticMesh;
-		break;
-	case Mesh_Type::AnimationMesh:
-		pMesh = new CAnimationMesh;
-		break;
-	}
-
-	pMesh->SetName(Name);
-	pMesh->m_pScene = Scene;
-
-	if (!pMesh->LoadMeshFullPathMultibyte(FullPath))
-	{
-		SAFE_RELEASE(pMesh);
-		return false;
-	}
-
-	m_mapMesh.insert(std::make_pair(Name, pMesh));
-
-	return true;
-}
-
-bool CResourceManager::SetAnimationMeshSkeleton(CScene* Scene, const std::string& MeshName, const std::string& Name, const TCHAR* FileName, const std::string& PathName)
-{
-	CAnimationMesh* Mesh = (CAnimationMesh*)FindMesh(MeshName);
-
-	if (!Mesh)
-		return false;
-
-	Mesh->SetSkeleton(Name, FileName, PathName);
-
-	return true;
-}
-
-bool CResourceManager::SetAnimationMeshSkeleton(CScene* Scene, const std::string& MeshName, CSkeleton* Skeleton)
-{
-	CAnimationMesh* Mesh = (CAnimationMesh*)FindMesh(MeshName);
-
-	if (!Mesh)
-		return false;
-
-	Mesh->SetSkeleton(Skeleton);
 
 	return true;
 }
@@ -691,183 +410,6 @@ CMesh* CResourceManager::FindMesh(const std::string& Name)
 		return nullptr;
 
 	return iter->second;
-}
-
-bool CResourceManager::CreateSphere(std::vector<Vertex3D>& vecVertex, std::vector<int>& vecIndex, float Radius,
-	unsigned int SubDivision)
-{
-	// Put a cap on the number of subdivisions.
-	SubDivision = min(SubDivision, 5);
-
-	// Approximate a sphere by tessellating an icosahedron.
-	const float X = 0.525731f;
-	const float Z = 0.850651f;
-
-	Vector3 pos[12] =
-	{
-		Vector3(-X, 0.0f, Z),  Vector3(X, 0.0f, Z),
-		Vector3(-X, 0.0f, -Z), Vector3(X, 0.0f, -Z),
-		Vector3(0.0f, Z, X),   Vector3(0.0f, Z, -X),
-		Vector3(0.0f, -Z, X),  Vector3(0.0f, -Z, -X),
-		Vector3(Z, X, 0.0f),   Vector3(-Z, X, 0.0f),
-		Vector3(Z, -X, 0.0f),  Vector3(-Z, -X, 0.0f)
-	};
-
-	DWORD k[60] =
-	{
-		1,4,0,  4,9,0,  4,5,9,  8,5,4,  1,8,4,
-		1,10,8, 10,3,8, 8,3,5,  3,2,5,  3,7,2,
-		3,10,7, 10,6,7, 6,11,7, 6,0,11, 6,1,0,
-		10,1,6, 11,0,9, 2,11,9, 5,2,9,  11,2,7
-	};
-
-	vecVertex.resize(12);
-	vecIndex.resize(60);
-
-	for (UINT i = 0; i < 12; ++i)
-		vecVertex[i].Pos = pos[i];
-
-	for (UINT i = 0; i < 60; ++i)
-		vecIndex[i] = k[i];
-
-	for (UINT i = 0; i < SubDivision; ++i)
-		Subdivide(vecVertex, vecIndex);
-
-	// Project vertices onto sphere and scale.
-	for (UINT i = 0; i < vecVertex.size(); ++i)
-	{
-		// Project onto unit sphere.
-		Vector3	vN = vecVertex[i].Pos;
-		vN.Normalize();
-
-		// Project onto sphere.
-		Vector3 p = vN * Radius;
-
-		vecVertex[i].Pos = p;
-		// Normal이 있을 경우 따로 저장한다.
-
-		// Derive texture coordinates from spherical coordinates.
-		float theta = AngleFromXY(
-			vecVertex[i].Pos.x,
-			vecVertex[i].Pos.z);
-
-		float phi = acosf(vecVertex[i].Pos.y / Radius);
-
-		vecVertex[i].UV.x = theta / XM_2PI;
-		vecVertex[i].UV.y = phi / XM_PI;
-
-		// Partial derivative of P with respect to theta
-		vecVertex[i].Tangent.x = -Radius * sinf(phi) * sinf(theta);
-		vecVertex[i].Tangent.y = 0.0f;
-		vecVertex[i].Tangent.z = Radius * sinf(phi) * cosf(theta);
-
-		vecVertex[i].Binormal = vecVertex[i].Normal.Cross(vecVertex[i].Tangent);
-		vecVertex[i].Binormal.Normalize();
-	}
-
-	return true;
-}
-
-void CResourceManager::Subdivide(std::vector<Vertex3D>& vecVertices, std::vector<int>& vecIndices)
-{
-	// Save a copy of the input geometry.
-	std::vector<Vertex3D>	vecCopyVertex = vecVertices;
-	std::vector<int>	vecCopyIndex = vecIndices;
-
-
-	vecVertices.resize(0);
-	vecIndices.resize(0);
-
-	//       v1
-	//       *
-	//      / \
-					//     /   \
-	//  m0*-----*m1
-//   / \   / \
-	//  /   \ /   \
-	// *-----*-----*
-// v0    m2     v2
-
-	UINT numTris = vecCopyIndex.size() / 3;
-	for (UINT i = 0; i < numTris; ++i)
-	{
-		Vertex3D v0 = vecCopyVertex[vecCopyIndex[i * 3 + 0]];
-		Vertex3D v1 = vecCopyVertex[vecCopyIndex[i * 3 + 1]];
-		Vertex3D v2 = vecCopyVertex[vecCopyIndex[i * 3 + 2]];
-
-		//
-		// Generate the midpoints.
-		//
-
-		Vertex3D m0, m1, m2;
-
-		// For subdivision, we just care about the position component.  We derive the other
-		// vertex components in CreateGeosphere.
-
-		m0.Pos = Vector3(
-			0.5f * (v0.Pos.x + v1.Pos.x),
-			0.5f * (v0.Pos.y + v1.Pos.y),
-			0.5f * (v0.Pos.z + v1.Pos.z));
-
-		m1.Pos = Vector3(
-			0.5f * (v1.Pos.x + v2.Pos.x),
-			0.5f * (v1.Pos.y + v2.Pos.y),
-			0.5f * (v1.Pos.z + v2.Pos.z));
-
-		m2.Pos = Vector3(
-			0.5f * (v0.Pos.x + v2.Pos.x),
-			0.5f * (v0.Pos.y + v2.Pos.y),
-			0.5f * (v0.Pos.z + v2.Pos.z));
-
-		//
-		// Add new geometry.
-		//
-
-		vecVertices.push_back(v0); // 0
-		vecVertices.push_back(v1); // 1
-		vecVertices.push_back(v2); // 2
-		vecVertices.push_back(m0); // 3
-		vecVertices.push_back(m1); // 4
-		vecVertices.push_back(m2); // 5
-
-		vecIndices.push_back(i * 6 + 0);
-		vecIndices.push_back(i * 6 + 3);
-		vecIndices.push_back(i * 6 + 5);
-
-		vecIndices.push_back(i * 6 + 3);
-		vecIndices.push_back(i * 6 + 4);
-		vecIndices.push_back(i * 6 + 5);
-
-		vecIndices.push_back(i * 6 + 5);
-		vecIndices.push_back(i * 6 + 4);
-		vecIndices.push_back(i * 6 + 2);
-
-		vecIndices.push_back(i * 6 + 3);
-		vecIndices.push_back(i * 6 + 1);
-		vecIndices.push_back(i * 6 + 4);
-	}
-}
-
-float CResourceManager::AngleFromXY(float x, float y)
-{
-	float theta = 0.0f;
-
-	// Quadrant I or IV
-	if (x >= 0.0f)
-	{
-		// If x = 0, then atanf(y/x) = +pi/2 if y > 0
-		//                atanf(y/x) = -pi/2 if y < 0
-		theta = atanf(y / x); // in [-pi/2, +pi/2]
-
-		if (theta < 0.0f)
-			theta += 2.0f * PI; // in [0, 2*pi).
-	}
-
-	// Quadrant II or III
-	else
-		theta = atanf(y / x) + PI; // in [0, 2*pi).
-
-	return theta;
 }
 
 bool CResourceManager::CreateMaterial(const std::string& Name)
@@ -1110,7 +652,7 @@ bool CResourceManager::AddMaterialTextureArrayFullPath(
 }
 
 bool CResourceManager::SetMaterialTexture(const std::string& MaterialName, 
-	const std::string& FindName, const std::string& TextureName)
+	const std::string& TextureName)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
 
@@ -1122,13 +664,13 @@ bool CResourceManager::SetMaterialTexture(const std::string& MaterialName,
 	if (!Texture)
 		return false;
 
-	pMaterial->SetTexture(FindName, TextureName, Texture);
+	pMaterial->SetTexture(TextureName, Texture);
 
 	return false;
 }
 
 bool CResourceManager::SetMaterialTexture(const std::string& MaterialName,
-	const std::string& FindName, const std::string& TextureName, const TCHAR* FileName,
+	const std::string& TextureName, const TCHAR* FileName, 
 	const std::string& PathName)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -1136,26 +678,26 @@ bool CResourceManager::SetMaterialTexture(const std::string& MaterialName,
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTexture(FindName, TextureName, FileName, PathName);
+	pMaterial->SetTexture(TextureName, FileName, PathName);
 
 	return true;
 }
 
 bool CResourceManager::SetMaterialTextureFullPath(const std::string& MaterialName,
-	const std::string& FindName, const std::string& TextureName, const TCHAR* FullPath)
+	const std::string& TextureName, const TCHAR* FullPath)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
 
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureFullPath(FindName, TextureName, FullPath);
+	pMaterial->SetTextureFullPath(TextureName, FullPath);
 
 	return true;
 }
 
 bool CResourceManager::SetMaterialTexture(const std::string& MaterialName,
-	const std::string& FindName, const std::string& TextureName,
+	const std::string& TextureName, 
 	const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -1163,13 +705,13 @@ bool CResourceManager::SetMaterialTexture(const std::string& MaterialName,
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTexture(FindName, TextureName, vecFileName, PathName);
+	pMaterial->SetTexture(TextureName, vecFileName, PathName);
 
 	return true;
 }
 
 bool CResourceManager::SetMaterialTextureFullPath(
-	const std::string& FindName, const std::string& MaterialName, const std::string& TextureName,
+	const std::string& MaterialName, const std::string& TextureName,
 	const std::vector<const TCHAR*>& vecFullPath)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -1177,13 +719,13 @@ bool CResourceManager::SetMaterialTextureFullPath(
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureFullPath(FindName, TextureName, vecFullPath);
+	pMaterial->SetTextureFullPath(TextureName, vecFullPath);
 
 	return true;
 }
 
 bool CResourceManager::SetMaterialTextureArray(const std::string& MaterialName,
-	const std::string& FindName, const std::string& TextureName,
+	const std::string& TextureName, 
 	const std::vector<const TCHAR*>& vecFileName, const std::string& PathName)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -1191,13 +733,13 @@ bool CResourceManager::SetMaterialTextureArray(const std::string& MaterialName,
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureArray(FindName, TextureName, vecFileName, PathName);
+	pMaterial->SetTextureArray(TextureName, vecFileName, PathName);
 
 	return true;
 }
 
 bool CResourceManager::SetMaterialTextureArrayFullPath(
-	const std::string& MaterialName, const std::string& FindName, const std::string& TextureName,
+	const std::string& MaterialName, const std::string& TextureName,
 	const std::vector<const TCHAR*>& vecFullPath)
 {
 	CMaterial* pMaterial = FindMaterial(MaterialName);
@@ -1205,7 +747,7 @@ bool CResourceManager::SetMaterialTextureArrayFullPath(
 	if (!pMaterial)
 		return false;
 
-	pMaterial->SetTextureArrayFullPath(FindName, TextureName, vecFullPath);
+	pMaterial->SetTextureArrayFullPath(TextureName, vecFullPath);
 
 	return true;
 }
@@ -1418,39 +960,6 @@ bool CResourceManager::CreateTarget(const std::string& Name,
 	m_mapTexture.insert(std::make_pair(Name, pTexture));
 
 	return true;
-}
-
-void CResourceManager::RenderTarget()
-{
-	CMesh* Mesh = FindMesh("TextureRect");
-
-	auto	iter = m_mapTexture.begin();
-	auto	iterEnd = m_mapTexture.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-		if (!iter->second->IsRenderTarget())
-			continue;
-
-		if (((CRenderTarget*)iter->second)->m_DebugRender)
-		{
-			CRenderTarget* Target = (CRenderTarget*)iter->second;
-			
-			Target->SetTargetShader();
-
-			Matrix	matWVP = Target->GetWVP();
-
-			m_TargetCBuffer->SetWVP(matWVP);
-
-			m_TargetCBuffer->UpdateCBuffer();
-
-			m_TargetShader->SetShader();
-
-			Mesh->Render();
-
-			Target->ResetTargetShader();
-		}
-	}
 }
 
 void CResourceManager::ReleaseTexture(const std::string& Name)
@@ -2495,135 +2004,4 @@ IDWriteTextFormat* CResourceManager::FindFont(const std::string& Name)
 		return nullptr;
 
 	return iter->second;
-}
-
-bool CResourceManager::LoadAnimationSequence(const std::string& Name, bool Loop,
-	_tagFbxAnimationClip* Clip)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	pSequence = new CAnimationSequence;
-
-	pSequence->CreateSequence(Loop, Clip);
-
-	pSequence->SetName(Name);
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CResourceManager::LoadAnimationSequence(const std::string& Name, bool Loop,
-	int StartFrame, int EndFrame, float PlayTime,
-	const std::vector<BoneKeyFrame*>& vecFrame)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	pSequence = new CAnimationSequence;
-
-	pSequence->CreateSequence(Name, Loop, StartFrame, EndFrame, PlayTime, vecFrame);
-
-	pSequence->SetName(Name);
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CResourceManager::LoadAnimationSequence(const std::string& Name, 
-	const TCHAR* FileName, const std::string& PathName)
-{
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
-
-	TCHAR	FullPath[MAX_PATH] = {};
-
-	if (Info)
-		lstrcpy(FullPath, Info->pPath);
-
-	lstrcat(FullPath, FileName);
-
-	return LoadAnimationSequenceFullPath(Name, FullPath);
-}
-
-bool CResourceManager::LoadAnimationSequenceFullPath(const std::string& Name,
-	const TCHAR* FullPath)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	pSequence = new CAnimationSequence;
-
-	pSequence->CreateSequence(FullPath);
-
-	pSequence->SetName(Name);
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-bool CResourceManager::LoadAnimationSequenceMultibyte(const std::string& Name,
-	const char* FileName, const std::string& PathName)
-{
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
-
-	char	FullPath[MAX_PATH] = {};
-
-	if (Info)
-		strcpy_s(FullPath, Info->pPathMultibyte);
-
-	strcat_s(FullPath, FileName);
-
-	return LoadAnimationSequenceFullPathMultibyte(Name, FullPath);
-}
-
-bool CResourceManager::LoadAnimationSequenceFullPathMultibyte(const std::string& Name,
-	const char* FullPath)
-{
-	CAnimationSequence* pSequence = FindAnimationSequence(Name);
-
-	if (pSequence)
-		return true;
-
-	pSequence = new CAnimationSequence;
-
-	pSequence->CreateSequenceMultibyte(FullPath);
-
-	pSequence->SetName(Name);
-
-	m_mapAnimationSequence.insert(std::make_pair(Name, pSequence));
-
-	return true;
-}
-
-CAnimationSequence* CResourceManager::FindAnimationSequence(const std::string& Name)
-{
-	auto    iter = m_mapAnimationSequence.find(Name);
-
-	if (iter == m_mapAnimationSequence.end())
-		return nullptr;
-
-	return iter->second;
-}
-
-void CResourceManager::ReleaseAnimationSequence(const std::string& Name)
-{
-	auto    iter = m_mapAnimationSequence.find(Name);
-
-	if (iter == m_mapAnimationSequence.end())
-		return;
-
-	if (iter->second->GetRefCount() == 1)
-	{
-		iter->second->Release();
-		m_mapAnimationSequence.erase(iter);
-	}
 }

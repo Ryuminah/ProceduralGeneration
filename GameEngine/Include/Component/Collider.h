@@ -27,7 +27,6 @@ protected:
 	std::vector<int>	m_vecSectionIndex;
 	Vector3		m_Min;
 	Vector3		m_Max;
-	Vector3		m_Offset;
 	std::list<CCollider*>	m_PrevCollisionList;
 	std::list<CCollider*>	m_CurrentCollisionList;
 	CollisionProfile* m_Profile;
@@ -36,8 +35,7 @@ protected:
 	std::list<std::function<void(const HitResult&, CCollider*)>>	m_CollisionCallback[(int)Collision_State::Max];
 	std::list<std::function<void(const Vector2&, CCollider*)>>		m_CollisionMouseCallback[(int)Collision_State::Max];
 	bool		m_MouseCollision;
-	class CRenderState* m_WireFrame;
-	
+
 
 public:
 	bool GetDebugRender()	const
@@ -88,16 +86,6 @@ public:
 	void SetHitResult(HitResult result)
 	{
 		m_HitResult = result;
-	}
-
-	void SetOffset(const Vector3& Offset)
-	{
-		m_Offset = Offset;
-	}
-
-	void SetOffset(float x, float y, float z)
-	{
-		m_Offset = Vector3(x, y, z);
 	}
 
 public:

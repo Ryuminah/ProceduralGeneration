@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../GameEngine.h"
-#include "AnimationSequence.h"
 
 class CResourceManager
 {
@@ -26,10 +25,7 @@ private:
 	std::unordered_map<std::string, class CTexture*>   m_mapTexture;
 	std::unordered_map<std::string, ID3D11SamplerState*>   m_mapSampler;
 	std::unordered_map<std::string, class CAnimationSequence2D*>   m_mapAnimationSequence2D;
-	std::unordered_map<std::string, CAnimationSequence*>   m_mapAnimationSequence;
 	std::unordered_map<std::string, class CParticleSystem*>   m_mapParticleSystem;
-	CSharedPtr<class CShader> m_TargetShader;
-	class CRenderTargetCBuffer* m_TargetCBuffer;
 
 
 public:
@@ -40,22 +36,10 @@ public:
 	bool CreateMesh(Mesh_Type Type, const std::string& Name, void* pVertices, int VtxCount, int VtxSize, D3D11_USAGE VtxUsage, D3D11_PRIMITIVE_TOPOLOGY Primitive,
 		void* pIndices = nullptr, int IdxCount = 0, int IdxSize = 0, D3D11_USAGE IdxUsage = D3D11_USAGE_DEFAULT,
 		DXGI_FORMAT Fmt = DXGI_FORMAT_UNKNOWN);
-	bool LoadMesh(class CScene* Scene, Mesh_Type Type, const std::string& Name, const TCHAR* Filename, const std::string& PathName = MESH_PATH);
-	bool LoadMeshFullPath(class CScene* Scene, Mesh_Type Type, const std::string& Name, const TCHAR* FullPath);
-	bool LoadMeshMultibyte(class CScene* Scene, Mesh_Type Type, const std::string& Name, const char* Filename, const std::string& PathName = MESH_PATH);
-	bool LoadMeshFullPathMultibyte(class CScene* Scene, Mesh_Type Type, const std::string& Name, const char* FullPath);
-	bool SetAnimationMeshSkeleton(class CScene* Scene, const std::string& MeshName, const std::string& Name, const TCHAR* FileName, const std::string& PathName = MESH_PATH);
-	bool SetAnimationMeshSkeleton(class CScene* Scene, const std::string& MeshName, class CSkeleton* Skeleton);
-	
+
 	void ReleaseMesh(const std::string& Name);
 
 	class CMesh* FindMesh(const std::string& Name);
-
-private:
-	bool CreateSphere(std::vector<Vertex3D>& vecVertex, std::vector<int>& vecIndex, float Radius,
-		unsigned int SubDivision);
-	void Subdivide(std::vector<Vertex3D>& vecVertices, std::vector<int>& vecIndices);
-	float AngleFromXY(float x, float y);
 
 public:
 	bool CreateMaterial(const std::string& Name);
@@ -103,25 +87,25 @@ public:
 
 	// 기존 Texture를 교체한다.
 	bool SetMaterialTexture(const std::string& MaterialName,
-		const std::string& FindName, const std::string& TextureName);
+		const std::string& TextureName);
 	bool SetMaterialTexture(const std::string& MaterialName,
-		const std::string& FindName, const std::string& TextureName, const TCHAR* FileName,
+		const std::string& TextureName, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool SetMaterialTextureFullPath(const std::string& MaterialName,
-		const std::string& FindName, const std::string& TextureName, const TCHAR* FullPath);
+		const std::string& TextureName, const TCHAR* FullPath);
 	bool SetMaterialTexture(const std::string& MaterialName,
-		const std::string& FindName, const std::string& TextureName,
+		const std::string& TextureName,
 		const std::vector<const TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool SetMaterialTextureFullPath(const std::string& MaterialName,
-		const std::string& FindName, const std::string& TextureName,
+		const std::string& TextureName,
 		const std::vector<const TCHAR*>& vecFullPath);
 	bool SetMaterialTextureArray(const std::string& MaterialName,
-		const std::string& FindName, const std::string& TextureName,
+		const std::string& TextureName,
 		const std::vector<const TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool SetMaterialTextureArrayFullPath(const std::string& MaterialName,
-		const std::string& FindName, const std::string& TextureName,
+		const std::string& TextureName,
 		const std::vector<const TCHAR*>& vecFullPath);
 
 	bool SetMaterialTextureLink(const std::string& MaterialName,
@@ -152,7 +136,6 @@ public:
 		const std::vector<const TCHAR*>& vecFullPath);
 	bool CreateTarget(const std::string& Name, unsigned int Width,
 		unsigned int Height, DXGI_FORMAT PixelFormat);
-	void RenderTarget();
 
 	void ReleaseTexture(const std::string& Name);
 
@@ -274,22 +257,6 @@ public:
 
 	IDWriteFontCollection1* FindFontFile(const std::string& Name);
 	IDWriteTextFormat* FindFont(const std::string& Name);
-
-
-public:
-	bool LoadAnimationSequence(const std::string& Name, bool Loop,
-		struct _tagFbxAnimationClip* Clip);
-	bool LoadAnimationSequence(const std::string& Name, bool Loop,
-		int StartFrame, int EndFrame, float PlayTime,
-		const std::vector<BoneKeyFrame*>& vecFrame);
-	bool LoadAnimationSequence(const std::string& Name, const TCHAR* FileName,
-		const std::string& PathName = ANIMATION_PATH);
-	bool LoadAnimationSequenceFullPath(const std::string& Name, const TCHAR* FullPath);
-	bool LoadAnimationSequenceMultibyte(const std::string& Name, const char* FileName,
-		const std::string& PathName = ANIMATION_PATH);
-	bool LoadAnimationSequenceFullPathMultibyte(const std::string& Name, const char* FullPath);
-	CAnimationSequence* FindAnimationSequence(const std::string& Name);
-	void ReleaseAnimationSequence(const std::string& Name);
 
 	DECLARE_SINGLE(CResourceManager)
 };

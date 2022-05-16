@@ -79,7 +79,6 @@ public:
 	virtual void Render(float DeltaTime);
 	virtual CGameObject* Clone();
 	virtual void Animation2DNotify(const std::string& Name);
-	virtual void AnimationNotify(const std::string& Name);
 	void ClearTransformState();
 
 public:
@@ -87,8 +86,6 @@ public:
 	void Move(const Vector3& Target);
 
 public:
-	Transform_State GetTransformState() const;
-	void SetTransformState(Transform_State State);
 	Vector3 GetVelocityScale()  const;
 	Vector3 GetVelocityRot()    const;
 	Vector3 GetVelocity()   const;
@@ -137,8 +134,6 @@ public:
 	Vector3 GetWorldScale() const;
 	Vector3 GetWorldRotation()  const;
 	Vector3 GetWorldPos()   const;
-	Vector3 GetPrevWorldPos()   const;
-
 	Vector3 GetPivot()  const;
 	Vector3 GetMeshSize()   const;
 	Matrix GetScaleMatrix() const;
@@ -171,12 +166,6 @@ public:
 	void AddWorldRotationZ(float z);
 	void AddWorldPos(const Vector3& Pos);
 	void AddWorldPos(float x, float y, float z);
-
-public:
-	void LookAt(const Vector3& Pos);
-	void LookAt(const Vector3& Pos, const Vector3& OriginDir);
-	void LookAtYAxis(const Vector3& Pos);
-	void LookAtYAxis(const Vector3& Pos, const Vector3& OriginDir);
 
 private:
 	void AddCamera(CCamera* Camera);

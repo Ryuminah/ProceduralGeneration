@@ -28,8 +28,14 @@
     <Filter Include="04. UI">
       <UniqueIdentifier>{44f68ea1-cd6d-4893-9b6b-58a3d86a702d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RandomMap">
-      <UniqueIdentifier>{bee1d2c5-3b32-467f-b809-9ce9aeaa487d}</UniqueIdentifier>
+    <Filter Include="03. Animation2D\Image">
+      <UniqueIdentifier>{b5e73618-8a3d-4c20-9a1d-67077e85976e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MapGenerator">
+      <UniqueIdentifier>{12f688f8-10d9-434f-936e-a7661d0f563d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MapGenerator\Object">
+      <UniqueIdentifier>{46a7e390-2120-4367-9ad8-591ece5e5cd0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -93,8 +99,23 @@
     <ClCompile Include="Object\MainMap.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
-    <ClCompile Include="Object\RandomMap.cpp">
-      <Filter>RandomMap</Filter>
+    <ClCompile Include="Object\ImageObject.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation2D\Anim_Image.cpp">
+      <Filter>03. Animation2D\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\MapGenerator.cpp">
+      <Filter>MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\IMapGenerator.cpp">
+      <Filter>MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\RandomMap.cpp">
+      <Filter>MapGenerator\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\MapGeneratorManager.cpp">
+      <Filter>MapGenerator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,8 +179,23 @@
     <ClInclude Include="Object\MainMap.h">
       <Filter>02. Object</Filter>
     </ClInclude>
-    <ClInclude Include="Object\RandomMap.h">
-      <Filter>RandomMap</Filter>
+    <ClInclude Include="Object\ImageObject.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation2D\Anim_Image.h">
+      <Filter>03. Animation2D\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\MapGenerator.h">
+      <Filter>MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\IMapGenerator.h">
+      <Filter>MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\RandomMap.h">
+      <Filter>MapGenerator\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\MapGeneratorManager.h">
+      <Filter>MapGenerator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
