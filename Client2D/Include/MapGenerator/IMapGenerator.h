@@ -3,8 +3,8 @@
 
 enum LAND_STATE
 {
-	BASE,
-	LAND,
+	BASE = -1,
+	LAND, 
 	SEA,
 	COAST,
 	LAKE,
@@ -25,7 +25,6 @@ public:
 public:
 	virtual void GenerateWorld(LAND_STATE _landState) = 0;
 	virtual void GenerateVegetation(LAND_STATE _landState) = 0;
-
 
 };
 

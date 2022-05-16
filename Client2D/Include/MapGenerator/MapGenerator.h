@@ -1,5 +1,5 @@
 #pragma once
-#include "GameEngine.h"
+#include <GameEngine.h>
 #include "../MapGenerator/IMapGenerator.h"
 
 class CMapGenerator :
@@ -34,8 +34,5 @@ public:
 	void GenerateLake();
 	void GenerateForest();
 
-	// 우선 하나의 맵으로만 ... 
-	// 후에 Manager class 제작해서 맵 선택하게 하기
-    DECLARE_SINGLE(CMapGenerator)
 };
 

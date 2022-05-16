@@ -10,7 +10,7 @@
 #include "../UI/MainHUDWidget.h"
 #include "Scene/Viewport.h"
 #include "../Object/MainMap.h"
-#include "../Object/RandomMap.h"
+#include "../MapGenerator/RandomMap.h"
 #include "../Object/ImageObject.h"
 
 
