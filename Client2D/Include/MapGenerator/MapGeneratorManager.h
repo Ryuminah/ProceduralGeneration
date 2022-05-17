@@ -5,7 +5,7 @@ class CMapGeneratorManager
 {
     class CMapGenerator* m_pCurrentMapGenerator;
 
-public:
+private:
     std::unordered_map<std::string, class CMapGenerator*> m_AllMapGenerator;
 
 public:

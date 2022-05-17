@@ -7,7 +7,7 @@ class CMapGenerator :
 {
 public:
 	CMapGenerator();
-	virtual ~CMapGenerator();
+	~CMapGenerator();
 
 private:
 	// 어떤 맵의 Generator인지 저장

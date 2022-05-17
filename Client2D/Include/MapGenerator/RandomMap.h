@@ -32,7 +32,7 @@ public:
 	virtual CRandomMap* Clone();
 
 
-	// 기본 정보만 가지고 있고 타일 데이터는 MapGenerator에서 관리한다.
+// 기본 정보만 가지고 있고 타일 데이터는 MapGenerator에서 관리한다.
 private:
 	int m_MapX;
 	int m_MapY;

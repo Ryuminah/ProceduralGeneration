@@ -213,187 +213,103 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 	}
 
 	m_AllTileStateData.insert(std::pair<LAND_STATE, std::vector<Vector2>>(LAND_STATE::SEA, vecSeaTile));
-	m_AllTileStateData.insert(std::pair<LAND_STATE, std::vector<Vector2>>(LAND_STATE::LAND, vecCoastTile));
+	m_AllTileStateData.insert(std::pair<LAND_STATE, std::vector<Vector2>>(LAND_STATE::LAND, vecLandTile));
 
 	m_IsGenerateFinished = true;
 	
 	// Land 중 강가에 있는 타일 체크 후 모래로 한번 바꿈.
-	for (size_t i = 0; i < vecCoastTile.size(); ++i)
+	for (size_t i = 0; i < vecLandTile.size(); ++i)
 	{
-		Vector2 Index = vecCoastTile[i];
+		Vector2 Index = vecLandTile[i];
 		int NearSeaCount = CheckNearSeaTile4(Index.x, Index.y);
 
 		if (NearSeaCount > 0)
 		{
 			ChangeTileImage(Index, LAND_STATE::COAST);
-			m_AllTileStateData.insert(std::pair<LAND_STATE, std::vector<Vector2>>(LAND_STATE::COAST, vecCoastTile));
+			m_TileData[Index.x][Index.y] = LAND_STATE::COAST;
 			vecCoastTile.push_back(Index);
 		}
 	}
 
+	m_AllTileStateData.insert(std::pair<LAND_STATE, std::vector<Vector2>>(LAND_STATE::COAST, vecCoastTile));
 	int keyIndex = 0;
 	std::map<int, Vector2> mapRandomSandTile;
 
-	// 샌드 만들고 랜덤으로 ...
-	for (size_t i = 0; i < vecCoastTile.size(); ++i)
-	{
-		Vector2 currentSandTile = vecCoastTile[i];
+	CreateCoast(vecCoastTile);
 
-		for (int nearX = currentSandTile.x - 1; nearX <= currentSandTile.x + 1; ++nearX)
-		{
-			if (nearX == currentSandTile.x)
-			{
-				continue;
-			}
+	//keyIndex = 0;
+	//mapRandomSandTile.clear();
 
-			// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
-			if ((nearX >= 0 && nearX < m_MapX) &&
-				m_TileData[nearX][currentSandTile.y])
-			{
-				m_TileData[nearX][currentSandTile.y] != LAND_STATE::COAST;
-				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(nearX, currentSandTile.y)));
+	//// 한번 더 반복 (이거 야매코드 수정하기..)
+	//for (size_t i = 0; i < vecCoastTile.size(); ++i)
+	//{
+	//	Vector2 currentSandTile = vecCoastTile[i];
 
-				++keyIndex;
-			}
-		}
+	//	for (int nearX = currentSandTile.x - 1; nearX <= currentSandTile.x + 1; ++nearX)
+	//	{
+	//		if (nearX == currentSandTile.x)
+	//		{
+	//			continue;
+	//		}
 
-		for (int nearY = currentSandTile.y - 1; nearY <= currentSandTile.y + 1; nearY++)
-		{
-			if (nearY == currentSandTile.y)
-			{
-				continue;
-			}
+	//		// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
+	//		if ((nearX >= 0 && nearX < m_MapX) &&
+	//			m_TileData[nearX][currentSandTile.y])
+	//		{
+	//			m_TileData[nearX][currentSandTile.y] != LAND_STATE::COAST;
+	//			mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(nearX, currentSandTile.y)));
 
-			// 맵 범위 체크
-			if ((nearY >= 0 && nearY < m_MapY) &&
-				m_TileData[currentSandTile.x][nearY])
-			{
-				m_TileData[currentSandTile.x][nearY] != LAND_STATE::COAST;
-				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(currentSandTile.x, nearY)));
-				++keyIndex;
-			}
-		}
-	}
+	//			++keyIndex;
+	//		}
+	//	}
 
-	// 랜덤으로 뽑아서 . .. . . 샌드 타일 만들기
-	std::random_device randomDevice;
-	std::mt19937_64 gen(randomDevice());
+	//	for (int nearY = currentSandTile.y - 1; nearY <= currentSandTile.y + 1; nearY++)
+	//	{
+	//		if (nearY == currentSandTile.y)
+	//		{
+	//			continue;
+	//		}
 
-	int RandomTileCount = mapRandomSandTile.size() * 0.5f;
-	int RandomSeed = 0;
+	//		// 맵 범위 체크
+	//		if ((nearY >= 0 && nearY < m_MapY) &&
+	//			m_TileData[currentSandTile.x][nearY])
+	//		{
+	//			m_TileData[currentSandTile.x][nearY] != LAND_STATE::COAST;
+	//			mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(currentSandTile.x, nearY)));
+	//			++keyIndex;
+	//		}
+	//	}
+	//}
 
-	while (RandomTileCount)
-	{
-		// seed값을 이용하여 타일을 랜덤한 위치에 생성
-		// 남은 타일의 갯수 중 인덱스 선정
-		std::uniform_int_distribution<int> dist(0, mapRandomSandTile.size());
-		RandomSeed = dist(randomDevice);
+	//// 랜덤으로 뽑아서 . .. . . 샌드 타일 만들기
 
-		Vector2 TileIndex = mapRandomSandTile[RandomSeed];
+	//RandomTileCount = mapRandomSandTile.size() * 0.5f;
+	//RandomSeed = 0;
 
-		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-		ChangeTileImage(TileIndex, LAND_STATE::COAST);
-		m_AllTileStateData.insert(std::pair<LAND_STATE, std::vector<Vector2>>(LAND_STATE::COAST, vecCoastTile));
-		vecCoastTile.push_back(TileIndex);
+	//while (RandomTileCount)
+	//{
+	//	// seed값을 이용하여 타일을 랜덤한 위치에 생성
+	//	// 남은 타일의 갯수 중 인덱스 선정
+	//	std::uniform_int_distribution<int> dist(0, mapRandomSandTile.size());
+	//	RandomSeed = dist(randomDevice);
 
-		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
-		auto iterEnd = mapRandomSandTile.end();
-		mapRandomSandTile[RandomSeed] = (--iterEnd)->second;
-		mapRandomSandTile.erase(iterEnd);
+	//	Vector2 TileIndex = mapRandomSandTile[RandomSeed];
 
-		--RandomTileCount;
-	}
+	//	// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+	//	ChangeTileImage(TileIndex, LAND_STATE::COAST);
 
+	//	// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
+	//	auto iterEnd = mapRandomSandTile.end();
+	//	mapRandomSandTile[RandomSeed] = (--iterEnd)->second;
+	//	mapRandomSandTile.erase(iterEnd);
 
-	keyIndex = 0;
-	mapRandomSandTile.clear();
-
-	// 한번 더 반복 (이거 야매코드 수정하기..)
-	for (size_t i = 0; i < vecCoastTile.size(); ++i)
-	{
-		Vector2 currentSandTile = vecCoastTile[i];
-
-		for (int nearX = currentSandTile.x - 1; nearX <= currentSandTile.x + 1; ++nearX)
-		{
-			if (nearX == currentSandTile.x)
-			{
-				continue;
-			}
-
-			// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
-			if ((nearX >= 0 && nearX < m_MapX) &&
-				m_TileData[nearX][currentSandTile.y])
-			{
-				m_TileData[nearX][currentSandTile.y] != LAND_STATE::COAST;
-				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(nearX, currentSandTile.y)));
-
-				++keyIndex;
-			}
-		}
-
-		for (int nearY = currentSandTile.y - 1; nearY <= currentSandTile.y + 1; nearY++)
-		{
-			if (nearY == currentSandTile.y)
-			{
-				continue;
-			}
-
-			// 맵 범위 체크
-			if ((nearY >= 0 && nearY < m_MapY) &&
-				m_TileData[currentSandTile.x][nearY])
-			{
-				m_TileData[currentSandTile.x][nearY] != LAND_STATE::COAST;
-				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(currentSandTile.x, nearY)));
-				++keyIndex;
-			}
-		}
-	}
-
-	// 랜덤으로 뽑아서 . .. . . 샌드 타일 만들기
-
-	RandomTileCount = mapRandomSandTile.size() * 0.5f;
-	RandomSeed = 0;
-
-	while (RandomTileCount)
-	{
-		// seed값을 이용하여 타일을 랜덤한 위치에 생성
-		// 남은 타일의 갯수 중 인덱스 선정
-		std::uniform_int_distribution<int> dist(0, mapRandomSandTile.size());
-		RandomSeed = dist(randomDevice);
-
-		Vector2 TileIndex = mapRandomSandTile[RandomSeed];
-
-		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-		ChangeTileImage(TileIndex, LAND_STATE::COAST);
-
-		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
-		auto iterEnd = mapRandomSandTile.end();
-		mapRandomSandTile[RandomSeed] = (--iterEnd)->second;
-		mapRandomSandTile.erase(iterEnd);
-
-		--RandomTileCount;
-	}
-
-	//CreateCoast(vecCoastTile);
+	//	--RandomTileCount;
+	//}
 
 }
 
 void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 {
-	// Land 중 강가에 있는 타일 체크 후 모래로 한번 바꿈.
-	for (size_t i = 0; i < vecCoastTile.size(); ++i)
-	{
-		Vector2 Index = vecCoastTile[i];
-		int NearSeaCount = CheckNearSeaTile4(Index.x, Index.y);
-
-		if (NearSeaCount > 0)
-		{
-			ChangeTileImage(Index, LAND_STATE::COAST);
-			m_AllTileStateData.insert(std::pair<LAND_STATE, std::vector<Vector2>>(LAND_STATE::COAST, vecCoastTile));
-			vecCoastTile.push_back(Index);
-		}
-	}
-
 	int keyIndex = 0;
 	std::map<int, Vector2> mapRandomSandTile;
 
@@ -467,75 +383,6 @@ void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 		--RandomTileCount;
 	}
 
-
-	keyIndex = 0;
-	mapRandomSandTile.clear();
-
-	// 한번 더 반복 (이거 야매코드 수정하기..)
-	for (size_t i = 0; i < vecCoastTile.size(); ++i)
-	{
-		Vector2 currentSandTile = vecCoastTile[i];
-
-		for (int nearX = currentSandTile.x - 1; nearX <= currentSandTile.x + 1; ++nearX)
-		{
-			if (nearX == currentSandTile.x)
-			{
-				continue;
-			}
-
-			// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
-			if ((nearX >= 0 && nearX < m_MapX) &&
-				m_TileData[nearX][currentSandTile.y])
-			{
-				m_TileData[nearX][currentSandTile.y] != LAND_STATE::COAST;
-				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(nearX, currentSandTile.y)));
-
-				++keyIndex;
-			}
-		}
-
-		for (int nearY = currentSandTile.y - 1; nearY <= currentSandTile.y + 1; nearY++)
-		{
-			if (nearY == currentSandTile.y)
-			{
-				continue;
-			}
-
-			// 맵 범위 체크
-			if ((nearY >= 0 && nearY < m_MapY) &&
-				m_TileData[currentSandTile.x][nearY])
-			{
-				m_TileData[currentSandTile.x][nearY] != LAND_STATE::COAST;
-				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(currentSandTile.x, nearY)));
-				++keyIndex;
-			}
-		}
-	}
-
-	// 랜덤으로 뽑아서 . .. . . 샌드 타일 만들기
-
-	RandomTileCount = mapRandomSandTile.size() * 0.5f;
-	RandomSeed = 0;
-
-	while (RandomTileCount)
-	{
-		// seed값을 이용하여 타일을 랜덤한 위치에 생성
-		// 남은 타일의 갯수 중 인덱스 선정
-		std::uniform_int_distribution<int> dist(0, mapRandomSandTile.size());
-		RandomSeed = dist(randomDevice);
-
-		Vector2 TileIndex = mapRandomSandTile[RandomSeed];
-
-		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-		ChangeTileImage(TileIndex, LAND_STATE::COAST);
-
-		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
-		auto iterEnd = mapRandomSandTile.end();
-		mapRandomSandTile[RandomSeed] = (--iterEnd)->second;
-		mapRandomSandTile.erase(iterEnd);
-
-		--RandomTileCount;
-	}
 }
 
 
