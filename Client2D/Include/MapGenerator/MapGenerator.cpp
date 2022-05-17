@@ -1,14 +1,38 @@
 #include "MapGenerator.h"
 #include "RandomMap.h"
 
-CMapGenerator::CMapGenerator() : m_MapX(50), m_MapY(50),
-	m_IsGenerateWorldEnd(false)
+CMapGenerator::CMapGenerator() : m_IsGenerateWorldEnd(false)
 {
 }
 
 CMapGenerator::~CMapGenerator()
 {
+	// 여기 소멸자 호풀 안됨 끄응
+	//int a = 0;
+}
 
+bool CMapGenerator::Init()
+{
+
+	return true;
+}
+
+bool CMapGenerator::Init(CRandomMap* pRandomMap)
+{
+	if (!m_pRandomMap)
+	{
+		m_pRandomMap = pRandomMap;
+	}
+
+	// CMapGenerator에서 RandomMap 객체의 맵을 생성해준다.
+	CTileMapComponent* pMapComponent = m_pRandomMap->CreateSceneComponent<CTileMapComponent>("RandomMap");
+	m_pRandomMap->m_MapComponent = pMapComponent;
+	m_pRandomMap->SetRootComponent(pMapComponent);
+
+	// Tile들을 생성한다.
+	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_pRandomMap->m_MapSizeX, m_pRandomMap->m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
+
+	return true;
 }
 
 // virtual

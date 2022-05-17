@@ -117,6 +117,9 @@
     <ClCompile Include="MapGenerator\MapGeneratorManager.cpp">
       <Filter>MapGenerator</Filter>
     </ClCompile>
+    <ClCompile Include="MapGenerator\TileFinder.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="MapGenerator\MapGeneratorManager.h">
       <Filter>MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\TileFinder.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

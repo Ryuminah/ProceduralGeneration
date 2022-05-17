@@ -3,32 +3,33 @@
 
 class CMapGeneratorManager
 {
-    class CMapGenerator* m_pCurrentMapGenerator;
-
 private:
+    class CMapGenerator* m_pCurrentMapGenerator;
     std::unordered_map<std::string, class CMapGenerator*> m_AllMapGenerator;
 
-public:
+public :
     class CMapGenerator* FindMapGenerator(const std::string& Name);
 
 public:
+    // 실제 RandomMap 객체를 생성할때만 맵 생성기를 제작할 수 있음.
     template <typename T>
-    bool CreateMapGenerator(const std::string& Name)
+    CMapGenerator* CreateMapGenerator(const std::string& Name, class CRandomMap* pRandomMap)
     {
         T* pMapGenerator = (T*)FindMapGenerator(Name);
 
         if (pMapGenerator)
-            return true;
+            return pMapGenerator;
 
         pMapGenerator = new T;
 
+        // 이건 필요없을지도
         pMapGenerator->SetName(Name);
 
-       /* if (!pMapGenerator->Init())
+        if (!pMapGenerator->Init(pRandomMap))
         {
-            SAFE_RELEASE(pShader);
-            return false;
-        }*/
+            SAFE_DELETE(pMapGenerator);
+            return nullptr;
+        }
 
         m_AllMapGenerator.insert(std::make_pair(Name, pMapGenerator));
 
@@ -37,7 +38,7 @@ public:
             m_pCurrentMapGenerator = pMapGenerator;
         }
 
-        return true;
+        return pMapGenerator;
     }
 
     DECLARE_SINGLE(CMapGeneratorManager)

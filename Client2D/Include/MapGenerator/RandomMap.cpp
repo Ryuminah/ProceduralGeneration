@@ -1,6 +1,9 @@
 #include <time.h>
-#include "../MapGenerator/MapGenerator.h"
 #include <random>
+#include <set>
+#include <map>
+#include "MapGenerator.h"
+#include "MapGeneratorManager.h"
 #include "RandomMap.h"
 #include "Scene/Scene.h"
 #include "Resource/Material.h"
@@ -8,12 +11,11 @@
 #include "Engine.h"
 #include "Timer.h"
 #include "Input.h"
-#include <set>
-#include <map>
 
 
 
-CRandomMap::CRandomMap() : m_MapX(50), m_MapY(50),
+
+CRandomMap::CRandomMap() : m_MapSizeX(50), m_MapSizeY(50),
 	m_IsGenerateFinished(false)
 {
 }
@@ -21,7 +23,7 @@ CRandomMap::CRandomMap() : m_MapX(50), m_MapY(50),
 CRandomMap::CRandomMap(const CRandomMap& obj) :
 	CGameObject(obj)
 {
-	m_RandomMap = (CTileMapComponent*)FindSceneComponent("RandomMap");
+	m_MapComponent = (CTileMapComponent*)FindSceneComponent("RandomMap");
 }
 
 CRandomMap::~CRandomMap()
@@ -57,17 +59,15 @@ bool CRandomMap::Init()
 		TEXT("RandomMap/Tile_Sea_16px.png"));
 	m_pScene->GetResource()->SetMaterialTransparency("Tile_Sea", true);
 	m_pScene->GetResource()->SetMaterialShader("Tile_Sea", "TileMapShader");
-
-	m_RandomMap = CreateSceneComponent<CTileMapComponent>("RandomMap");
-
-	SetRootComponent(m_RandomMap);
-	m_RandomMap->CreateTile<CTile>(Tile_Shape::Rect,m_MapX,m_MapY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
-	m_RandomMap->SetMaterial(0, "Tile_16px");
-	m_RandomMap->SetFrameMax(4, 1);
-	m_RandomMap->SetTileDefaultFrame(0, 0);
-	m_RandomMap->SetPivot(0.f, 0.f, 0.f);
-	m_RandomMap->SetRelativePos(0.f, 0.f, 0.1f);
-	m_RandomMap->SetAnimation2DEnable(false);
+	
+	m_MapGenerator = CMapGeneratorManager::GetInst()->CreateMapGenerator<CMapGenerator>("RandomMap", this);
+	
+	m_MapComponent->SetMaterial(0, "Tile_16px");
+	m_MapComponent->SetFrameMax(4, 1);
+	m_MapComponent->SetTileDefaultFrame(0, 0);
+	m_MapComponent->SetPivot(0.f, 0.f, 0.f);
+	m_MapComponent->SetRelativePos(0.f, 0.f, 0.1f);
+	m_MapComponent->SetAnimation2DEnable(false);
 
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("Space", KT_Down, this, &CRandomMap::SmoothMap);
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("1", KT_Down, this, &CRandomMap::Clear);
@@ -107,11 +107,11 @@ void CRandomMap::GenerateMapBase()
 	CEngine::GetInst()->OnDebugLog();
 	m_IsGenerateFinished = false;
 
-	for (int x = 0; x < m_MapX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
 		std::vector<int> tileData;
 
-		for (int y = 0; y < m_MapY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			tileData.push_back(LAND_STATE::LAND);
 		}
@@ -135,22 +135,22 @@ void CRandomMap::GenerateMapBase()
 
 
 	// 후에 맵의 가장 가장자리를 물로 변경한다
-	for (int x = 0; x < m_MapX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
 		ChangeTileImage(Vector2((float)x, 0.f), LAND_STATE::SEA);
-		ChangeTileImage(Vector2((float)x, (float)(m_MapY - 1)), LAND_STATE::SEA);
+		ChangeTileImage(Vector2((float)x, (float)(m_MapSizeY - 1)), LAND_STATE::SEA);
 
 		ChangeTileImage(Vector2((float)x , 1.f), LAND_STATE::SEA);
-		ChangeTileImage(Vector2((float)x , (float)(m_MapY - 2)), LAND_STATE::SEA);
+		ChangeTileImage(Vector2((float)x , (float)(m_MapSizeY - 2)), LAND_STATE::SEA);
 	}
 
-	for (int y = 0; y < m_MapY; ++y)
+	for (int y = 0; y < m_MapSizeY; ++y)
 	{
 		ChangeTileImage(Vector2(0.f, (float)y), LAND_STATE::SEA);
-		ChangeTileImage(Vector2((float)(m_MapX - 1), (float)y), LAND_STATE::SEA);
+		ChangeTileImage(Vector2((float)(m_MapSizeX - 1), (float)y), LAND_STATE::SEA);
 
 		ChangeTileImage(Vector2(1.f, (float)y), LAND_STATE::SEA);
-		ChangeTileImage(Vector2((float)(m_MapX - 2), (float)y), LAND_STATE::SEA);
+		ChangeTileImage(Vector2((float)(m_MapSizeX - 2), (float)y), LAND_STATE::SEA);
 	}
 
 	// 걸린 시간 출력
@@ -171,9 +171,9 @@ void CRandomMap::GenerateEnvironment(float DeltaTime)
 void CRandomMap::SetOnlyLand(float DeltaTime)
 {
 	// 주변 타일 4개이상 땅이면 땅으로 바꿈 (최대한 땅으로 바꿈)
-	for (int x = 3; x < m_MapX-3; ++x)
+	for (int x = 3; x < m_MapSizeX-3; ++x)
 	{
-		for (int y = 3; y < m_MapY-3; ++y)
+		for (int y = 3; y < m_MapSizeY-3; ++y)
 		{
 			if (m_TileData[x][y] == LAND_STATE::SEA)
 			{
@@ -195,9 +195,9 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 	std::vector<Vector2> vecLandTile;
 	std::vector<Vector2> vecCoastTile;
 
-	for (int x = 0; x < m_MapX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
-		for (int y = 0; y < m_MapY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			if (m_TileData[x][y] == LAND_STATE::SEA)
 			{
@@ -253,7 +253,7 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 	//		}
 
 	//		// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
-	//		if ((nearX >= 0 && nearX < m_MapX) &&
+	//		if ((nearX >= 0 && nearX < m_MapSizeX) &&
 	//			m_TileData[nearX][currentSandTile.y])
 	//		{
 	//			m_TileData[nearX][currentSandTile.y] != LAND_STATE::COAST;
@@ -271,7 +271,7 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 	//		}
 
 	//		// 맵 범위 체크
-	//		if ((nearY >= 0 && nearY < m_MapY) &&
+	//		if ((nearY >= 0 && nearY < m_MapSizeY) &&
 	//			m_TileData[currentSandTile.x][nearY])
 	//		{
 	//			m_TileData[currentSandTile.x][nearY] != LAND_STATE::COAST;
@@ -326,7 +326,7 @@ void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 			}
 
 			// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
-			if ((nearX >= 0 && nearX < m_MapX) &&
+			if ((nearX >= 0 && nearX < m_MapSizeX) &&
 				m_TileData[nearX][currentSandTile.y])
 			{
 				m_TileData[nearX][currentSandTile.y] != LAND_STATE::COAST;
@@ -344,7 +344,7 @@ void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 			}
 
 			// 맵 범위 체크
-			if ((nearY >= 0 && nearY < m_MapY) &&
+			if ((nearY >= 0 && nearY < m_MapSizeY) &&
 				m_TileData[currentSandTile.x][nearY])
 			{
 				m_TileData[currentSandTile.x][nearY] != LAND_STATE::COAST;
@@ -395,16 +395,16 @@ void CRandomMap::IndexRandomLogic()
 	std::unordered_map<int, Vector2> MapIndex;
 	int Index = 0;
 
-	for (int x = 0; x < m_MapX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
-		for (int y = 0; y < m_MapY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			MapIndex[Index] = Vector2((float)x, (float)y);
 			++Index;
 		}
 	}
 
-	int RandomTileCount = (m_MapX * m_MapY) * 0.42f;	
+	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.42f;	
 	int RandomSeed = 0;
 
 	while (RandomTileCount)
@@ -443,9 +443,9 @@ void CRandomMap::RandomSaveLogic()
 	int RandomSeed = 0;
 	int Index = 0;
 
-	for (int x = 0; x < m_MapX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
-		for (int y = 0; y < m_MapY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			MapIndex[Index] = Vector2((float)x, (float)y);
 
@@ -473,7 +473,7 @@ void CRandomMap::RandomSaveLogic()
 	}
 
 	// 50퍼의 비율을 물로 채움
-	int RandomTileCount = (m_MapX * m_MapY) * 0.42f;
+	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.42f;
 
 	for (size_t i = 0; i < RandomTileCount; ++i)
 	{
@@ -517,7 +517,7 @@ void CRandomMap::TestRandomLogic()
 	srand((unsigned int)time(NULL));
 
 	// 50퍼의 비율을 물로 채움
-	int RandomTileCount = (m_MapX * m_MapY) * 0.51f;
+	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.51f;
 	std::vector<Vector2> vecCreateIndex;
 	Vector2 TileIndex = { 0.f,0.f };
 
@@ -525,8 +525,8 @@ void CRandomMap::TestRandomLogic()
 	while (RandomTileCount)
 	{
 		// seed값을 이용하여 타일을 랜덤한 위치에 생성
-		TileIndex.x = rand() % m_MapX;
-		TileIndex.y = rand() % m_MapY;
+		TileIndex.x = rand() % m_MapSizeX;
+		TileIndex.y = rand() % m_MapSizeY;
 
 		if (vecCreateIndex.size() != 0)
 		{
@@ -536,8 +536,8 @@ void CRandomMap::TestRandomLogic()
 				if ((vecCreateIndex[i].x == TileIndex.x) && (vecCreateIndex[i].x == TileIndex.y))
 				{
 					// 다시 뽑고 다시 조사
-					TileIndex.x = (float)(rand() % m_MapX);
-					TileIndex.y = (float)(rand() % m_MapY);
+					TileIndex.x = (float)(rand() % m_MapSizeX);
+					TileIndex.y = (float)(rand() % m_MapSizeY);
 
 					i = 0;
 				}
@@ -559,9 +559,9 @@ void CRandomMap::SmoothMap(float DeltaTime)
 	if (m_IsGenerateFinished)
 		return;
 
-	for (int x = 0; x < m_MapX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
-		for (int y = 0; y < m_MapY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			int NearSeaCount = CheckNearSeaTile8(x, y);
 
@@ -584,12 +584,12 @@ void CRandomMap::Clear(float DeltaTime)
 {
 	m_TileData.clear();
 
-	for (int x = 0; x < m_MapX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
-		for (int y = 0; y < m_MapY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			// 해당 부분의 타일만 UV좌표를 변경 (땅으로 변경)
-			CTile* pTile = m_RandomMap->GetTile(Vector2((float)x, (float)y) * TILE_SIZE_SMALL);
+			CTile* pTile = m_MapComponent->GetTile(Vector2((float)x, (float)y) * TILE_SIZE_SMALL);
 			pTile->SetFrameStart(0.f, 0.f);
 			pTile->SetFrameEnd(TILE_SIZE_SMALL, TILE_SIZE_SMALL);
 		}
@@ -608,7 +608,7 @@ void CRandomMap::ChangeTileImage(Vector2 tileIndex, LAND_STATE tileState)
 {
 	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
 
-	CTile* pTile = m_RandomMap->GetTile(tileIndex * TILE_SIZE_SMALL);
+	CTile* pTile = m_MapComponent->GetTile(tileIndex * TILE_SIZE_SMALL);
 	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
 	pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
 }
@@ -623,9 +623,9 @@ int CRandomMap::CheckNearSeaTile8(int indexX, int indexY)
 		for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
 		{
 			// 맵 범위 체크
-			if (nearX >= 0 && nearX < m_MapX && nearY >= 0 && nearY < m_MapY)
+			if (nearX >= 0 && nearX < m_MapSizeX && nearY >= 0 && nearY < m_MapSizeY)
 			{
-				if (nearX != m_MapX || nearY != m_MapY)
+				if (nearX != m_MapSizeX || nearY != m_MapSizeY)
 				{
 					wallCount += m_TileData[nearX][nearY];
 				}
@@ -653,7 +653,7 @@ int CRandomMap::CheckNearSeaTile4(int indexX, int indexY)
 		}
 
 		// 맵 범위 이내라면
-		if ((nearX >= 0 && nearX < m_MapX)&&
+		if ((nearX >= 0 && nearX < m_MapSizeX)&&
 			m_TileData[nearX][indexY] == LAND_STATE::SEA)
 		{
 			++wallCount;
@@ -669,7 +669,7 @@ int CRandomMap::CheckNearSeaTile4(int indexX, int indexY)
 		}
 
 		// 맵 범위 체크
-		if ((nearY >= 0 && nearY < m_MapY) &&
+		if ((nearY >= 0 && nearY < m_MapSizeY) &&
 			m_TileData[indexX][nearY] == LAND_STATE::SEA)
 		{
 			++wallCount;
@@ -717,7 +717,7 @@ int CRandomMap::CheckNearTileState4(int indexX, int indexY, LAND_STATE checkTile
 		}
 
 		// 맵 범위 이내라면
-		if ((nearX >= 0 && nearX < m_MapX) &&
+		if ((nearX >= 0 && nearX < m_MapSizeX) &&
 			m_TileData[nearX][indexY] == checkTileState)
 		{
 			++tileCount;
@@ -732,7 +732,7 @@ int CRandomMap::CheckNearTileState4(int indexX, int indexY, LAND_STATE checkTile
 		}
 
 		// 맵 범위 체크
-		if ((nearY >= 0 && nearY < m_MapY) &&
+		if ((nearY >= 0 && nearY < m_MapSizeY) &&
 			m_TileData[indexX][nearY] == checkTileState)
 		{
 			++tileCount;
@@ -754,7 +754,7 @@ int CRandomMap::CheckNearTileState(int indexX, int indexY, LAND_STATE checkTileS
 		}
 
 		// 맵 범위 이내라면
-		if ((nearX >= 0 && nearX < m_MapX) &&
+		if ((nearX >= 0 && nearX < m_MapSizeX) &&
 			m_TileData[nearX][indexY] == checkTileState)
 		{
 			++tileCount;
@@ -769,7 +769,7 @@ int CRandomMap::CheckNearTileState(int indexX, int indexY, LAND_STATE checkTileS
 		}
 
 		// 맵 범위 체크
-		if ((nearY >= 0 && nearY < m_MapY) &&
+		if ((nearY >= 0 && nearY < m_MapSizeY) &&
 			m_TileData[indexX][nearY] == checkTileState)
 		{
 			++tileCount;

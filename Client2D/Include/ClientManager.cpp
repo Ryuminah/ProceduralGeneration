@@ -1,4 +1,5 @@
 #include "ClientManager.h"
+#include "MapGenerator\MapGeneratorManager.h"
 #include "Scene/SceneManager.h"
 #include "SceneMode/MainScene.h"
 #include "Input.h"
@@ -17,6 +18,7 @@ CClientManager::CClientManager()
 
 CClientManager::~CClientManager()
 {
+   CMapGeneratorManager::DestroyInst();
 }
 
 bool CClientManager::Init()

@@ -6,8 +6,6 @@
 #define TILE_SIZE 64.f
 #define TILE_SIZE_SMALL 16.f
 
-
-
 class CRandomMap :
     public CGameObject
 {
@@ -19,8 +17,9 @@ protected:
 	CRandomMap(const CRandomMap& obj);
 	virtual ~CRandomMap();
 
-protected:
-	CSharedPtr<CTileMapComponent> m_RandomMap;
+private:
+	class CMapGenerator* m_MapGenerator;
+	CSharedPtr<CTileMapComponent> m_MapComponent;
 
 public:
 	virtual void Start();
@@ -34,8 +33,8 @@ public:
 
 // 기본 정보만 가지고 있고 타일 데이터는 MapGenerator에서 관리한다.
 private:
-	int m_MapX;
-	int m_MapY;
+	int m_MapSizeX;
+	int m_MapSizeY;
 
 	std::vector<std::vector<int>> m_TileData;
 	std::map<LAND_STATE, std::vector<Vector2>> m_AllTileStateData;
