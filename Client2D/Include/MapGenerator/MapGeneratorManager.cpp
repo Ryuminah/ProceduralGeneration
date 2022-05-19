@@ -1,4 +1,5 @@
 #include "MapGeneratorManager.h"
+#include "MapGenerator.h"
 #include "IMapGenerator.h"
 
 DEFINITION_SINGLE(CMapGeneratorManager)

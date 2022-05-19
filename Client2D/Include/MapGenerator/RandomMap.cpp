@@ -382,7 +382,6 @@ void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 
 		--RandomTileCount;
 	}
-
 }
 
 
@@ -473,7 +472,7 @@ void CRandomMap::RandomSaveLogic()
 	}
 
 	// 50퍼의 비율을 물로 채움
-	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.42f;
+	int RandomTileCount = (int)(m_MapSizeX * m_MapSizeY) * 0.42f;
 
 	for (size_t i = 0; i < RandomTileCount; ++i)
 	{

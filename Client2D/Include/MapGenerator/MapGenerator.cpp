@@ -1,5 +1,10 @@
+#include <time.h>
+#include <random>
 #include "MapGenerator.h"
 #include "RandomMap.h"
+#include "Engine.h"
+#include "Timer.h"
+#include "Input.h"
 
 CMapGenerator::CMapGenerator() : m_IsGenerateWorldEnd(false)
 {
@@ -81,6 +86,30 @@ void CMapGenerator::GenerateBase()
 {
 	// 기본 맵 생성 로직
 	// 시드값을 이용해서 맵의 기반을 만듦
+
+	CEngine::GetInst()->OnDebugLog();
+	m_IsGenerateWorldEnd = false;
+
+	for (int x = 0; x < m_pRandomMap->m_MapSizeX; ++x)
+	{
+		std::vector<LAND_STATE> tileData;
+
+		for (int y = 0; y < m_pRandomMap->m_MapSizeY; ++y)
+		{
+			tileData.push_back(LAND_STATE::LAND);
+		}
+
+		m_TileData.push_back(tileData);
+	}
+
+	clock_t start = clock(); // 시작 시간 저장
+
+	CellularAutomata();
+
+	clock_t end = clock();
+	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
+	char buffer[BUFSIZ];
+	sprintf_s(buffer, "%f", clockTime);
 }
 
 void CMapGenerator::GenerateLand()
@@ -106,4 +135,8 @@ void CMapGenerator::GenerateLake()
 void CMapGenerator::GenerateForest()
 {
 	// 호수 근처에 숲 지역을 생성.
+}
+
+void CMapGenerator::CellularAutomata()
+{
 }

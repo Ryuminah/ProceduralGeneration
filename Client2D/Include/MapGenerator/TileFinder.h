@@ -9,7 +9,7 @@ public:
 	~CTileFinder();
 
 public:
-	void ChangeTileImage(Vector2 tileIndex, LAND_STATE tileState);
+	void ChangeTileLandState(Vector2 tileIndex, LAND_STATE tileState);
 	int CheckNearSeaTile8(int indexX, int indexY);
 	int CheckNearSeaTile4(int indexX, int indexY);
 

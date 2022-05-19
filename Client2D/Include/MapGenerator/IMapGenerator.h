@@ -19,7 +19,8 @@ enum VEGETATION_STATE
 
 class IMapGenerator
 {
-public:
+private:
+	// 이름 안쓸수도
 	std::string m_Name;
 
 public:

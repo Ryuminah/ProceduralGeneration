@@ -21,7 +21,7 @@ private:
 	bool m_IsGenerateWorldEnd;
 
 	std::map<LAND_STATE, std::vector<Vector2>> m_AllTileStateData;
-	std::vector<std::vector<int>> m_TileData;
+	std::vector<std::vector<LAND_STATE>> m_TileData;
 
 public:
 	// °ð ¾ø¾îÁú ³à¼® ,,,
@@ -40,5 +40,8 @@ public:
 	void GenerateCoast();
 	void GenerateLake();
 	void GenerateForest();
+
+private:
+	void CellularAutomata();
 };
 
