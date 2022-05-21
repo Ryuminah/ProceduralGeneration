@@ -6,14 +6,13 @@
 #include "Timer.h"
 #include "Input.h"
 
-CMapGenerator::CMapGenerator() : m_IsGenerateWorldEnd(false)
+CMapGenerator::CMapGenerator() : m_IsGenerateWorldEnd(false), m_pRandomMap(nullptr)
 {
 }
 
 CMapGenerator::~CMapGenerator()
 {
-	// 여기 소멸자 호풀 안됨 끄응
-	//int a = 0;
+
 }
 
 bool CMapGenerator::Init()
@@ -41,26 +40,26 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 }
 
 // virtual
-void CMapGenerator::GenerateWorld(LAND_STATE _tileState)
+void CMapGenerator::GenerateWorld(TILE_STATE _tileState)
 {
 	switch (_tileState)
 	{
-	case LAND_STATE::BASE:
+	case TILE_STATE::BASE:
 		GenerateBase();
 		break;
-	case LAND_STATE::LAND:
+	case TILE_STATE::LAND:
 		GenerateLand();
 		break;
-	case LAND_STATE::SEA:
+	case TILE_STATE::SEA:
 		GenerateSea();
 		break;
-	case LAND_STATE::COAST:
+	case TILE_STATE::COAST:
 		GenerateCoast();
 		break;
-	case LAND_STATE::LAKE:
+	case TILE_STATE::LAKE:
 		GenerateLake();
 		break;
-	case LAND_STATE::FOREST:
+	case TILE_STATE::FOREST:
 		GenerateForest();
 		break;
 	default:
@@ -68,7 +67,7 @@ void CMapGenerator::GenerateWorld(LAND_STATE _tileState)
 	}
 }
 
-void CMapGenerator::GenerateVegetation(LAND_STATE _landState)
+void CMapGenerator::GenerateVegetation(TILE_STATE _landState)
 {
 	if (!m_IsGenerateWorldEnd)
 	{
@@ -92,11 +91,11 @@ void CMapGenerator::GenerateBase()
 
 	for (int x = 0; x < m_pRandomMap->m_MapSizeX; ++x)
 	{
-		std::vector<LAND_STATE> tileData;
+		std::vector<TILE_STATE> tileData;
 
 		for (int y = 0; y < m_pRandomMap->m_MapSizeY; ++y)
 		{
-			tileData.push_back(LAND_STATE::LAND);
+			tileData.push_back(TILE_STATE::LAND);
 		}
 
 		m_TileData.push_back(tileData);
@@ -104,6 +103,7 @@ void CMapGenerator::GenerateBase()
 
 	clock_t start = clock(); // 시작 시간 저장
 
+	// 맵 자동화 알고리즘
 	CellularAutomata();
 
 	clock_t end = clock();
@@ -139,4 +139,56 @@ void CMapGenerator::GenerateForest()
 
 void CMapGenerator::CellularAutomata()
 {
+	// 맵 크기만큼 리스트나 맵에 저장해놓고
+	// 당첨 번호의 노드를 삭제
+	std::random_device randomDevice;
+	std::mt19937_64 gen(randomDevice());
+	std::unordered_map<int, Vector2> MapIndex;
+	int Index = 0;
+
+	int MapSizeX = m_pRandomMap->m_MapSizeX;
+	int MapSizeY = m_pRandomMap->m_MapSizeY;
+
+	for (int x = 0; x < MapSizeX; ++x)
+	{
+		for (int y = 0; y < MapSizeY; ++y)
+		{
+			MapIndex[Index] = Vector2((float)x, (float)y);
+			++Index;
+		}
+	}
+
+	int RandomTileCount = (MapSizeX * MapSizeY) * 0.42f;
+	int RandomSeed = 0;
+
+	while (RandomTileCount)
+	{
+		// seed값을 이용하여 타일을 랜덤한 위치에 생성
+		// 남은 타일의 갯수 중 인덱스 선정
+		//RandomSeed = rand() % RandomIndex.size();
+		std::uniform_int_distribution<int> dist(0, MapIndex.size());
+		RandomSeed = dist(randomDevice);
+
+		//Vector2 TileIndex = RandomIndex[RandomSeed];
+		Vector2 TileIndex = MapIndex[RandomSeed];
+
+		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+		ChangeTileState(TileIndex, TILE_STATE::SEA);
+
+		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
+		auto iterEnd = MapIndex.end();
+		MapIndex[RandomSeed] = (--iterEnd)->second;
+		MapIndex.erase(iterEnd);
+
+		--RandomTileCount;
+	}
+}
+
+void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
+{
+	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
+
+	CTile* pTile = m_pRandomMap->m_MapComponent->GetTile(tileIndex * TILE_SIZE_SMALL);
+	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
+	pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
 }

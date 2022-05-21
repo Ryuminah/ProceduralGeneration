@@ -1,7 +1,7 @@
 #pragma once
 #include <GameEngine.h>
 
-enum LAND_STATE
+enum TILE_STATE
 {
 	BASE = -1,
 	LAND, 
@@ -38,8 +38,8 @@ public:
 	}
 
 public:
-	virtual void GenerateWorld(LAND_STATE _landState) = 0;
-	virtual void GenerateVegetation(LAND_STATE _landState) = 0;
+	virtual void GenerateWorld(TILE_STATE _landState) = 0;
+	virtual void GenerateVegetation(TILE_STATE _landState) = 0;
 
 };
 

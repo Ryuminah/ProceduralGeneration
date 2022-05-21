@@ -20,8 +20,9 @@ private:
 	// 맵 생성기에 이게 있어야하나 ,, , ,?
 	bool m_IsGenerateWorldEnd;
 
-	std::map<LAND_STATE, std::vector<Vector2>> m_AllTileStateData;
-	std::vector<std::vector<LAND_STATE>> m_TileData;
+	// 각 타일들을 LAND_STATE별로 분류해놓음
+	std::map<TILE_STATE, std::vector<Vector2>> m_AllTileStateData;
+	std::vector<std::vector<TILE_STATE>> m_TileData;
 
 public:
 	// 곧 없어질 녀석 ,,,
@@ -30,8 +31,8 @@ public:
 
 
 public:
-    virtual void GenerateWorld(LAND_STATE _landState);
-	virtual void GenerateVegetation(LAND_STATE _landState);
+    virtual void GenerateWorld(TILE_STATE _landState);
+	virtual void GenerateVegetation(TILE_STATE _landState);
 
 public:
 	void GenerateBase();
@@ -43,5 +44,7 @@ public:
 
 private:
 	void CellularAutomata();
+	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);
+
 };
 
