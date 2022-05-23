@@ -12,9 +12,6 @@
 #include "Timer.h"
 #include "Input.h"
 
-
-
-
 CRandomMap::CRandomMap() : m_MapSizeX(50), m_MapSizeY(50),
 	m_IsGenerateFinished(false)
 {
@@ -676,20 +673,6 @@ int CRandomMap::CheckNearSeaTile4(int indexX, int indexY)
 	}
 
 	return wallCount;
-}
-
-std::vector<Vector2> CRandomMap::GetNearTileIndex(int indexX, int indexY, TILE_STATE checkTileState)
-{
-	std::vector<Vector2> result;
-
-	return result;
-}
-
-std::vector<Vector2> CRandomMap::GetNearTileIndex(Vector2 index, TILE_STATE checkTileState)
-{
-	std::vector<Vector2> result;
-
-	return result;
 }
 
 bool CRandomMap::CheckNearTileState4(Vector2 index, TILE_STATE checkTileState)

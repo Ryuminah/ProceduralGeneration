@@ -1,6 +1,7 @@
 #include <time.h>
 #include <random>
 #include "MapGenerator.h"
+#include "TileFinder.h"
 #include "RandomMap.h"
 #include "Engine.h"
 #include "Timer.h"
@@ -17,7 +18,6 @@ CMapGenerator::~CMapGenerator()
 
 bool CMapGenerator::Init()
 {
-
 	return true;
 }
 
@@ -86,7 +86,7 @@ void CMapGenerator::GenerateBase()
 	// 기본 맵 생성 로직
 	// 시드값을 이용해서 맵의 기반을 만듦
 
-	CEngine::GetInst()->OnDebugLog();
+	//CEngine::GetInst()->OnDebugLog();
 	m_IsGenerateWorldEnd = false;
 
 	for (int x = 0; x < m_pRandomMap->m_MapSizeX; ++x)
@@ -182,6 +182,32 @@ void CMapGenerator::CellularAutomata()
 
 		--RandomTileCount;
 	}
+
+	//CTileFinder::GetInst();
+
+	// Smooth Map
+
+
+	//for (int x = 0; x < MapSizeX; ++x)
+	//{
+	//	for (int y = 0; y < MapSizeY; ++y)
+	//	{
+	//		
+	//		int NearSeaCount = CheckNearSeaTile8(x, y);
+
+	//		if (NearSeaCount > 4)
+	//		{
+	//			// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+	//			ChangeTileImage(Vector2(x, y), TILE_STATE::SEA);
+	//		}
+
+	//		else if (NearSeaCount < 4)
+	//		{
+	//			// 해당 부분의 타일만 UV좌표를 변경 (땅으로 변경)
+	//			ChangeTileImage(Vector2(x, y), TILE_STATE::LAND);
+	//		}
+	//	}
+	//}
 }
 
 void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)

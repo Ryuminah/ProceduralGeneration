@@ -19,11 +19,12 @@ private:
 	float		m_AccTime;
 	CSharedPtr<CMouseWidget>	m_MouseWidget;
 	bool		m_Start;
+	bool		m_Editor;
 
 public:
-	CTimer* GetTimer()
+	void SetEditor(bool Editor)
 	{
-		return m_pTimer;
+		m_Editor = Editor;
 	}
 
 	void SetResolution(int Width, int Height)

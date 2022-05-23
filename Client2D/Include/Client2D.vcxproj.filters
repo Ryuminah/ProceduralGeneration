@@ -203,6 +203,9 @@
     <ClInclude Include="MapGenerator\TileFinder.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="MapGenerator\MapEnum.h">
+      <Filter>MapGenerator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client2D.rc">

@@ -11,6 +11,7 @@
 #include "Scene/Viewport.h"
 #include "../Object/MainMap.h"
 #include "../MapGenerator/RandomMap.h"
+#include "../MapGenerator/MapEnum.h"
 #include "../Object/ImageObject.h"
 
 

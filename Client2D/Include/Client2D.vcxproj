@@ -194,6 +194,7 @@
     <ClInclude Include="Animation2D\PlayerAnimation2D.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="MapGenerator\IMapGenerator.h" />
+    <ClInclude Include="MapGenerator\MapEnum.h" />
     <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="MapGenerator\MapGeneratorManager.h" />
     <ClInclude Include="MapGenerator\RandomMap.h" />

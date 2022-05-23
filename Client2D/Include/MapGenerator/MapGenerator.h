@@ -1,6 +1,5 @@
 #pragma once
-#include <GameEngine.h>
-#include "../MapGenerator/IMapGenerator.h"
+#include "IMapGenerator.h"
 
 class CMapGenerator :
     public IMapGenerator
@@ -14,7 +13,6 @@ public:
 private:
 	// 어떤 맵의 Generator인지 저장
 	class CRandomMap* m_pRandomMap;
-
 
 private:
 	// 맵 생성기에 이게 있어야하나 ,, , ,?

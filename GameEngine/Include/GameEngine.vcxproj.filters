@@ -656,9 +656,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine.cpp">
-      <Filter>01. Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Device.cpp">
       <Filter>01. Engine\01. Device</Filter>
     </ClCompile>
@@ -1036,6 +1033,9 @@
     </ClCompile>
     <ClCompile Include="ThreadNavigation.cpp">
       <Filter>01. Engine\10. Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>01. Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
