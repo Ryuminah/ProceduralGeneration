@@ -3,7 +3,7 @@
 #include "MapGenerator.h"
 #include "RandomMap.h"
 
-//DEFINITION_SINGLE(CTileFinder)
+DEFINITION_SINGLE(CTileFinder)
 
 CTileFinder::CTileFinder()
 {
@@ -65,6 +65,13 @@ int CTileFinder::Check_NearTileState4(int indexX, int indexY, TILE_STATE checkTi
 	return tileCount;
 }
 
+int CTileFinder::Check_NearTileState4(Vector2 Index, TILE_STATE checkTileState, CMapGenerator* pCurrentMapGenerator)
+{
+	int result = Check_NearTileState4((int)Index.x, (int)Index.x, checkTileState, pCurrentMapGenerator);
+
+	return result;
+}
+
 bool CTileFinder::Check_TileState(int indexX, int indexY, TILE_STATE checkTileState, CMapGenerator* pCurrentMapGenerator)
 {
 	bool result = false;
@@ -75,7 +82,7 @@ bool CTileFinder::Check_TileState(int indexX, int indexY, TILE_STATE checkTileSt
 	// 맵 범위 이내에서
 	if (indexX >= 0 && indexX < MapSizeX &&
 		indexY >= 0 && indexY < MapSizeY &&
-		pCurrentMapGenerator->m_TileData[indexX][indexY] == checkTileState)
+		pCurrentMapGenerator->m_pRandomMap->m_TileData[indexX][indexY] == checkTileState)
 	{
 		result = true;
 	}
@@ -137,5 +144,12 @@ std::vector<Vector2> CTileFinder::GetNearTileState4(int indexX, int indexY, TILE
 	}
 
 	return vecTileIndex;
+}
+
+std::vector<Vector2> CTileFinder::GetNearTileState4(Vector2 Index, TILE_STATE checkTileState, CMapGenerator* pCurrentMapGenerator)
+{
+	std::vector<Vector2> result = GetNearTileState4((int)Index.x, (int)Index.x, checkTileState, pCurrentMapGenerator);
+
+	return result;
 }
 

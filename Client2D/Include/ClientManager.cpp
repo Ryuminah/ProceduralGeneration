@@ -37,6 +37,8 @@ bool CClientManager::Init()
     CInput::GetInst()->CreateKey("Enter", VK_RETURN);
     CInput::GetInst()->CreateKey("1", '1');
     CInput::GetInst()->CreateKey("2", '2');
+    CInput::GetInst()->CreateKey("3", '3');
+
 
 
 

@@ -30,3 +30,17 @@ CMapGenerator* CMapGeneratorManager::FindMapGenerator(const std::string& Name)
 
     return iter->second;
 }
+
+bool CMapGeneratorManager::ChangeMapGenerator(const std::string& Name)
+{
+    bool result = false;
+
+	m_pCurrentMapGenerator = FindMapGenerator(Name);
+
+    if (m_pCurrentMapGenerator)
+    {
+        result = true;
+    }
+
+    return result;
+}

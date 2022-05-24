@@ -43,6 +43,9 @@ private:
 	int m_MapSizeY;
 
 	std::vector<std::vector<int>> m_TileData;
+
+	// 이거 List로 변경하거나 ,,,,
+	// 정말 상태가 확정되었을때만 저장하거나.. . ..
 	std::map<TILE_STATE, std::vector<Vector2>> m_AllTileStateData;
 
 	// 바다인 타일과 땅인 타일 등을 따로 저장해놓는다.
@@ -65,6 +68,7 @@ private:
 	void RandomSaveLogic(); 
 	void TestRandomLogic(); // 테스트용 코드 렉걸려 쓰지마
 
+	void CreateForest(float DeltaTime);
 	void SmoothMap(float DeltaTime);
 	void Clear(float DeltaTime);
 	void SetOnlyLand(float DeltaTime);
@@ -78,14 +82,17 @@ private:
 	void PickRandom();
 	
 public:
-	void ChangeTileImage(Vector2 tileIndex, TILE_STATE tileState);
+	bool ChangeTileImage(Vector2 tileIndex, TILE_STATE tileState);
 	int CheckNearSeaTile8(int indexX, int indexY);
 	int CheckNearSeaTile4(int indexX, int indexY);
 
 	// 인자로 들어간 TileState가 4방향중 몇개나 존재하는지
 	int CheckNearTileState4(int indexX, int indexY, TILE_STATE checkTileState);
-	bool CheckNearTileState4(Vector2 index, TILE_STATE checkTileState);
+	int CheckNearTileState4(Vector2 index, TILE_STATE checkTileState);
+
+	//bool CheckNearTileState4(Vector2 index, TILE_STATE checkTileState);
 	int CheckNearTileState(int indexX, int indexY, TILE_STATE checkTileState);
 
+	
 };
 

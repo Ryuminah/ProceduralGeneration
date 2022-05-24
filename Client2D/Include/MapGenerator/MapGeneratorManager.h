@@ -9,6 +9,7 @@ private:
 
 public :
     class CMapGenerator* FindMapGenerator(const std::string& Name);
+    bool ChangeMapGenerator(const std::string& Name);
 
 public:
     // 실제 RandomMap 객체를 생성할때만 맵 생성기를 제작할 수 있음.

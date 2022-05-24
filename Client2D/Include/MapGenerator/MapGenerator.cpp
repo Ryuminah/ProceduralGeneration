@@ -16,11 +16,6 @@ CMapGenerator::~CMapGenerator()
 
 }
 
-bool CMapGenerator::Init()
-{
-	return true;
-}
-
 bool CMapGenerator::Init(CRandomMap* pRandomMap)
 {
 	if (!m_pRandomMap)
@@ -39,7 +34,6 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	return true;
 }
 
-// virtual
 void CMapGenerator::GenerateWorld(TILE_STATE _tileState)
 {
 	switch (_tileState)
@@ -183,31 +177,33 @@ void CMapGenerator::CellularAutomata()
 		--RandomTileCount;
 	}
 
-	//CTileFinder::GetInst();
+	//Smooth Map
+	CTileFinder* TileFinder = CTileFinder::GetInst();
 
-	// Smooth Map
+	for (int i = 0; i < 5; i++)
+	{
+		for (int x = 0; x < MapSizeX; ++x)
+		{
+			for (int y = 0; y < MapSizeY; ++y)
+			{
 
+				int NearSeaCount = TileFinder->Check_NearTileState4(x, y, TILE_STATE::SEA, this);
 
-	//for (int x = 0; x < MapSizeX; ++x)
-	//{
-	//	for (int y = 0; y < MapSizeY; ++y)
-	//	{
-	//		
-	//		int NearSeaCount = CheckNearSeaTile8(x, y);
+				if (NearSeaCount > 4)
+				{
+					// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+					ChangeTileState(Vector2(x, y), TILE_STATE::SEA);
+				}
 
-	//		if (NearSeaCount > 4)
-	//		{
-	//			// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-	//			ChangeTileImage(Vector2(x, y), TILE_STATE::SEA);
-	//		}
-
-	//		else if (NearSeaCount < 4)
-	//		{
-	//			// 해당 부분의 타일만 UV좌표를 변경 (땅으로 변경)
-	//			ChangeTileImage(Vector2(x, y), TILE_STATE::LAND);
-	//		}
-	//	}
-	//}
+				else if (NearSeaCount < 4)
+				{
+					// 해당 부분의 타일만 UV좌표를 변경 (땅으로 변경)
+					ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
+				}
+			}
+		}
+	}
+	
 }
 
 void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)

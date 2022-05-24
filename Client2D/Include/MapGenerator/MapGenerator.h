@@ -15,7 +15,6 @@ private:
 	class CRandomMap* m_pRandomMap;
 
 private:
-	// 맵 생성기에 이게 있어야하나 ,, , ,?
 	bool m_IsGenerateWorldEnd;
 
 	// 각 타일들을 LAND_STATE별로 분류해놓음
@@ -23,8 +22,6 @@ private:
 	std::vector<std::vector<TILE_STATE>> m_TileData;
 
 public:
-	// 곧 없어질 녀석 ,,,
-	bool Init();
 	bool Init(class CRandomMap* pRandomMap);
 
 
@@ -42,6 +39,9 @@ public:
 
 private:
 	void CellularAutomata();
+
+
+
 	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);
 
 };

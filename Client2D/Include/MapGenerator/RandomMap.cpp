@@ -3,6 +3,7 @@
 #include <set>
 #include <map>
 #include "MapGenerator.h"
+#include "TileFinder.h"
 #include "MapGeneratorManager.h"
 #include "RandomMap.h"
 #include "Scene/Scene.h"
@@ -60,7 +61,7 @@ bool CRandomMap::Init()
 	m_MapGenerator = CMapGeneratorManager::GetInst()->CreateMapGenerator<CMapGenerator>("RandomMap", this);
 	
 	m_MapComponent->SetMaterial(0, "Tile_16px");
-	m_MapComponent->SetFrameMax(4, 1);
+	m_MapComponent->SetFrameMax(6, 1);
 	m_MapComponent->SetTileDefaultFrame(0, 0);
 	m_MapComponent->SetPivot(0.f, 0.f, 0.f);
 	m_MapComponent->SetRelativePos(0.f, 0.f, 0.1f);
@@ -69,7 +70,10 @@ bool CRandomMap::Init()
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("Space", KT_Down, this, &CRandomMap::SmoothMap);
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("1", KT_Down, this, &CRandomMap::Clear);
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("2", KT_Down, this, &CRandomMap::SetOnlyLand);
+	CInput::GetInst()->AddKeyCallback<CRandomMap>("3", KT_Down, this, &CRandomMap::CreateForest);
+
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("Enter", KT_Down, this, &CRandomMap::SetGenerateFinished);
+
 
 	return true;
 }
@@ -119,7 +123,6 @@ void CRandomMap::GenerateMapBase()
 	clock_t start = clock(); // 시작 시간 저장
 	
 	IndexRandomLogic();
-	//TestRandomLogic();
 	
 	// 이건 진짜 생각이 안나는군 ㄱㅡ
 	//RandomSaveLogic();		
@@ -179,6 +182,8 @@ void CRandomMap::SetOnlyLand(float DeltaTime)
 				if (NearSeaCount <= 4)
 				{
 					ChangeTileImage(Vector2(x,y), TILE_STATE::LAND);
+					//m_AllTileStateData[TILE_STATE::LAND].push_back(Vector2(x, y));
+
 				}
 			}
 		}
@@ -209,9 +214,8 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 		}
 	}
 
-	m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::SEA, vecSeaTile));
-	m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::LAND, vecLandTile));
-
+	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::SEA, vecSeaTile));
+	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::LAND, vecLandTile));
 	m_IsGenerateFinished = true;
 	
 	// Land 중 강가에 있는 타일 체크 후 모래로 한번 바꿈.
@@ -223,85 +227,19 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 		if (NearSeaCount > 0)
 		{
 			ChangeTileImage(Index, TILE_STATE::COAST);
-			m_TileData[Index.x][Index.y] = TILE_STATE::COAST;
+
+			//m_TileData[Index.x][Index.y] = TILE_STATE::COAST;
+
 			vecCoastTile.push_back(Index);
 		}
 	}
 
-	m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
+	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
 	int keyIndex = 0;
 	std::map<int, Vector2> mapRandomSandTile;
 
+
 	CreateCoast(vecCoastTile);
-
-	//keyIndex = 0;
-	//mapRandomSandTile.clear();
-
-	//// 한번 더 반복 (이거 야매코드 수정하기..)
-	//for (size_t i = 0; i < vecCoastTile.size(); ++i)
-	//{
-	//	Vector2 currentSandTile = vecCoastTile[i];
-
-	//	for (int nearX = currentSandTile.x - 1; nearX <= currentSandTile.x + 1; ++nearX)
-	//	{
-	//		if (nearX == currentSandTile.x)
-	//		{
-	//			continue;
-	//		}
-
-	//		// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
-	//		if ((nearX >= 0 && nearX < m_MapSizeX) &&
-	//			m_TileData[nearX][currentSandTile.y])
-	//		{
-	//			m_TileData[nearX][currentSandTile.y] != LAND_STATE::COAST;
-	//			mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(nearX, currentSandTile.y)));
-
-	//			++keyIndex;
-	//		}
-	//	}
-
-	//	for (int nearY = currentSandTile.y - 1; nearY <= currentSandTile.y + 1; nearY++)
-	//	{
-	//		if (nearY == currentSandTile.y)
-	//		{
-	//			continue;
-	//		}
-
-	//		// 맵 범위 체크
-	//		if ((nearY >= 0 && nearY < m_MapSizeY) &&
-	//			m_TileData[currentSandTile.x][nearY])
-	//		{
-	//			m_TileData[currentSandTile.x][nearY] != LAND_STATE::COAST;
-	//			mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(currentSandTile.x, nearY)));
-	//			++keyIndex;
-	//		}
-	//	}
-	//}
-
-	//// 랜덤으로 뽑아서 . .. . . 샌드 타일 만들기
-
-	//RandomTileCount = mapRandomSandTile.size() * 0.5f;
-	//RandomSeed = 0;
-
-	//while (RandomTileCount)
-	//{
-	//	// seed값을 이용하여 타일을 랜덤한 위치에 생성
-	//	// 남은 타일의 갯수 중 인덱스 선정
-	//	std::uniform_int_distribution<int> dist(0, mapRandomSandTile.size());
-	//	RandomSeed = dist(randomDevice);
-
-	//	Vector2 TileIndex = mapRandomSandTile[RandomSeed];
-
-	//	// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-	//	ChangeTileImage(TileIndex, LAND_STATE::COAST);
-
-	//	// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
-	//	auto iterEnd = mapRandomSandTile.end();
-	//	mapRandomSandTile[RandomSeed] = (--iterEnd)->second;
-	//	mapRandomSandTile.erase(iterEnd);
-
-	//	--RandomTileCount;
-	//}
 
 }
 
@@ -367,9 +305,8 @@ void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 
 		Vector2 TileIndex = mapRandomSandTile[RandomSeed];
 
-		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
 		ChangeTileImage(TileIndex, TILE_STATE::COAST);
-		m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
+		//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
 		vecCoastTile.push_back(TileIndex);
 
 		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
@@ -379,6 +316,8 @@ void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 
 		--RandomTileCount;
 	}
+
+	m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
 }
 
 
@@ -550,6 +489,43 @@ void CRandomMap::TestRandomLogic()
 	}
 }
 
+void CRandomMap::CreateForest(float DeltaTime)
+{
+	int Index = 0;
+
+	int randomCount = 2;
+	int forestX = (rand() % 15) + 7;
+	int forestY = (rand() % 16) +8;
+
+	
+	Vector2 forestStart;
+	int startIndex = rand() % m_AllTileStateData[TILE_STATE::LAND].size();
+	forestStart = m_AllTileStateData[TILE_STATE::LAND][startIndex];
+
+
+	Vector2 forestEnd;
+	forestEnd.x = forestStart.x + forestX;
+	forestEnd.y = forestStart.y + forestY;
+
+	std::vector<Vector2> vecForestTile;
+	for (int x = forestStart.x; x < forestEnd.x; ++x)
+	{
+		for (int y = forestStart.y; y < forestEnd.y; ++y)
+		{
+			if (x >= 0 && x < m_MapSizeX &&
+				y >= 0 && y < m_MapSizeY &&
+				m_TileData[x][y] == TILE_STATE::LAND)
+			{
+				vecForestTile.push_back(Vector2(x, y));
+				ChangeTileImage(Vector2(x, y), TILE_STATE::FOREST);
+			}
+
+		}
+	}
+
+	m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::FOREST, vecForestTile));
+}
+
 void CRandomMap::SmoothMap(float DeltaTime)
 {
 	if (m_IsGenerateFinished)
@@ -600,13 +576,23 @@ void CRandomMap::PickRandom()
 
 }
 
-void CRandomMap::ChangeTileImage(Vector2 tileIndex, TILE_STATE tileState)
+bool CRandomMap::ChangeTileImage(Vector2 tileIndex, TILE_STATE tileState)
 {
-	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
+	bool result = false;
 
 	CTile* pTile = m_MapComponent->GetTile(tileIndex * TILE_SIZE_SMALL);
-	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
-	pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
+	if (pTile)
+	{
+		pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
+		pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
+
+		m_TileData[tileIndex.x][tileIndex.y] = tileState;
+		m_AllTileStateData[tileState].push_back(tileIndex);
+
+		result = true;
+	}
+
+	return result;
 }
 
 
@@ -675,17 +661,17 @@ int CRandomMap::CheckNearSeaTile4(int indexX, int indexY)
 	return wallCount;
 }
 
-bool CRandomMap::CheckNearTileState4(Vector2 index, TILE_STATE checkTileState)
-{
-	bool result = false;
-
-	if (m_TileData[index.x][index.y] == checkTileState)
-	{
-		result = true;
-	}
-
-	return result;
-}
+//bool CRandomMap::CheckNearTileState4(Vector2 index, TILE_STATE checkTileState)
+//{
+//	bool result = false;
+//
+//	if (m_TileData[index.x][index.y] == checkTileState)
+//	{
+//		result = true;
+//	}
+//
+//	return result;
+//}
 
 int CRandomMap::CheckNearTileState4(int indexX, int indexY, TILE_STATE checkTileState)
 {
@@ -723,6 +709,13 @@ int CRandomMap::CheckNearTileState4(int indexX, int indexY, TILE_STATE checkTile
 
 	return tileCount;
 }
+
+int CRandomMap::CheckNearTileState4(Vector2 index, TILE_STATE checkTileState)
+{
+	return CheckNearTileState4((int)index.x ,(int)index.y ,checkTileState);
+}
+
+
 
 int CRandomMap::CheckNearTileState(int indexX, int indexY, TILE_STATE checkTileState)
 {
