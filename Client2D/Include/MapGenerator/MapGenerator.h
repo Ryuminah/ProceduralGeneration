@@ -11,14 +11,18 @@ public:
 	virtual ~CMapGenerator();
 
 private:
-	// 어떤 맵의 Generator인지 저장
-	class CRandomMap* m_pRandomMap;
+	class CRandomMap*	m_pRandomMap;
+	class CTileFinder*	m_pTileFinder;
 
 private:
+	int m_MapSizeX;
+	int m_MapSizeY;
 	bool m_IsGenerateWorldEnd;
 
 	// 각 타일들을 LAND_STATE별로 분류해놓음
 	std::map<TILE_STATE, std::vector<Vector2>> m_AllTileStateData;
+
+	// 2차원배열로 저장하는거 맞냐 ㅠ
 	std::vector<std::vector<TILE_STATE>> m_TileData;
 
 public:
@@ -37,12 +41,36 @@ public:
 	void GenerateLake();
 	void GenerateForest();
 
+///////////////////////////////////// Private /////////////////////////////////////
 private:
 	void CellularAutomata();
-
-
-
 	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);
+	void ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState);
+
+
+///////////////////////////////////// Get, Set /////////////////////////////////////
+
+public:
+	int GetMapSizeX()
+	{
+		return m_MapSizeX;
+	}
+
+	int GetMapSizeY()
+	{
+		return m_MapSizeY;
+	}
+
+	Vector2 GetMapSize()
+	{
+		return Vector2(m_MapSizeX, m_MapSizeY);
+	}
+
+	std::vector<std::vector<TILE_STATE>> GetTileData()
+	{
+		return m_TileData;
+	}
+		
 
 };
 

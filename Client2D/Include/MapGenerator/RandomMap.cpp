@@ -14,7 +14,7 @@
 #include "Input.h"
 
 CRandomMap::CRandomMap() : m_MapSizeX(50), m_MapSizeY(50),
-	m_IsGenerateFinished(false)
+	m_IsGenerateFinished(false),m_MapGenerator(nullptr)
 {
 }
 

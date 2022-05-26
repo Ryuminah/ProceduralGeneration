@@ -7,7 +7,8 @@
 #include "Timer.h"
 #include "Input.h"
 
-CMapGenerator::CMapGenerator() : m_IsGenerateWorldEnd(false), m_pRandomMap(nullptr)
+CMapGenerator::CMapGenerator() : m_IsGenerateWorldEnd(false), m_pRandomMap(nullptr),
+								m_MapSizeX(40), m_MapSizeY(40)
 {
 }
 
@@ -23,13 +24,16 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 		m_pRandomMap = pRandomMap;
 	}
 
-	// CMapGenerator에서 RandomMap 객체의 맵을 생성해준다.
+	// CMapGenerator에서 RandomMap 객체의 맵을 생성해준다. (엔진 뜯어고칠 시간이 없어서 ㅠ)
 	CTileMapComponent* pMapComponent = m_pRandomMap->CreateSceneComponent<CTileMapComponent>("RandomMap");
 	m_pRandomMap->m_MapComponent = pMapComponent;
 	m_pRandomMap->SetRootComponent(pMapComponent);
 
 	// Tile들을 생성한다.
 	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_pRandomMap->m_MapSizeX, m_pRandomMap->m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
+
+	//CTileFinder* pTileFinder(this);
+	//m_pTileFinder = pTileFinder
 
 	return true;
 }
@@ -80,7 +84,8 @@ void CMapGenerator::GenerateBase()
 	// 기본 맵 생성 로직
 	// 시드값을 이용해서 맵의 기반을 만듦
 
-	//CEngine::GetInst()->OnDebugLog();
+	CEngine::GetInst()->OnDebugLog();
+
 	m_IsGenerateWorldEnd = false;
 
 	for (int x = 0; x < m_pRandomMap->m_MapSizeX; ++x)
@@ -104,6 +109,8 @@ void CMapGenerator::GenerateBase()
 	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
 	char buffer[BUFSIZ];
 	sprintf_s(buffer, "%f", clockTime);
+	CEngine::GetInst()->AddDebugLog(buffer);
+
 }
 
 void CMapGenerator::GenerateLand()
@@ -178,8 +185,6 @@ void CMapGenerator::CellularAutomata()
 	}
 
 	//Smooth Map
-	CTileFinder* TileFinder = CTileFinder::GetInst();
-
 	for (int i = 0; i < 5; i++)
 	{
 		for (int x = 0; x < MapSizeX; ++x)
@@ -187,7 +192,7 @@ void CMapGenerator::CellularAutomata()
 			for (int y = 0; y < MapSizeY; ++y)
 			{
 
-				int NearSeaCount = TileFinder->Check_NearTileState4(x, y, TILE_STATE::SEA, this);
+				int NearSeaCount = m_pTileFinder->Check_NearTileState4(x, y, TILE_STATE::SEA);
 
 				if (NearSeaCount > 4)
 				{
@@ -213,4 +218,12 @@ void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
 	CTile* pTile = m_pRandomMap->m_MapComponent->GetTile(tileIndex * TILE_SIZE_SMALL);
 	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
 	pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
+
+	// 타일의 상태가 변경 되었을 때 정보를 저장한다
+	ChangeTileState(tileIndex, tileState);
+}
+
+void CMapGenerator::ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState)
+{
+	// 데이터가 있는지 없는지 확인 후, 이미 있는 데이터라면 바뀐 정보로 갱신한다.
 }

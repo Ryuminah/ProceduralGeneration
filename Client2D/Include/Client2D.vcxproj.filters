@@ -31,11 +31,14 @@
     <Filter Include="03. Animation2D\Image">
       <UniqueIdentifier>{b5e73618-8a3d-4c20-9a1d-67077e85976e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MapGenerator">
+    <Filter Include="ProceduralGeneration">
       <UniqueIdentifier>{12f688f8-10d9-434f-936e-a7661d0f563d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MapGenerator\Object">
+    <Filter Include="ProceduralGeneration\Object">
       <UniqueIdentifier>{46a7e390-2120-4367-9ad8-591ece5e5cd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ProceduralGeneration\MapGenerator">
+      <UniqueIdentifier>{07de62fb-7d92-4545-bfa7-9ab639bff1a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -105,20 +108,20 @@
     <ClCompile Include="Animation2D\Anim_Image.cpp">
       <Filter>03. Animation2D\Image</Filter>
     </ClCompile>
-    <ClCompile Include="MapGenerator\MapGenerator.cpp">
-      <Filter>MapGenerator</Filter>
-    </ClCompile>
-    <ClCompile Include="MapGenerator\IMapGenerator.cpp">
-      <Filter>MapGenerator</Filter>
-    </ClCompile>
     <ClCompile Include="MapGenerator\RandomMap.cpp">
-      <Filter>MapGenerator\Object</Filter>
+      <Filter>ProceduralGeneration\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\MapGenerator.cpp">
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClCompile>
     <ClCompile Include="MapGenerator\MapGeneratorManager.cpp">
-      <Filter>MapGenerator</Filter>
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClCompile>
     <ClCompile Include="MapGenerator\TileFinder.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\IMapGenerator.cpp">
+      <Filter>ProceduralGeneration\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,23 +191,23 @@
     <ClInclude Include="Animation2D\Anim_Image.h">
       <Filter>03. Animation2D\Image</Filter>
     </ClInclude>
-    <ClInclude Include="MapGenerator\MapGenerator.h">
-      <Filter>MapGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="MapGenerator\IMapGenerator.h">
-      <Filter>MapGenerator</Filter>
-    </ClInclude>
     <ClInclude Include="MapGenerator\RandomMap.h">
-      <Filter>MapGenerator\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="MapGenerator\MapGeneratorManager.h">
-      <Filter>MapGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="MapGenerator\TileFinder.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>ProceduralGeneration\Object</Filter>
     </ClInclude>
     <ClInclude Include="MapGenerator\MapEnum.h">
-      <Filter>MapGenerator</Filter>
+      <Filter>ProceduralGeneration</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\MapGenerator.h">
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\MapGeneratorManager.h">
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\TileFinder.h">
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\IMapGenerator.h">
+      <Filter>ProceduralGeneration\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
