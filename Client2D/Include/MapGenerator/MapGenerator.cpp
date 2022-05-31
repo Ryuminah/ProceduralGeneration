@@ -7,8 +7,12 @@
 #include "Timer.h"
 #include "Input.h"
 
-CMapGenerator::CMapGenerator() : m_IsGenerateWorldEnd(false), m_pRandomMap(nullptr),
-								m_MapSizeX(40), m_MapSizeY(40)
+CMapGenerator::CMapGenerator() : 
+	m_IsGenerateWorldEnd(false),
+	m_pRandomMap(nullptr),
+	m_pTileFinder(nullptr),
+	m_MapSizeX(50), m_MapSizeY(50), 
+	m_SeaEndLineX(2), m_SeaEndLineY(2)
 {
 }
 
@@ -85,14 +89,13 @@ void CMapGenerator::GenerateBase()
 	// 시드값을 이용해서 맵의 기반을 만듦
 
 	CEngine::GetInst()->OnDebugLog();
-
 	m_IsGenerateWorldEnd = false;
 
-	for (int x = 0; x < m_pRandomMap->m_MapSizeX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
 		std::vector<TILE_STATE> tileData;
 
-		for (int y = 0; y < m_pRandomMap->m_MapSizeY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			tileData.push_back(TILE_STATE::LAND);
 		}
@@ -115,17 +118,22 @@ void CMapGenerator::GenerateBase()
 
 void CMapGenerator::GenerateLand()
 {
-	// Land 옵션 추가... 어떻게 ㄱㅡ...
+	// 1. 호수 없이 전부 땅으로 메움
+	// 옵션을 전부 멤버 변수로. . . 추가 .. .
+
+	// 물타일의 주변 타일이 땅이면 땅으로 채운다..
+
 }
 
 void CMapGenerator::GenerateSea()
 {
-	
+	// 이 옵션은 나중에 섬 생성 옵션으로 변경
 }
 
 void CMapGenerator::GenerateCoast()
 {
-	// 해안가 생성 코드
+	// 생성된 땅을 기반으로 해안가 생성
+
 }
 
 void CMapGenerator::GenerateLake()
@@ -147,26 +155,22 @@ void CMapGenerator::CellularAutomata()
 	std::unordered_map<int, Vector2> MapIndex;
 	int Index = 0;
 
-	int MapSizeX = m_pRandomMap->m_MapSizeX;
-	int MapSizeY = m_pRandomMap->m_MapSizeY;
-
-	for (int x = 0; x < MapSizeX; ++x)
+	for (int x = 0; x < m_MapSizeX; ++x)
 	{
-		for (int y = 0; y < MapSizeY; ++y)
+		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			MapIndex[Index] = Vector2((float)x, (float)y);
 			++Index;
 		}
 	}
 
-	int RandomTileCount = (MapSizeX * MapSizeY) * 0.42f;
+	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.42f;
 	int RandomSeed = 0;
 
 	while (RandomTileCount)
 	{
 		// seed값을 이용하여 타일을 랜덤한 위치에 생성
 		// 남은 타일의 갯수 중 인덱스 선정
-		//RandomSeed = rand() % RandomIndex.size();
 		std::uniform_int_distribution<int> dist(0, MapIndex.size());
 		RandomSeed = dist(randomDevice);
 
@@ -184,12 +188,13 @@ void CMapGenerator::CellularAutomata()
 		--RandomTileCount;
 	}
 
-	//Smooth Map
+	// Smooth Map
+	// 스무딩 강도를 정할 수 있게 한다. Min / Normal /Max
 	for (int i = 0; i < 5; i++)
 	{
-		for (int x = 0; x < MapSizeX; ++x)
+		for (int x = 0; x < m_MapSizeX; ++x)
 		{
-			for (int y = 0; y < MapSizeY; ++y)
+			for (int y = 0; y < m_MapSizeY; ++y)
 			{
 
 				int NearSeaCount = m_pTileFinder->Check_NearTileState4(x, y, TILE_STATE::SEA);
@@ -225,5 +230,11 @@ void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
 
 void CMapGenerator::ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState)
 {
+	if (tileIndex.x >= 0 && tileIndex.x < m_MapSizeX &&
+		tileIndex.y >= 0 && tileIndex.y < m_MapSizeY)
+	{
+		return;
+	}
+
 	// 데이터가 있는지 없는지 확인 후, 이미 있는 데이터라면 바뀐 정보로 갱신한다.
 }

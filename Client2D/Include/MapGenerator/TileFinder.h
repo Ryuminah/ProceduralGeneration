@@ -31,7 +31,5 @@ private:
 	std::vector<Vector2> GetNearTileState4(int indexX, int indexY, TILE_STATE checkTileState);
 	std::vector<Vector2> GetNearTileState4(Vector2 Index, TILE_STATE checkTileState);
 
-
-	// ΩÃ±€≈Ê ±ª¿Ã ,, ?
 };
 

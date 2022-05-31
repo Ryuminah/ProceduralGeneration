@@ -13,14 +13,19 @@ public:
 private:
 	class CRandomMap*	m_pRandomMap;
 	class CTileFinder*	m_pTileFinder;
-
+	
 private:
 	int m_MapSizeX;
 	int m_MapSizeY;
 	bool m_IsGenerateWorldEnd;
 
+	int m_SeaEndLineX;
+	int m_SeaEndLineY;
+
+
 	// 각 타일들을 LAND_STATE별로 분류해놓음
-	std::map<TILE_STATE, std::vector<Vector2>> m_AllTileStateData;
+	// 월드 생성이 완료된 후 최종 타일 정보를 저장하는 자료구조임
+	std::map<TILE_STATE, std::vector<Vector2>> m_FinalTileStateData;
 
 	// 2차원배열로 저장하는거 맞냐 ㅠ
 	std::vector<std::vector<TILE_STATE>> m_TileData;
