@@ -1,8 +1,7 @@
-#include "TileFinder.h"
 #include "Scene/SceneResource.h"
+#include "TileFinder.h"
 #include "MapGenerator.h"
 #include "RandomMap.h"
-
 
 CTileFinder::CTileFinder() :m_pOwner(nullptr)
 {
@@ -101,6 +100,13 @@ bool CTileFinder::Check_TileState(int indexX, int indexY, TILE_STATE checkTileSt
 	return result;
 }
 
+bool CTileFinder::Check_TileState(Vector2 Index, TILE_STATE checkTileState)
+{
+	bool result = Check_TileState((int)Index.x, (int)Index.x, checkTileState);
+
+	return result;
+}
+
 std::vector<Vector2> CTileFinder::GetNearTileState8(int indexX, int indexY, TILE_STATE checkTileState)
 {
 	std::vector<Vector2> vecTileIndex;
@@ -160,6 +166,28 @@ std::vector<Vector2> CTileFinder::GetNearTileState4(int indexX, int indexY, TILE
 std::vector<Vector2> CTileFinder::GetNearTileState4(Vector2 Index, TILE_STATE checkTileState)
 {
 	std::vector<Vector2> result = GetNearTileState4((int)Index.x, (int)Index.x, checkTileState);
+
+	return result;
+}
+
+bool CTileFinder::Check_ExistTile(int indexX, int indexY)
+{
+	Vector2 index = Vector2(indexX, indexY);
+	bool result = Check_ExistTile(index);
+	
+	return result;
+}
+
+bool CTileFinder::Check_ExistTile(Vector2 tileIndex)
+{
+	bool result = true;
+	Vector2 MapSize = m_pOwner->GetMapSize();
+
+	if (tileIndex.x >= 0 && tileIndex.x < MapSize.x &&
+		tileIndex.y >= 0 && tileIndex.y < MapSize.y)
+	{
+		result = false;
+	}
 
 	return result;
 }

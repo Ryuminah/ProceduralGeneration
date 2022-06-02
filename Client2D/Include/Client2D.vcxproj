@@ -166,9 +166,11 @@
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapGenerator\IMapGenerator.cpp" />
+    <ClCompile Include="MapGenerator\AMapGeneratorOption.cpp" />
     <ClCompile Include="MapGenerator\MapGenerator.cpp" />
     <ClCompile Include="MapGenerator\MapGeneratorManager.cpp" />
     <ClCompile Include="MapGenerator\RandomMap.cpp" />
+    <ClCompile Include="MapGenerator\SmoothingOption.cpp" />
     <ClCompile Include="MapGenerator\TileFinder.cpp" />
     <ClCompile Include="Object\Bullet.cpp" />
     <ClCompile Include="Object\FlameEffect.cpp" />
@@ -194,10 +196,12 @@
     <ClInclude Include="Animation2D\PlayerAnimation2D.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="MapGenerator\IMapGenerator.h" />
+    <ClInclude Include="MapGenerator\AMapGeneratorOption.h" />
     <ClInclude Include="MapGenerator\MapEnum.h" />
     <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="MapGenerator\MapGeneratorManager.h" />
     <ClInclude Include="MapGenerator\RandomMap.h" />
+    <ClInclude Include="MapGenerator\SmoothingOption.h" />
     <ClInclude Include="MapGenerator\TileFinder.h" />
     <ClInclude Include="Object\Bullet.h" />
     <ClInclude Include="Object\FlameEffect.h" />

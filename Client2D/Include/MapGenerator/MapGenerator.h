@@ -13,7 +13,11 @@ public:
 private:
 	class CRandomMap*	m_pRandomMap;
 	class CTileFinder*	m_pTileFinder;
-	
+
+	// 옵션들을 전부 저장해놓고 (imgui에서 값 받아오기)
+	//해당 옵션 설정이 필요한 타이밍에 PerformOptionLevel 수행하긩
+	std::unordered_map<std::string , class AMapGeneratorOption*> m_mapOptions;
+
 private:
 	int m_MapSizeX;
 	int m_MapSizeY;
@@ -48,10 +52,19 @@ public:
 
 ///////////////////////////////////// Private /////////////////////////////////////
 private:
+	// Algorithm
 	void CellularAutomata();
+
+	// 옵션들도 각자의 기능을 가진 클래스로 빼야할지도
+	void PerformSmootingLevel(OPTION_LEVEL smoothingLevel);
+	void SmoothMap();
+	void CreateRandom();
+
+	// TileData
 	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);
 	void ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState);
 
+	// 랜덤 알고리즘 짱구좀 굴려서 함수화 시키기...
 
 ///////////////////////////////////// Get, Set /////////////////////////////////////
 

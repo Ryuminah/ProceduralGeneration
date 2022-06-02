@@ -40,6 +40,9 @@
     <Filter Include="ProceduralGeneration\MapGenerator">
       <UniqueIdentifier>{07de62fb-7d92-4545-bfa7-9ab639bff1a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ProceduralGeneration\MapGeneratorOption">
+      <UniqueIdentifier>{32ef4cf1-3260-4ed6-9e39-ededbdd9e55f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -121,7 +124,13 @@
       <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClCompile>
     <ClCompile Include="MapGenerator\IMapGenerator.cpp">
-      <Filter>ProceduralGeneration\Object</Filter>
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\AMapGeneratorOption.cpp">
+      <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\SmoothingOption.cpp">
+      <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -207,7 +216,13 @@
       <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClInclude>
     <ClInclude Include="MapGenerator\IMapGenerator.h">
-      <Filter>ProceduralGeneration\Object</Filter>
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\AMapGeneratorOption.h">
+      <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\SmoothingOption.h">
+      <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

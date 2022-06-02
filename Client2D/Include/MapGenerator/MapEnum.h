@@ -15,3 +15,11 @@ enum VEGETATION_STATE
 {
 
 };
+
+// 식생분포, 스무딩 강도 등 정할때 옵션
+enum class OPTION_LEVEL
+{
+	MIN,
+	NORMAL,
+	MAX
+};

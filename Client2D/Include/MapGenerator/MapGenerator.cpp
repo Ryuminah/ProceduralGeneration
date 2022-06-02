@@ -35,9 +35,7 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 
 	// Tile들을 생성한다.
 	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_pRandomMap->m_MapSizeX, m_pRandomMap->m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
-
-	//CTileFinder* pTileFinder(this);
-	//m_pTileFinder = pTileFinder
+	m_pTileFinder = &CTileFinder(this);		// 이거 동적?
 
 	return true;
 }
@@ -79,6 +77,7 @@ void CMapGenerator::GenerateVegetation(TILE_STATE _landState)
 
 	// 현재까지 생성된 타일 정보를 기반으로 
 	// 식생을 생성한다.
+	// 랜덤으로 갖다 때려박아버려 , , ,,
 }
 
 
@@ -133,7 +132,6 @@ void CMapGenerator::GenerateSea()
 void CMapGenerator::GenerateCoast()
 {
 	// 생성된 땅을 기반으로 해안가 생성
-
 }
 
 void CMapGenerator::GenerateLake()
@@ -174,7 +172,6 @@ void CMapGenerator::CellularAutomata()
 		std::uniform_int_distribution<int> dist(0, MapIndex.size());
 		RandomSeed = dist(randomDevice);
 
-		//Vector2 TileIndex = RandomIndex[RandomSeed];
 		Vector2 TileIndex = MapIndex[RandomSeed];
 
 		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
@@ -190,6 +187,8 @@ void CMapGenerator::CellularAutomata()
 
 	// Smooth Map
 	// 스무딩 강도를 정할 수 있게 한다. Min / Normal /Max
+	// 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 
+	
 	for (int i = 0; i < 5; i++)
 	{
 		for (int x = 0; x < m_MapSizeX; ++x)
@@ -216,25 +215,55 @@ void CMapGenerator::CellularAutomata()
 	
 }
 
+void CMapGenerator::SmoothMap()
+{
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			int NearSeaCount = m_pTileFinder->Check_NearTileState4(x, y, TILE_STATE::SEA);
+
+			if (NearSeaCount > 4)
+			{
+				// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+				ChangeTileState(Vector2(x, y), TILE_STATE::SEA);
+			}
+
+			else if (NearSeaCount < 4)
+			{
+				// 해당 부분의 타일만 UV좌표를 변경 (땅으로 변경)
+				ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
+			}
+		}
+	}
+
+	
+}
+
+
 void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
 {
-	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
+	if (!m_pTileFinder->Check_ExistTile(tileIndex))
+	{
+		return;
+	}
 
 	CTile* pTile = m_pRandomMap->m_MapComponent->GetTile(tileIndex * TILE_SIZE_SMALL);
 	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
 	pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
 
-	// 타일의 상태가 변경 되었을 때 정보를 저장한다
+	// 타일의 상태가 확실히 변경 되었을 때 정보를 저장한다
 	ChangeTileState(tileIndex, tileState);
 }
 
 void CMapGenerator::ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState)
 {
-	if (tileIndex.x >= 0 && tileIndex.x < m_MapSizeX &&
-		tileIndex.y >= 0 && tileIndex.y < m_MapSizeY)
-	{
-		return;
-	}
-
 	// 데이터가 있는지 없는지 확인 후, 이미 있는 데이터라면 바뀐 정보로 갱신한다.
+	// 데이터 추가...
+
+	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
+}
+
+void CMapGenerator::CreateRandom()
+{
 }
