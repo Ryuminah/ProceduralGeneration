@@ -314,7 +314,7 @@ void CEngine::Register(const TCHAR* pClass, int IconID, int SmallIconID)
 
 bool CEngine::Create(const TCHAR* pClass, const TCHAR* pTitle)
 {
-	m_hWnd = CreateWindow(pClass, pTitle, WS_OVERLAPPEDWINDOW, -1500, 0, m_RS.Width, m_RS.Height,
+	m_hWnd = CreateWindow(pClass, pTitle, WS_OVERLAPPEDWINDOW, 0, 0, m_RS.Width, m_RS.Height,
 		nullptr, nullptr, m_hInst, nullptr);
 
 	if (!m_hWnd)
@@ -323,7 +323,7 @@ bool CEngine::Create(const TCHAR* pClass, const TCHAR* pTitle)
 	RECT	rc = { 0, 0, m_RS.Width, m_RS.Height };
 
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	SetWindowPos(m_hWnd, HWND_TOPMOST, -1500, 0, rc.right - rc.left, rc.bottom - rc.top,
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, rc.right - rc.left, rc.bottom - rc.top,
 		SWP_NOZORDER | SWP_NOMOVE);
 
 	ShowWindow(m_hWnd, SW_SHOW);

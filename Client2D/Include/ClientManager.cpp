@@ -9,6 +9,8 @@
 #include "UI/MouseWidget.h"
 #include "Resource/ResourceManager.h"
 #include "MapGenerator/MapGeneratorManager.h"
+#include "MapGenerator/GenerateOptionManager.h"
+
 #include "SceneMode/StartScene.h"
 
 DEFINITION_SINGLE(CClientManager)
@@ -20,6 +22,7 @@ CClientManager::CClientManager()
 CClientManager::~CClientManager()
 {
    CMapGeneratorManager::DestroyInst();
+   CGenerateOptionManager::DestroyInst();
 }
 
 bool CClientManager::Init()
@@ -29,6 +32,8 @@ bool CClientManager::Init()
     if (!CMapGeneratorManager::GetInst()->Init())
 		return false;
 
+    CreateKey();
+    CreateCollision();
     // 마우스 거슬려서 없애버렷
     //CreateMouse();
 

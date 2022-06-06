@@ -1,4 +1,5 @@
 #pragma once
+#define TILE_STATE_SIZE 5
 
 enum TILE_STATE
 {

@@ -143,8 +143,6 @@ void CMapGenerator::GenerateLand()
 				if (NearSeaCount <= 4)
 				{
 					m_pTileFinder->Check_NearTileState8(x, y, TILE_STATE::LAND);
-					//m_AllTileStateData[TILE_STATE::LAND].push_back(Vector2(x, y));
-
 				}
 			}
 		}
@@ -160,6 +158,122 @@ void CMapGenerator::GenerateSea()
 void CMapGenerator::GenerateCoast()
 {
 	// 생성된 땅을 기반으로 해안가 생성
+
+	std::vector<Vector2> vecSeaTile;
+	std::vector<Vector2> vecLandTile;
+	std::vector<Vector2> vecCoastTile;
+
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			if (m_TileData[x][y] == TILE_STATE::SEA)
+			{
+				vecSeaTile.push_back(Vector2(x, y));
+			}
+
+			else
+			{
+				vecLandTile.push_back(Vector2(x, y));
+
+			}
+		}
+	}
+
+	// Land 중 강가에 있는 타일 체크 후 모래로 한번 바꿈.
+	for (size_t i = 0; i < vecLandTile.size(); ++i)
+	{
+		Vector2 Index = vecLandTile[i];
+		int NearSeaCount = m_pTileFinder->Check_NearTileState4(Index.x, Index.y, TILE_STATE::SEA);
+
+		if (NearSeaCount > 0)
+		{
+			//ChangeTileImage(Index, TILE_STATE::COAST);
+
+			//m_TileData[Index.x][Index.y] = TILE_STATE::COAST;
+
+			vecCoastTile.push_back(Index);
+		}
+	}
+
+	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
+	int keyIndex = 0;
+	std::map<int, Vector2> mapRandomSandTile;
+
+
+	int keyIndex = 0;
+	std::map<int, Vector2> mapRandomSandTile;
+
+	// 샌드 만들고 랜덤으로 ...
+	for (size_t i = 0; i < vecCoastTile.size(); ++i)
+	{
+		Vector2 currentSandTile = vecCoastTile[i];
+
+		for (int nearX = currentSandTile.x - 1; nearX <= currentSandTile.x + 1; ++nearX)
+		{
+			if (nearX == currentSandTile.x)
+			{
+				continue;
+			}
+
+			// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
+			if ((nearX >= 0 && nearX < m_MapSizeX) &&
+				m_TileData[nearX][currentSandTile.y])
+			{
+				m_TileData[nearX][currentSandTile.y] != TILE_STATE::COAST;
+				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(nearX, currentSandTile.y)));
+
+				++keyIndex;
+			}
+		}
+
+		for (int nearY = currentSandTile.y - 1; nearY <= currentSandTile.y + 1; nearY++)
+		{
+			if (nearY == currentSandTile.y)
+			{
+				continue;
+			}
+
+			// 맵 범위 체크
+			if ((nearY >= 0 && nearY < m_MapSizeY) &&
+				m_TileData[currentSandTile.x][nearY])
+			{
+				m_TileData[currentSandTile.x][nearY] != TILE_STATE::COAST;
+				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(currentSandTile.x, nearY)));
+				++keyIndex;
+			}
+		}
+	}
+
+	// 랜덤으로 뽑아서 . .. . . 샌드 타일 만들기
+	std::random_device randomDevice;
+	std::mt19937_64 gen(randomDevice());
+
+	int RandomTileCount = mapRandomSandTile.size() * 0.5f;
+	int RandomSeed = 0;
+
+	while (RandomTileCount)
+	{
+		// seed값을 이용하여 타일을 랜덤한 위치에 생성
+		// 남은 타일의 갯수 중 인덱스 선정
+		std::uniform_int_distribution<int> dist(0, mapRandomSandTile.size());
+		RandomSeed = dist(randomDevice);
+
+		Vector2 TileIndex = mapRandomSandTile[RandomSeed];
+
+		//ChangeTileImage(TileIndex, TILE_STATE::COAST);
+		//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
+		vecCoastTile.push_back(TileIndex);
+
+		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
+		auto iterEnd = mapRandomSandTile.end();
+		mapRandomSandTile[RandomSeed] = (--iterEnd)->second;
+		mapRandomSandTile.erase(iterEnd);
+
+		--RandomTileCount;
+	}
+
+	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
 }
 
 void CMapGenerator::GenerateLake()
@@ -269,6 +383,56 @@ void CMapGenerator::ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState)
 	// 데이터 추가...
 
 	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
+}
+
+void CMapGenerator::UpdateTileState()
+{
+	m_TileStateData.clear();
+
+	std::vector<Vector2> vecLandTile;
+	std::vector<Vector2> vecSeaTile;
+	std::vector<Vector2> vecCoastTile;
+	std::vector<Vector2> vecLakeTile;
+	std::vector<Vector2> vecForestTile;
+
+
+	// 전체 타일정보를 체크해서 저장
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			TILE_STATE currentTileState = m_TileData[x][y];
+			
+			switch (currentTileState)
+			{
+			case LAND:
+				vecLandTile.push_back(Vector2(x, y));
+				break;
+			case SEA:
+				vecSeaTile.push_back(Vector2(x, y));
+				break;
+			case COAST:
+				vecCoastTile.push_back(Vector2(x, y));
+				break;
+			case LAKE:
+				vecLakeTile.push_back(Vector2(x, y));
+				break;
+			case FOREST:
+				vecForestTile.push_back(Vector2(x, y));
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	std::vector<Vector2> allTileState[TILE_STATE_SIZE] = { vecLandTile ,vecSeaTile, vecCoastTile, vecLakeTile, vecForestTile };
+
+	for (int i = 0; i < TILE_STATE_SIZE; i++)
+	{
+		TILE_STATE tileState = static_cast<TILE_STATE>(i);
+		m_TileStateData.insert({ tileState , allTileState[i] });
+	}
 }
 
 void CMapGenerator::CreateRandom()

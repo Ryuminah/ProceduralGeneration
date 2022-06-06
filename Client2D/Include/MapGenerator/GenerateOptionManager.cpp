@@ -23,7 +23,6 @@ CGenerateOptionManager::~CGenerateOptionManager()
 bool CGenerateOptionManager::Init()
 {
     // ¾ÆÁ÷ ,,
-
     return true;
 }
 

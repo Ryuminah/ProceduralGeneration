@@ -209,9 +209,6 @@
     <ClInclude Include="MapGenerator\MapEnum.h">
       <Filter>ProceduralGeneration</Filter>
     </ClInclude>
-    <ClInclude Include="MapGenerator\MapGenerator.h">
-      <Filter>ProceduralGeneration\MapGenerator</Filter>
-    </ClInclude>
     <ClInclude Include="MapGenerator\MapGeneratorManager.h">
       <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClInclude>
@@ -229,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="MapGenerator\GenerateOptionManager.h">
       <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\MapGenerator.h">
+      <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
