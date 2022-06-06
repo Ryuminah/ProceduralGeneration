@@ -2,7 +2,7 @@
 #include "MapEnum.h"
 
 // ㄱㅡ 이거 안쓰는게 맞나
-class AMapGeneratorOption
+class AGenerateOption
 {
 protected:
 	OPTION_LEVEL m_OptionLevel;
@@ -10,8 +10,8 @@ protected:
 
 
 public:
-	AMapGeneratorOption();
-	virtual ~AMapGeneratorOption();
+	AGenerateOption();
+	virtual ~AGenerateOption();
 
 	// 이 함수 호출 시점 . . .. 
 	virtual void PerformOptionLevel();

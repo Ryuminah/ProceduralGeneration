@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "UI/MouseWidget.h"
 #include "Resource/ResourceManager.h"
+#include "MapGenerator/MapGeneratorManager.h"
 #include "SceneMode/StartScene.h"
 
 DEFINITION_SINGLE(CClientManager)
@@ -25,44 +26,8 @@ bool CClientManager::Init()
 {
     //CEngine::GetInst()->OnDebugLog();
     //CEngine::GetInst()->OnLogFPS(true);
-
-    // 키 등록
-    CInput::GetInst()->CreateKey("MoveUp", 'W');
-    CInput::GetInst()->CreateKey("MoveDown", 'S');
-    CInput::GetInst()->CreateKey("RotationZ", 'A');
-    CInput::GetInst()->CreateKey("RotationZInv", 'D');
-    CInput::GetInst()->CreateKey("MouseLButton", VK_LBUTTON);
-    CInput::GetInst()->CreateKey("MouseRButton", VK_RBUTTON);
-    CInput::GetInst()->CreateKey("Space", VK_SPACE);
-    CInput::GetInst()->CreateKey("Enter", VK_RETURN);
-    CInput::GetInst()->CreateKey("1", '1');
-    CInput::GetInst()->CreateKey("2", '2');
-    CInput::GetInst()->CreateKey("3", '3');
-
-
-
-
-    CCollisionManager::GetInst()->CreateChannel("PlayerAttack", Collision_Interaction::Block);
-    CCollisionManager::GetInst()->CreateChannel("MonsterAttack", Collision_Interaction::Block);
-
-    CCollisionManager::GetInst()->CreateProfile("PlayerAttack", Collision_Channel::Custom1);
-    CCollisionManager::GetInst()->CreateProfile("MonsterAttack", Collision_Channel::Custom2);
-
-    CCollisionManager::GetInst()->SetProfileChannelState("Player", Collision_Channel::Custom1,
-        Collision_Interaction::Ignore);
-    CCollisionManager::GetInst()->SetProfileChannelState("PlayerAttack", Collision_Channel::Custom1,
-        Collision_Interaction::Ignore);
-    CCollisionManager::GetInst()->SetProfileChannelState("MonsterAttack", Collision_Channel::Custom1,
-        Collision_Interaction::Ignore);
-
-    CCollisionManager::GetInst()->SetProfileChannelState("Monster", Collision_Channel::Custom2,
-        Collision_Interaction::Ignore);
-    CCollisionManager::GetInst()->SetProfileChannelState("PlayerAttack", Collision_Channel::Custom2,
-        Collision_Interaction::Ignore);
-    CCollisionManager::GetInst()->SetProfileChannelState("MonsterAttack", Collision_Channel::Custom2,
-        Collision_Interaction::Ignore);
-
-    CSceneManager::GetInst()->SetSceneMode<CMainScene>();
+    if (!CMapGeneratorManager::GetInst()->Init())
+		return false;
 
     // 마우스 거슬려서 없애버렷
     //CreateMouse();
@@ -106,4 +71,45 @@ void CClientManager::CreateMouse()
     CAnimation2D* MouseAnim = Mouse->GetAnimation2D();
 
     MouseAnim->AddAnimationSequence2D("MouseDefault");
+}
+
+void CClientManager::CreateKey()
+{
+    // 키 등록
+    CInput::GetInst()->CreateKey("MoveUp", 'W');
+    CInput::GetInst()->CreateKey("MoveDown", 'S');
+    CInput::GetInst()->CreateKey("RotationZ", 'A');
+    CInput::GetInst()->CreateKey("RotationZInv", 'D');
+    CInput::GetInst()->CreateKey("MouseLButton", VK_LBUTTON);
+    CInput::GetInst()->CreateKey("MouseRButton", VK_RBUTTON);
+    CInput::GetInst()->CreateKey("Space", VK_SPACE);
+    CInput::GetInst()->CreateKey("Enter", VK_RETURN);
+    CInput::GetInst()->CreateKey("1", '1');
+    CInput::GetInst()->CreateKey("2", '2');
+    CInput::GetInst()->CreateKey("3", '3');
+}
+
+void CClientManager::CreateCollision()
+{
+    CCollisionManager::GetInst()->CreateChannel("PlayerAttack", Collision_Interaction::Block);
+    CCollisionManager::GetInst()->CreateChannel("MonsterAttack", Collision_Interaction::Block);
+
+    CCollisionManager::GetInst()->CreateProfile("PlayerAttack", Collision_Channel::Custom1);
+    CCollisionManager::GetInst()->CreateProfile("MonsterAttack", Collision_Channel::Custom2);
+
+    CCollisionManager::GetInst()->SetProfileChannelState("Player", Collision_Channel::Custom1,
+        Collision_Interaction::Ignore);
+    CCollisionManager::GetInst()->SetProfileChannelState("PlayerAttack", Collision_Channel::Custom1,
+        Collision_Interaction::Ignore);
+    CCollisionManager::GetInst()->SetProfileChannelState("MonsterAttack", Collision_Channel::Custom1,
+        Collision_Interaction::Ignore);
+
+    CCollisionManager::GetInst()->SetProfileChannelState("Monster", Collision_Channel::Custom2,
+        Collision_Interaction::Ignore);
+    CCollisionManager::GetInst()->SetProfileChannelState("PlayerAttack", Collision_Channel::Custom2,
+        Collision_Interaction::Ignore);
+    CCollisionManager::GetInst()->SetProfileChannelState("MonsterAttack", Collision_Channel::Custom2,
+        Collision_Interaction::Ignore);
+
+    CSceneManager::GetInst()->SetSceneMode<CMainScene>();
 }

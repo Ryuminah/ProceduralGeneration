@@ -126,10 +126,13 @@
     <ClCompile Include="MapGenerator\IMapGenerator.cpp">
       <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClCompile>
-    <ClCompile Include="MapGenerator\AMapGeneratorOption.cpp">
+    <ClCompile Include="MapGenerator\AGenerateOption.cpp">
       <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
     </ClCompile>
     <ClCompile Include="MapGenerator\SmoothingOption.cpp">
+      <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator\GenerateOptionManager.cpp">
       <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
     </ClCompile>
   </ItemGroup>
@@ -218,10 +221,13 @@
     <ClInclude Include="MapGenerator\IMapGenerator.h">
       <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClInclude>
-    <ClInclude Include="MapGenerator\AMapGeneratorOption.h">
+    <ClInclude Include="MapGenerator\AGenerateOption.h">
       <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
     </ClInclude>
     <ClInclude Include="MapGenerator\SmoothingOption.h">
+      <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator\GenerateOptionManager.h">
       <Filter>ProceduralGeneration\MapGeneratorOption</Filter>
     </ClInclude>
   </ItemGroup>
@@ -234,5 +240,8 @@
     <Image Include="icon1.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

@@ -1,16 +1,16 @@
-#include "AMapGeneratorOption.h"
+#include "AGenerateOption.h"
 
-AMapGeneratorOption::AMapGeneratorOption() : m_OptionLevel(OPTION_LEVEL::NORMAL)
+AGenerateOption::AGenerateOption() : m_OptionLevel(OPTION_LEVEL::NORMAL), m_pOwner(nullptr)
 {
 
 }
 
-AMapGeneratorOption::~AMapGeneratorOption()
+AGenerateOption::~AGenerateOption()
 {
 
 }
 
-void AMapGeneratorOption::PerformOptionLevel()
+void AGenerateOption::PerformOptionLevel()
 {
 	switch (m_OptionLevel)
 	{

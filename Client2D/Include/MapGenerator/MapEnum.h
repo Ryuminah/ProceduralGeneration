@@ -7,7 +7,8 @@ enum TILE_STATE
 	SEA,
 	COAST,
 	LAKE,
-	FOREST
+	FOREST,
+	CLEAR
 };
 
 // °í¹Î

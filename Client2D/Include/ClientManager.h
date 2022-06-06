@@ -9,6 +9,8 @@ public:
 
 private:
     void CreateMouse();
+    void CreateKey();
+    void CreateCollision();
 
     DECLARE_SINGLE(CClientManager)
 };

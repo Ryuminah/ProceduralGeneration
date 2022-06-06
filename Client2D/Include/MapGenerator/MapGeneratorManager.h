@@ -12,6 +12,9 @@ public :
     bool ChangeMapGenerator(const std::string& Name);
 
 public:
+    bool Init();
+
+public:
     // 실제 RandomMap 객체를 생성할때만 맵 생성기를 제작할 수 있음.
     template <typename T>
     CMapGenerator* CreateMapGenerator(const std::string& Name, class CRandomMap* pRandomMap)
@@ -44,5 +47,11 @@ public:
 
     DECLARE_SINGLE(CMapGeneratorManager)
 
+public:
+    // 현재 MapGenerator를 가져다가 여기에 옵션을 생성하는 방식으로 
+    CMapGenerator* GetCurrentMapGenerator()
+    {
+        return m_pCurrentMapGenerator;
+    }
 };
 

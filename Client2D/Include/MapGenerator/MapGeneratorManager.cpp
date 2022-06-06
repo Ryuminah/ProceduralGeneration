@@ -1,4 +1,5 @@
 #include "MapGeneratorManager.h"
+#include "GenerateOptionManager.h"
 #include "MapGenerator.h"
 #include "IMapGenerator.h"
 
@@ -19,6 +20,15 @@ CMapGeneratorManager::~CMapGeneratorManager()
             SAFE_DELETE(iter->second);
         }
     }
+}
+
+
+bool CMapGeneratorManager::Init()
+{
+    if (!CGenerateOptionManager::GetInst()->Init())
+        return false;
+
+    return true;
 }
 
 CMapGenerator* CMapGeneratorManager::FindMapGenerator(const std::string& Name)
@@ -44,3 +54,4 @@ bool CMapGeneratorManager::ChangeMapGenerator(const std::string& Name)
 
     return result;
 }
+

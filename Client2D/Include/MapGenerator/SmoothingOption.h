@@ -1,8 +1,8 @@
 #pragma once
-#include "AMapGeneratorOption.h"
+#include "AGenerateOption.h"
 
 class CSmoothingOption :
-    public AMapGeneratorOption
+    public AGenerateOption
 {
 public:
 	CSmoothingOption();

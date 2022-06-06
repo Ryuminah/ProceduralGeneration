@@ -165,8 +165,9 @@
     <ClCompile Include="Animation2D\PlayerAnimation2D.cpp" />
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapGenerator\GenerateOptionManager.cpp" />
     <ClCompile Include="MapGenerator\IMapGenerator.cpp" />
-    <ClCompile Include="MapGenerator\AMapGeneratorOption.cpp" />
+    <ClCompile Include="MapGenerator\AGenerateOption.cpp" />
     <ClCompile Include="MapGenerator\MapGenerator.cpp" />
     <ClCompile Include="MapGenerator\MapGeneratorManager.cpp" />
     <ClCompile Include="MapGenerator\RandomMap.cpp" />
@@ -195,8 +196,9 @@
     <ClInclude Include="Animation2D\Anim_Image.h" />
     <ClInclude Include="Animation2D\PlayerAnimation2D.h" />
     <ClInclude Include="ClientManager.h" />
+    <ClInclude Include="MapGenerator\GenerateOptionManager.h" />
     <ClInclude Include="MapGenerator\IMapGenerator.h" />
-    <ClInclude Include="MapGenerator\AMapGeneratorOption.h" />
+    <ClInclude Include="MapGenerator\AGenerateOption.h" />
     <ClInclude Include="MapGenerator\MapEnum.h" />
     <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="MapGenerator\MapGeneratorManager.h" />
@@ -228,6 +230,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

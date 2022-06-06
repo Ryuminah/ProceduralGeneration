@@ -1,5 +1,6 @@
 #include <time.h>
 #include <random>
+#include "GenerateOptionManager.h"
 #include "MapGenerator.h"
 #include "TileFinder.h"
 #include "RandomMap.h"
@@ -12,7 +13,7 @@ CMapGenerator::CMapGenerator() :
 	m_pRandomMap(nullptr),
 	m_pTileFinder(nullptr),
 	m_MapSizeX(50), m_MapSizeY(50), 
-	m_SeaEndLineX(2), m_SeaEndLineY(2)
+	m_OutLineX(2), m_OutLineY(2)
 {
 }
 
@@ -28,6 +29,9 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 		m_pRandomMap = pRandomMap;
 	}
 
+	// GenerateOption 생성
+	//CGenerateOptionManager::GetInst()->CreateGenerateOption("Base");
+
 	// CMapGenerator에서 RandomMap 객체의 맵을 생성해준다. (엔진 뜯어고칠 시간이 없어서 ㅠ)
 	CTileMapComponent* pMapComponent = m_pRandomMap->CreateSceneComponent<CTileMapComponent>("RandomMap");
 	m_pRandomMap->m_MapComponent = pMapComponent;
@@ -35,7 +39,8 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 
 	// Tile들을 생성한다.
 	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_pRandomMap->m_MapSizeX, m_pRandomMap->m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
-	m_pTileFinder = &CTileFinder(this);		// 이거 동적?
+	CTileFinder tileFinder = CTileFinder(this);		// 이거 동적?
+	m_pTileFinder = &tileFinder;
 
 	return true;
 }
@@ -122,6 +127,29 @@ void CMapGenerator::GenerateLand()
 
 	// 물타일의 주변 타일이 땅이면 땅으로 채운다..
 
+	// 
+	// 주변 타일 4개이상 땅이면 땅으로 바꿈 (최대한 땅으로 바꿈)
+	int InnerTileLineX = m_MapSizeX - m_OutLineX;
+	int InnerTileLineY = m_MapSizeY - m_OutLineY;
+
+	for (int x = m_OutLineX; x < InnerTileLineX; ++x)
+	{
+		for (int y = m_OutLineY; y < InnerTileLineY - 3; ++y)
+		{
+			if (m_TileData[x][y] == TILE_STATE::SEA)
+			{
+				int NearSeaCount = m_pTileFinder->Check_NearTileState8(x, y, TILE_STATE::SEA);
+
+				if (NearSeaCount <= 4)
+				{
+					m_pTileFinder->Check_NearTileState8(x, y, TILE_STATE::LAND);
+					//m_AllTileStateData[TILE_STATE::LAND].push_back(Vector2(x, y));
+
+				}
+			}
+		}
+	}
+
 }
 
 void CMapGenerator::GenerateSea()
@@ -187,32 +215,13 @@ void CMapGenerator::CellularAutomata()
 
 	// Smooth Map
 	// 스무딩 강도를 정할 수 있게 한다. Min / Normal /Max
-	// 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 
+	// 1. 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 횟수 
+	// 2. 각 레벨의 타일 상태를 전부 저장한 후 중간중간 확정 되기 전까지 맵의 상태를 볼 수 있도록 한다 .. .. . . .
 	
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)					// 우선 5번 정도를 횟수 최대로,,
 	{
-		for (int x = 0; x < m_MapSizeX; ++x)
-		{
-			for (int y = 0; y < m_MapSizeY; ++y)
-			{
-
-				int NearSeaCount = m_pTileFinder->Check_NearTileState4(x, y, TILE_STATE::SEA);
-
-				if (NearSeaCount > 4)
-				{
-					// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-					ChangeTileState(Vector2(x, y), TILE_STATE::SEA);
-				}
-
-				else if (NearSeaCount < 4)
-				{
-					// 해당 부분의 타일만 UV좌표를 변경 (땅으로 변경)
-					ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
-				}
-			}
-		}
+		SmoothMap();
 	}
-	
 }
 
 void CMapGenerator::SmoothMap()
@@ -236,8 +245,6 @@ void CMapGenerator::SmoothMap()
 			}
 		}
 	}
-
-	
 }
 
 
