@@ -70,6 +70,8 @@ void CMapGenerator::GenerateWorld(TILE_STATE _tileState)
 	default:
 		break;
 	}
+
+	UpdateTileStateData();
 }
 
 void CMapGenerator::GenerateVegetation(TILE_STATE _landState)
@@ -118,6 +120,7 @@ void CMapGenerator::GenerateBase()
 	sprintf_s(buffer, "%f", clockTime);
 	CEngine::GetInst()->AddDebugLog(buffer);
 
+
 }
 
 void CMapGenerator::GenerateLand()
@@ -159,56 +162,61 @@ void CMapGenerator::GenerateCoast()
 {
 	// 생성된 땅을 기반으로 해안가 생성
 
-	std::vector<Vector2> vecSeaTile;
-	std::vector<Vector2> vecLandTile;
-	std::vector<Vector2> vecCoastTile;
+	//std::vector<Vector2> vecSeaTile;
 
-	for (int x = 0; x < m_MapSizeX; ++x)
-	{
-		for (int y = 0; y < m_MapSizeY; ++y)
-		{
-			if (m_TileData[x][y] == TILE_STATE::SEA)
-			{
-				vecSeaTile.push_back(Vector2(x, y));
-			}
 
-			else
-			{
-				vecLandTile.push_back(Vector2(x, y));
+	//for (int x = 0; x < m_MapSizeX; ++x)
+	//{
+	//	for (int y = 0; y < m_MapSizeY; ++y)
+	//	{
+	//		if (m_TileData[x][y] == TILE_State::SEA)
+	//		{
+	//			vecSeaTile.push_back(Vector2(x, y));
+	//		}
 
-			}
-		}
-	}
+	//		else
+	//		{
+	//			vecLandTile.push_back(Vector2(x, y));
 
-	// Land 중 강가에 있는 타일 체크 후 모래로 한번 바꿈.
+	//		}
+	//	}
+	//}
+
+	std::vector<Vector2> vecLandTile = m_TileStateData[TILE_STATE::LAND];
+	std::vector<Vector2> vecNewCoastTile;
+
+	// Land Tile 중 가장자리에 있는 타일을 모래로 바꿈
+	//for (size_t i = 0; i < vecLandTile.size(); ++i)
+	//{
+	//	Vector2 Index = vecLandTile[i];
+	//	int NearSeaCount = m_pTileFinder->Check_NearTileState4(Index.x, Index.y, TILE_STATE::SEA);
+
+	//	if (NearSeaCount > 0)
+	//	{
+	//		ChangeTileState(Index, TILE_STATE::COAST);
+	//		vecNewCoastTile.push_back(Index);
+	//	}
+	//}
+
+	std::vector<Vector2> vecLandTile = m_pTileFinder->GetAreaBorder(TILE_STATE::LAND);
+
 	for (size_t i = 0; i < vecLandTile.size(); ++i)
 	{
-		Vector2 Index = vecLandTile[i];
-		int NearSeaCount = m_pTileFinder->Check_NearTileState4(Index.x, Index.y, TILE_STATE::SEA);
+		Vector2 CoastTile = vecLandTile[i];
 
-		if (NearSeaCount > 0)
-		{
-			//ChangeTileImage(Index, TILE_STATE::COAST);
-
-			//m_TileData[Index.x][Index.y] = TILE_STATE::COAST;
-
-			vecCoastTile.push_back(Index);
-		}
+		ChangeTileState(CoastTile, TILE_STATE::COAST);
+		vecNewCoastTile.push_back(CoastTile);
 	}
-
-	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
-	int keyIndex = 0;
-	std::map<int, Vector2> mapRandomSandTile;
-
 
 	int keyIndex = 0;
 	std::map<int, Vector2> mapRandomSandTile;
 
 	// 샌드 만들고 랜덤으로 ...
-	for (size_t i = 0; i < vecCoastTile.size(); ++i)
+	for (size_t i = 0; i < vecNewCoastTile.size(); ++i)
 	{
-		Vector2 currentSandTile = vecCoastTile[i];
+		Vector2 currentSandTile = vecNewCoastTile[i];
 
+		// 가장자리의 가장자리를 가져왕 , , , ,,(TILE_STATE에 제작)
 		for (int nearX = currentSandTile.x - 1; nearX <= currentSandTile.x + 1; ++nearX)
 		{
 			if (nearX == currentSandTile.x)
@@ -261,9 +269,9 @@ void CMapGenerator::GenerateCoast()
 
 		Vector2 TileIndex = mapRandomSandTile[RandomSeed];
 
-		//ChangeTileImage(TileIndex, TILE_STATE::COAST);
-		//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
-		vecCoastTile.push_back(TileIndex);
+		//ChangeTileImage(TileIndex, TILE_State::COAST);
+		//m_AllTileStateData.insert(std::pair<TILE_State, std::vector<Vector2>>(TILE_State::COAST, vecCoastTile));
+		vecNewCoastTile.push_back(TileIndex);
 
 		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
 		auto iterEnd = mapRandomSandTile.end();
@@ -273,7 +281,7 @@ void CMapGenerator::GenerateCoast()
 		--RandomTileCount;
 	}
 
-	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
+	//m_AllTileStateData.insert(std::pair<TILE_State, std::vector<Vector2>>(TILE_State::COAST, vecCoastTile));
 }
 
 void CMapGenerator::GenerateLake()
@@ -364,7 +372,7 @@ void CMapGenerator::SmoothMap()
 
 void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
 {
-	if (!m_pTileFinder->Check_ExistTile(tileIndex))
+	if (!m_pTileFinder->IsExistTile(tileIndex))
 	{
 		return;
 	}
@@ -373,11 +381,11 @@ void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
 	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
 	pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
 
-	// 타일의 상태가 확실히 변경 되었을 때 정보를 저장한다
-	ChangeTileState(tileIndex, tileState);
+	// 타일의 상태가 확실히 변경 되었을 때 정보를 교체한다
+	ChangeTileData(tileIndex, tileState);
 }
 
-void CMapGenerator::ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState)
+void CMapGenerator::ChangeTileData(Vector2 tileIndex, TILE_STATE tileState)
 {
 	// 데이터가 있는지 없는지 확인 후, 이미 있는 데이터라면 바뀐 정보로 갱신한다.
 	// 데이터 추가...
@@ -385,7 +393,7 @@ void CMapGenerator::ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState)
 	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
 }
 
-void CMapGenerator::UpdateTileState()
+void CMapGenerator::UpdateTileStateData()
 {
 	m_TileStateData.clear();
 
@@ -394,7 +402,6 @@ void CMapGenerator::UpdateTileState()
 	std::vector<Vector2> vecCoastTile;
 	std::vector<Vector2> vecLakeTile;
 	std::vector<Vector2> vecForestTile;
-
 
 	// 전체 타일정보를 체크해서 저장
 	for (int x = 0; x < m_MapSizeX; ++x)
@@ -431,7 +438,8 @@ void CMapGenerator::UpdateTileState()
 	for (int i = 0; i < TILE_STATE_SIZE; i++)
 	{
 		TILE_STATE tileState = static_cast<TILE_STATE>(i);
-		m_TileStateData.insert({ tileState , allTileState[i] });
+		m_TileStateData[tileState] = allTileState[i];
+		//m_TileStateData.insert({ tileState , allTileState[i] });
 	}
 }
 

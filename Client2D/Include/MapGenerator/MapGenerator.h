@@ -27,7 +27,7 @@ private:
 
 	bool m_IsGenerateWorldEnd;
 
-	// 각 타일들을 LAND_STATE별로 분류해놓음
+	// 각 타일들을 LAND_State별로 분류해놓음
 	// 매 생성단계가 끝난 후 재 분류
 	std::unordered_map<TILE_STATE, std::vector<Vector2>> m_TileStateData;
 
@@ -60,11 +60,11 @@ private:
 	void CreateRandom();
 
 	// TileData
-	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);
-	void ChangeTileStateData(Vector2 tileIndex, TILE_STATE tileState);
+	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);		// 타일 정보를 갱신하며 이미지를 교체함
+	void ChangeTileData(Vector2 tileIndex, TILE_STATE tileState);
 
 	// 타일 데이터를 전부 갱신한다.
-	void UpdateTileState();
+	void UpdateTileStateData();
 
 	// 랜덤 알고리즘 짱구좀 굴려서 함수화 시키기...
 
@@ -91,5 +91,8 @@ public:
 		return m_TileData;
 	}
 
-
+	std::unordered_map<TILE_STATE, std::vector<Vector2>> GetTileStateData()
+	{
+		return m_TileStateData;
+	}
 };

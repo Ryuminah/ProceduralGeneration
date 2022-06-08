@@ -91,7 +91,7 @@ public:
 	int CheckNearTileState4(int indexX, int indexY, TILE_STATE checkTileState);
 	int CheckNearTileState4(Vector2 index, TILE_STATE checkTileState);
 
-	//bool CheckNearTileState4(Vector2 index, TILE_STATE checkTileState);
+	//bool CheckNearTileState4(Vector2 index, TILE_State checkTileState);
 	int CheckNearTileState(int indexX, int indexY, TILE_STATE checkTileState);
 
 	

@@ -13,7 +13,7 @@ enum TILE_STATE
 };
 
 // °í¹Î
-enum VEGETATION_STATE
+enum VEGETATION_State
 {
 
 };

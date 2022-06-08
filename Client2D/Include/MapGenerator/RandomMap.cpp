@@ -182,7 +182,7 @@ void CRandomMap::SetOnlyLand(float DeltaTime)
 				if (NearSeaCount <= 4)
 				{
 					ChangeTileImage(Vector2(x,y), TILE_STATE::LAND);
-					//m_AllTileStateData[TILE_STATE::LAND].push_back(Vector2(x, y));
+					//m_AllTileStateData[TILE_State::LAND].push_back(Vector2(x, y));
 
 				}
 			}
@@ -214,8 +214,8 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 		}
 	}
 
-	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::SEA, vecSeaTile));
-	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::LAND, vecLandTile));
+	//m_AllTileStateData.insert(std::pair<TILE_State, std::vector<Vector2>>(TILE_State::SEA, vecSeaTile));
+	//m_AllTileStateData.insert(std::pair<TILE_State, std::vector<Vector2>>(TILE_State::LAND, vecLandTile));
 	m_IsGenerateFinished = true;
 	
 	// Land 중 강가에 있는 타일 체크 후 모래로 한번 바꿈.
@@ -228,19 +228,17 @@ void CRandomMap::SetGenerateFinished(float DeltaTime)
 		{
 			ChangeTileImage(Index, TILE_STATE::COAST);
 
-			//m_TileData[Index.x][Index.y] = TILE_STATE::COAST;
+			//m_TileData[Index.x][Index.y] = TILE_State::COAST;
 
 			vecCoastTile.push_back(Index);
 		}
 	}
 
-	//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
+	//m_AllTileStateData.insert(std::pair<TILE_State, std::vector<Vector2>>(TILE_State::COAST, vecCoastTile));
 	int keyIndex = 0;
 	std::map<int, Vector2> mapRandomSandTile;
 
-
 	CreateCoast(vecCoastTile);
-
 }
 
 void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
@@ -306,7 +304,7 @@ void CRandomMap::CreateCoast(std::vector<Vector2> vecCoastTile)
 		Vector2 TileIndex = mapRandomSandTile[RandomSeed];
 
 		ChangeTileImage(TileIndex, TILE_STATE::COAST);
-		//m_AllTileStateData.insert(std::pair<TILE_STATE, std::vector<Vector2>>(TILE_STATE::COAST, vecCoastTile));
+		//m_AllTileStateData.insert(std::pair<TILE_State, std::vector<Vector2>>(TILE_State::COAST, vecCoastTile));
 		vecCoastTile.push_back(TileIndex);
 
 		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
@@ -431,7 +429,7 @@ void CRandomMap::RandomSaveLogic()
 	//	Vector2 TileIndex = RandomIndex[RandomSeed];
 
 	//	// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-	//	ChangeTileImage(TileIndex, LAND_STATE::SEA);
+	//	ChangeTileImage(TileIndex, LAND_State::SEA);
 
 	//	// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
 	//	auto iterEnd = RandomIndex.end();
@@ -586,7 +584,7 @@ bool CRandomMap::ChangeTileImage(Vector2 tileIndex, TILE_STATE tileState)
 		pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
 		pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
 
-		m_TileData[tileIndex.x][tileIndex.y] = tileState;
+		m_TileData[(const unsigned __int64)tileIndex.x][(const unsigned __int64)tileIndex.y] = tileState;
 		m_AllTileStateData[tileState].push_back(tileIndex);
 
 		result = true;
@@ -661,7 +659,7 @@ int CRandomMap::CheckNearSeaTile4(int indexX, int indexY)
 	return wallCount;
 }
 
-//bool CRandomMap::CheckNearTileState4(Vector2 index, TILE_STATE checkTileState)
+//bool CRandomMap::CheckNearTileState4(Vector2 index, TILE_State checkTileState)
 //{
 //	bool result = false;
 //

@@ -40,8 +40,8 @@ int CTileFinder::Check_NearTileState8(int indexX, int indexY, TILE_STATE checkTi
 
 int CTileFinder::Check_NearTileState8(Vector2 TileIndex, TILE_STATE checkTileState)
 {
-	Check_NearTileState8(TileIndex.x, TileIndex.y, checkTileState);
-	return 0;
+	int result = Check_NearTileState8(TileIndex.x, TileIndex.y, checkTileState);
+	return result;
 }
 
 int CTileFinder::Check_NearTileState4(int indexX, int indexY, TILE_STATE checkTileState)
@@ -85,13 +85,8 @@ bool CTileFinder::Check_TileState(int indexX, int indexY, TILE_STATE checkTileSt
 {
 	bool result = false;
 
-	int MapSizeX = m_pOwner->GetMapSizeX();
-	int MapSizeY = m_pOwner->GetMapSizeY();
-
-
 	// 맵 범위 이내에서
-	if (indexX >= 0 && indexX < MapSizeX &&
-		indexY >= 0 && indexY < MapSizeY &&
+	if (IsExistTile(indexX,indexY)&&
 		m_pOwner->GetTileData()[indexX][indexY] == checkTileState)
 	{
 		result = true;
@@ -106,6 +101,92 @@ bool CTileFinder::Check_TileState(Vector2 Index, TILE_STATE checkTileState)
 
 	return result;
 }
+
+int CTileFinder::CompareWith_NearTileState8(int indexX, int indexY)
+{
+	int tileCount = 0;
+
+	int MapSizeX = m_pOwner->GetMapSizeX();
+	int MapSizeY = m_pOwner->GetMapSizeY();
+
+	for (int nearX = indexX - 1; nearX <= indexX + 1; nearX++)
+	{
+		for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
+		{
+			if (nearX != indexX && nearY != indexY)
+			{
+				if (!CompareWith_TileState(indexX, indexY, nearX, nearY))
+					++tileCount;
+			}
+		}
+	}
+
+	return tileCount;
+}
+
+int CTileFinder::CompareWith_NearTileState8(Vector2 index)
+{
+	int result = CompareWith_NearTileState8((int)index.x, (int)index.y);
+	return result;
+}
+
+int CTileFinder::CompareWith_NearTileState4(int indexX, int indexY)
+{
+	int tileCount = 0;
+
+	for (int nearX = indexX - 1; nearX <= indexX + 1; ++nearX)
+	{
+		if (nearX == indexX)
+		{
+			continue;
+		}
+
+		if (!CompareWith_TileState(indexX, indexY, nearX, indexY))
+			++tileCount;
+	}
+
+	for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
+	{
+		if (nearY == indexY)
+		{
+			continue;
+		}
+
+		// 맵 범위 체크
+		if (!CompareWith_TileState(indexX, indexY, indexX, nearY))
+			++tileCount;
+	}
+
+	return tileCount;
+}
+
+int CTileFinder::CompareWith_NearTileState4(Vector2 index)
+{
+	int result = CompareWith_NearTileState4((int)index.x , (int)index.y);
+	return result;
+}
+
+bool CTileFinder::CompareWith_TileState(int srcIndexX, int srcIndexY, int destIndexX, int destIndexY)
+{
+	Vector2 srcIndex = Vector2(srcIndexX, srcIndexY);
+	Vector2 destIndex = Vector2(destIndexX, destIndexY);
+
+	return CompareWith_TileState(srcIndex, destIndex);
+}
+
+bool CTileFinder::CompareWith_TileState(Vector2 srcIndex, Vector2 destIndex)
+{
+	if (!(IsExistTile(srcIndex) || IsExistTile(destIndex))) return false;
+
+	bool result = false;
+	TILE_STATE srcTileState = m_pOwner->GetTileData()[srcIndex.x][srcIndex.y];
+	TILE_STATE destTileState = m_pOwner->GetTileData()[destIndex.x][destIndex.y];
+
+	result = srcTileState == destTileState ? true : false;
+
+	return result;
+}
+
 
 std::vector<Vector2> CTileFinder::GetNearTileState8(int indexX, int indexY, TILE_STATE checkTileState)
 {
@@ -170,15 +251,39 @@ std::vector<Vector2> CTileFinder::GetNearTileState4(Vector2 Index, TILE_STATE ch
 	return result;
 }
 
-bool CTileFinder::Check_ExistTile(int indexX, int indexY)
+std::vector<Vector2> CTileFinder::GetAreaBorder(TILE_STATE checkTileState)
+{
+	std::vector<Vector2> vecResult;
+
+	std::unordered_map<TILE_STATE, std::vector<Vector2>> tileStateData = m_pOwner->GetTileStateData();
+	std::vector<std::vector<TILE_STATE>> tileData = m_pOwner->GetTileData();
+
+	// 해당 TILE_STATE가 존재할 경우 영역의 가장자리를 체크하여 인덱스를 반환한다.
+	if (tileStateData.end() != tileStateData.find(checkTileState))
+	{
+		for (size_t i = 0; i < tileStateData[checkTileState].size(); ++i)
+		{
+			// 하나라도 주변 타일의 TILE_STATE가 다르다면 가장자리로 간주한다.
+			if (CompareWith_NearTileState8(tileStateData[checkTileState][i]) > 1)
+			{
+				vecResult.push_back(tileStateData[checkTileState][i]);
+			}
+		}
+	}
+
+	return vecResult;
+}
+
+
+bool CTileFinder::IsExistTile(int indexX, int indexY)
 {
 	Vector2 index = Vector2(indexX, indexY);
-	bool result = Check_ExistTile(index);
+	bool result = IsExistTile(index);
 	
 	return result;
 }
 
-bool CTileFinder::Check_ExistTile(Vector2 tileIndex)
+bool CTileFinder::IsExistTile(Vector2 tileIndex)
 {
 	bool result = true;
 	Vector2 MapSize = m_pOwner->GetMapSize();
