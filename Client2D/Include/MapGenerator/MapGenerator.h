@@ -19,13 +19,19 @@ private:
 	std::unordered_map<std::string, class AMapGeneratorOption*> m_mapOptions;
 
 private:
+	bool m_IsGenerateWorldEnd;
+
+private:
 	int m_MapSizeX;
 	int m_MapSizeY;
-
 	int m_OutLineX;
 	int m_OutLineY;
 
-	bool m_IsGenerateWorldEnd;
+	int m_ForestMinX;
+	int m_ForestMinY;
+	int m_ForestMaxX;
+	int m_ForestMaxY;
+
 
 	// 각 타일들을 LAND_State별로 분류해놓음
 	// 매 생성단계가 끝난 후 재 분류
@@ -34,7 +40,6 @@ private:
 
 public:
 	bool Init(class CRandomMap* pRandomMap);
-
 
 public:
 	virtual void GenerateWorld(TILE_STATE _landState);

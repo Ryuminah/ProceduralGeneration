@@ -1,7 +1,6 @@
 #pragma once
 #include "MapEnum.h"
 
-// ㄱㅡ 이거 안쓰는게 맞나
 class AGenerateOption
 {
 protected:

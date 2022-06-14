@@ -1,3 +1,4 @@
+#include <set>
 #include <time.h>
 #include <random>
 #include "GenerateOptionManager.h"
@@ -13,7 +14,9 @@ CMapGenerator::CMapGenerator() :
 	m_pRandomMap(nullptr),
 	m_pTileFinder(nullptr),
 	m_MapSizeX(50), m_MapSizeY(50),
-	m_OutLineX(2), m_OutLineY(2)
+	m_OutLineX(2), m_OutLineY(2),
+	m_ForestMinX(7), m_ForestMinY(8), m_ForestMaxX(15), m_ForestMaxY(16)
+
 {
 }
 
@@ -90,7 +93,6 @@ void CMapGenerator::GenerateVegetation(TILE_STATE _landState)
 	// 랜덤으로 갖다 때려박아버려 , , ,,
 }
 
-
 // Member Function
 void CMapGenerator::GenerateBase()
 {
@@ -140,7 +142,6 @@ void CMapGenerator::GenerateBase()
 
 			ChangeTileState(LineStart, TILE_STATE::SEA);
 			ChangeTileState(LineEnd, TILE_STATE::SEA);
-
 		}
 	}
 
@@ -153,7 +154,6 @@ void CMapGenerator::GenerateBase()
 
 			ChangeTileState(LineStart, TILE_STATE::SEA);
 			ChangeTileState(LineEnd, TILE_STATE::SEA);
-
 		}
 	}
 }
@@ -291,17 +291,24 @@ void CMapGenerator::GenerateLake()
 
 void CMapGenerator::GenerateForest()
 {
+	// 땅 지형에 생성되므로, 땅이 존재하지 않는다면 함수 종료
+	int LandTilesCount = m_TileStateData[TILE_STATE::LAND].size();
+
+	if (LandTilesCount == 0)
+	{
+		return;
+	}
+
 	int Index = 0;
 	int randomCount = 2;
 
 	// 매직 넘버 꼭 바꿔,, 바꿔,,, ㅠ
-	int forestX = (rand() % 15) + 7;
-	int forestY = (rand() % 16) + 8;
+	int forestX = (rand() % m_ForestMaxX) + m_ForestMinX;
+	int forestY = (rand() % m_ForestMaxY) + m_ForestMinY;
 
 	// 숲 시작지점의 인덱스를 랜덤으로 고름
-	Vector2 forestStart;
-	int startIndex = rand() % m_TileStateData[TILE_STATE::LAND].size();
-	forestStart = m_TileStateData[TILE_STATE::LAND][startIndex];
+	int startIndex = rand() % LandTilesCount;
+	Vector2 forestStart = m_TileStateData[TILE_STATE::LAND][startIndex];
 
 	// 숲의 마지막 지점
 	Vector2 forestEnd;
@@ -382,7 +389,11 @@ void CMapGenerator::CellularAutomata()
 	// 당첨 번호의 노드를 삭제
 	std::random_device randomDevice;
 	std::mt19937_64 gen(randomDevice());
+
 	std::unordered_map<int, Vector2> MapIndex;
+	std::set<int> MapIndexKey;				// 키를 저장해놓음
+	std::vector<Vector2> RandomIndex;
+
 	int Index = 0;
 
 	for (int x = 0; x < m_MapSizeX; ++x)
@@ -390,11 +401,12 @@ void CMapGenerator::CellularAutomata()
 		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			MapIndex[Index] = Vector2((float)x, (float)y);
+			MapIndexKey.insert(Index);
 			++Index;
 		}
 	}
 
-	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.42f;
+	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.52f;
 	int RandomSeed = 0;
 
 	while (RandomTileCount)
@@ -415,6 +427,9 @@ void CMapGenerator::CellularAutomata()
 		MapIndex.erase(iterEnd);
 
 		--RandomTileCount;
+
+		// Fixed to the right
+
 	}
 
 	// Smooth Map
@@ -423,18 +438,12 @@ void CMapGenerator::CellularAutomata()
 	// 2. 각 레벨의 타일 상태를 전부 저장한 후 중간중간 확정 되기 전까지 맵의 상태를 볼 수 있도록 한다 .. .. . . .
 	//
 	SmoothMap();
-	//for (int i = 0; i < 2; i++)					// 우선 5번 정도를 횟수 최대로,,
-	//{
-	//}
 }
 
 void CMapGenerator::SmoothMap()
 {
-
 	for (int x = 0; x < m_MapSizeX - m_OutLineX; ++x)
 	{
-		int wallCount = 0;
-
 		for (int y = 0; y < m_MapSizeY - m_OutLineY; ++y)
 		{
 			int NearSeaCount = m_pTileFinder->Check_NearSeaTile8(x, y);
@@ -462,6 +471,8 @@ void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
 		return;
 	}
 
+	// 외부에서 접근해서 그런지 왤케 느려졌누;
+	// CTile 저장하고 있는것도 고려하기.. . . (속도 차이 비교할 것)
 	CTile* pTile = m_pRandomMap->m_MapComponent->GetTile(tileIndex * TILE_SIZE_SMALL);
 	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);
 	pTile->SetFrameEnd((tileState + 1) * TILE_SIZE_SMALL, TILE_SIZE_SMALL);
@@ -485,29 +496,29 @@ void CMapGenerator::UpdateTileStateData()
 	std::vector<Vector2> vecLakeTile;
 	std::vector<Vector2> vecForestTile;
 
-	// 전체 타일정보를 체크해서 분류 별로 한번 더 저장
 	for (int x = 0; x < m_MapSizeX; ++x)
 	{
 		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			TILE_STATE currentTileState = m_TileData[x][y];
+			Vector2 currentIndex = Vector2((float)x, (float)y);
 
 			switch (currentTileState)
 			{
 			case LAND:
-				vecLandTile.push_back(Vector2(x, y));
+				vecLandTile.push_back(currentIndex);
 				break;
 			case SEA:
-				vecSeaTile.push_back(Vector2(x, y));
+				vecSeaTile.push_back(currentIndex);
 				break;
 			case COAST:
-				vecCoastTile.push_back(Vector2(x, y));
+				vecCoastTile.push_back(currentIndex);
 				break;
 			case LAKE:
-				vecLakeTile.push_back(Vector2(x, y));
+				vecLakeTile.push_back(currentIndex);
 				break;
 			case FOREST:
-				vecForestTile.push_back(Vector2(x, y));
+				vecForestTile.push_back(currentIndex);
 				break;
 			default:
 				break;

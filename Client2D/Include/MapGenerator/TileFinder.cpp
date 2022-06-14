@@ -19,7 +19,7 @@ CTileFinder::~CTileFinder()
 
 int CTileFinder::Check_NearSeaTile8(int indexX, int indexY)
 {
-	int wallCount = 0;
+	int SeaCount = 0;
 	int MapSizeX = m_pOwner->GetMapSizeX();
 	int MapSizeY = m_pOwner->GetMapSizeY();
 
@@ -29,22 +29,23 @@ int CTileFinder::Check_NearSeaTile8(int indexX, int indexY)
 		for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
 		{
 			// 맵 범위 체크
-			if (nearX >= 0 && nearX < MapSizeX && nearY >= 0 && nearY < MapSizeY)
+			if (IsExistTile(nearX,nearY))
 			{
-				if (nearX != MapSizeX || nearY != MapSizeY)
+				if (nearX != indexX || nearY != indexY)
 				{
-					wallCount += m_pOwner->GetTileData()[nearX][nearY];
+					SeaCount += m_pOwner->GetTileData()[nearX][nearY];
 				}
 			}
 
+			// 인덱스를 초과한 타일은 전부 바다로 간주한다
 			else
 			{
-				wallCount++;
+				SeaCount++;
 			}
 		}
 	}
 
-	return wallCount;
+	return SeaCount;
 }
 
 int CTileFinder::Check_NearTileState8(int indexX, int indexY, TILE_STATE checkTileState)
@@ -353,8 +354,20 @@ std::vector<Vector2> CTileFinder::Get_AreaBorder(TILE_STATE checkTileState)
 {
 	std::vector<Vector2> vecResult;
 
-	std::unordered_map<TILE_STATE, std::vector<Vector2>> tileStateData = m_pOwner->GetTileStateData();
-	std::vector<std::vector<TILE_STATE>> tileData = m_pOwner->GetTileData();
+	// 여기 수정하기 수정하기 수정하기수정하기 별백개
+	std::unordered_map<TILE_STATE, std::vector<Vector2>> tileStateData;
+	std::vector<std::vector<TILE_STATE>> vecTileData = m_pOwner->GetTileData();
+
+	for (int x = 0; x < m_pOwner->GetMapSizeX(); ++x)
+	{
+		for (int  y = 0; y < m_pOwner->GetMapSizeY(); ++y)
+		{
+			if (vecTileData[x][y] == checkTileState)
+			{
+				//tileS
+			}
+		}
+	}
 
 	// 해당 TILE_STATE가 존재할 경우 영역의 가장자리를 체크하여 인덱스를 반환한다.
 	if (tileStateData.end() != tileStateData.find(checkTileState))

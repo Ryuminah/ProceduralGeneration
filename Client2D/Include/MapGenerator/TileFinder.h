@@ -18,9 +18,10 @@ private:
 
 
 private:
-	// 주변 타일 중 checkTileState 타일의 갯수를 반환
+	//Celluar Automata
 	int Check_NearSeaTile8(int indexX, int indexY);
 
+	// 주변 타일 중 checkTileState 타일의 갯수를 반환
 	int Check_NearTileState8(int indexX, int indexY, TILE_STATE checkTileState);
 	int Check_NearTileState8(Vector2 TileIndex, TILE_STATE checkTileState);
 
@@ -67,12 +68,6 @@ private:
 	// 맵 안에 존재하는 타일인지
 	bool IsExistTile(int indexX, int indexY);
 	bool IsExistTile(Vector2 tileIndex);
-
-public:
-	void SetOwner(class CMapGenerator* pMapGenerator)
-	{
-		m_pOwner = pMapGenerator;
-	}
 };
 
 
