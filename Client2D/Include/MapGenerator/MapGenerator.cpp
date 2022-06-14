@@ -8,18 +8,18 @@
 #include "Timer.h"
 #include "Input.h"
 
-CMapGenerator::CMapGenerator() : 
+CMapGenerator::CMapGenerator() :
 	m_IsGenerateWorldEnd(false),
 	m_pRandomMap(nullptr),
 	m_pTileFinder(nullptr),
-	m_MapSizeX(50), m_MapSizeY(50), 
+	m_MapSizeX(50), m_MapSizeY(50),
 	m_OutLineX(2), m_OutLineY(2)
 {
 }
 
 CMapGenerator::~CMapGenerator()
 {
-
+	SAFE_DELETE(m_pTileFinder);
 }
 
 bool CMapGenerator::Init(CRandomMap* pRandomMap)
@@ -39,8 +39,7 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 
 	// Tile들을 생성한다.
 	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_pRandomMap->m_MapSizeX, m_pRandomMap->m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
-	CTileFinder tileFinder = CTileFinder(this);		// 이거 동적?
-	m_pTileFinder = &tileFinder;
+	m_pTileFinder = new CTileFinder(this);
 
 	return true;
 }
@@ -67,10 +66,14 @@ void CMapGenerator::GenerateWorld(TILE_STATE _tileState)
 	case TILE_STATE::FOREST:
 		GenerateForest();
 		break;
+	case TILE_STATE::CLEAR:
+		ClearAll();
+		break;
 	default:
 		break;
 	}
 
+	// 각 상태가 끝난 이후 타일 상태를 항상 업데이트 해준다.
 	UpdateTileStateData();
 }
 
@@ -109,7 +112,15 @@ void CMapGenerator::GenerateBase()
 		m_TileData.push_back(tileData);
 	}
 
-	clock_t start = clock(); // 시작 시간 저장
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
+		}
+	}
+
+	clock_t start = clock(); // 시작 시 간 저장
 
 	// 맵 자동화 알고리즘
 	CellularAutomata();
@@ -120,11 +131,37 @@ void CMapGenerator::GenerateBase()
 	sprintf_s(buffer, "%f", clockTime);
 	CEngine::GetInst()->AddDebugLog(buffer);
 
+	for (int x = 0; x < m_OutLineX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			Vector2 LineStart = Vector2(x, y);
+			Vector2 LineEnd = Vector2(m_MapSizeX - 1 - x, y);
 
+			ChangeTileState(LineStart, TILE_STATE::SEA);
+			ChangeTileState(LineEnd, TILE_STATE::SEA);
+
+		}
+	}
+
+	for (int y = 0; y < m_OutLineY; ++y)
+	{
+		for (int x = 0; x < m_MapSizeX; ++x)
+		{
+			Vector2 LineStart = Vector2(x, y);
+			Vector2 LineEnd = Vector2(x, m_MapSizeY - 1 - y);
+
+			ChangeTileState(LineStart, TILE_STATE::SEA);
+			ChangeTileState(LineEnd, TILE_STATE::SEA);
+
+		}
+	}
 }
 
 void CMapGenerator::GenerateLand()
 {
+	// 이것도 스무딩 강도 정하기
+
 	// 1. 호수 없이 전부 땅으로 메움
 	// 옵션을 전부 멤버 변수로. . . 추가 .. .
 
@@ -137,15 +174,15 @@ void CMapGenerator::GenerateLand()
 
 	for (int x = m_OutLineX; x < InnerTileLineX; ++x)
 	{
-		for (int y = m_OutLineY; y < InnerTileLineY - 3; ++y)
+		for (int y = m_OutLineY; y < InnerTileLineY; ++y)
 		{
 			if (m_TileData[x][y] == TILE_STATE::SEA)
 			{
 				int NearSeaCount = m_pTileFinder->Check_NearTileState8(x, y, TILE_STATE::SEA);
 
-				if (NearSeaCount <= 4)
+				if (NearSeaCount < 4)
 				{
-					m_pTileFinder->Check_NearTileState8(x, y, TILE_STATE::LAND);
+					ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
 				}
 			}
 		}
@@ -160,45 +197,8 @@ void CMapGenerator::GenerateSea()
 
 void CMapGenerator::GenerateCoast()
 {
-	// 생성된 땅을 기반으로 해안가 생성
-
-	//std::vector<Vector2> vecSeaTile;
-
-
-	//for (int x = 0; x < m_MapSizeX; ++x)
-	//{
-	//	for (int y = 0; y < m_MapSizeY; ++y)
-	//	{
-	//		if (m_TileData[x][y] == TILE_State::SEA)
-	//		{
-	//			vecSeaTile.push_back(Vector2(x, y));
-	//		}
-
-	//		else
-	//		{
-	//			vecLandTile.push_back(Vector2(x, y));
-
-	//		}
-	//	}
-	//}
-
-	std::vector<Vector2> vecLandTile = m_TileStateData[TILE_STATE::LAND];
+	std::vector<Vector2> vecLandTile = m_pTileFinder->Get_AreaBorder(TILE_STATE::LAND);
 	std::vector<Vector2> vecNewCoastTile;
-
-	// Land Tile 중 가장자리에 있는 타일을 모래로 바꿈
-	//for (size_t i = 0; i < vecLandTile.size(); ++i)
-	//{
-	//	Vector2 Index = vecLandTile[i];
-	//	int NearSeaCount = m_pTileFinder->Check_NearTileState4(Index.x, Index.y, TILE_STATE::SEA);
-
-	//	if (NearSeaCount > 0)
-	//	{
-	//		ChangeTileState(Index, TILE_STATE::COAST);
-	//		vecNewCoastTile.push_back(Index);
-	//	}
-	//}
-
-	std::vector<Vector2> vecLandTile = m_pTileFinder->GetAreaBorder(TILE_STATE::LAND);
 
 	for (size_t i = 0; i < vecLandTile.size(); ++i)
 	{
@@ -291,7 +291,89 @@ void CMapGenerator::GenerateLake()
 
 void CMapGenerator::GenerateForest()
 {
-	// 호수 근처에 숲 지역을 생성.
+	int Index = 0;
+	int randomCount = 2;
+
+	// 매직 넘버 꼭 바꿔,, 바꿔,,, ㅠ
+	int forestX = (rand() % 15) + 7;
+	int forestY = (rand() % 16) + 8;
+
+	// 숲 시작지점의 인덱스를 랜덤으로 고름
+	Vector2 forestStart;
+	int startIndex = rand() % m_TileStateData[TILE_STATE::LAND].size();
+	forestStart = m_TileStateData[TILE_STATE::LAND][startIndex];
+
+	// 숲의 마지막 지점
+	Vector2 forestEnd;
+	forestEnd.x = forestStart.x + forestX;
+	forestEnd.y = forestStart.y + forestY;
+
+	// 사각형의 숲 만들기
+	std::vector<Vector2> vecForestTile;
+	for (int x = forestStart.x; x < forestEnd.x; ++x)
+	{
+		for (int y = forestStart.y; y < forestEnd.y; ++y)
+		{
+			// 땅 타일일 경우에만 숲을 추가한다
+			if (x >= 0 && x < m_MapSizeX &&
+				y >= 0 && y < m_MapSizeY &&
+				m_TileData[x][y] == TILE_STATE::LAND)
+			{
+				ChangeTileState(Vector2(x, y), TILE_STATE::FOREST);
+				vecForestTile.push_back(Vector2(x, y));
+			}
+		}
+	}
+
+	//UpdateTileStateData()
+	// 외곽 스무딩
+	// Outline을 모아서 뜬 ,,,
+
+	//std::vector<Vector2> vecSmoothTile = m_pTileFinder->Get_AreaBorder(TILE_STATE::FOREST);
+	//std::vector<Vector2> vecOutlineTile = m_pTileFinder->Get_OutlineTiles(vecSmoothTile);
+
+	//for (size_t i = 0; i < vecOutlineTile.size(); ++i)
+	//{
+	//	// 테두리 중 숲 타일이 아니라면 경계의 아웃라인으로 간주하고 스무딩 라인으로 추가한다.
+	//	if (!m_pTileFinder->Check_TileState(vecOutlineTile[i], TILE_STATE::FOREST))
+	//	{
+	//		vecSmoothTile.push_back(vecOutlineTile[i]);
+	//	}
+	//}
+
+	//for (size_t i = 0; i < vecSmoothTile.size(); ++i)
+	//{
+	//	bool changeForest  = rand() % 1;
+
+	//	switch (changeForest)
+	//	{
+	//	case true:
+	//		ChangeTileState(vecSmoothTile[i], TILE_STATE::FOREST);
+	//		break;
+
+	//	case false:
+	//		ChangeTileState(vecSmoothTile[i], TILE_STATE::LAND);
+	//		break;
+
+	//	default:
+	//		break;
+	//	}
+	//}
+}
+
+void CMapGenerator::ClearAll()
+{
+	m_TileData.clear();
+
+	/*for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			ChangeTileData(Vector2(x, y), TILE_STATE::LAND);
+		}
+	}*/
+
+	GenerateBase();
 }
 
 void CMapGenerator::CellularAutomata()
@@ -339,20 +421,23 @@ void CMapGenerator::CellularAutomata()
 	// 스무딩 강도를 정할 수 있게 한다. Min / Normal /Max
 	// 1. 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 횟수 
 	// 2. 각 레벨의 타일 상태를 전부 저장한 후 중간중간 확정 되기 전까지 맵의 상태를 볼 수 있도록 한다 .. .. . . .
-	
-	for (int i = 0; i < 5; i++)					// 우선 5번 정도를 횟수 최대로,,
-	{
-		SmoothMap();
-	}
+	//
+	SmoothMap();
+	//for (int i = 0; i < 2; i++)					// 우선 5번 정도를 횟수 최대로,,
+	//{
+	//}
 }
 
 void CMapGenerator::SmoothMap()
 {
-	for (int x = 0; x < m_MapSizeX; ++x)
+
+	for (int x = 0; x < m_MapSizeX - m_OutLineX; ++x)
 	{
-		for (int y = 0; y < m_MapSizeY; ++y)
+		int wallCount = 0;
+
+		for (int y = 0; y < m_MapSizeY - m_OutLineY; ++y)
 		{
-			int NearSeaCount = m_pTileFinder->Check_NearTileState4(x, y, TILE_STATE::SEA);
+			int NearSeaCount = m_pTileFinder->Check_NearSeaTile8(x, y);
 
 			if (NearSeaCount > 4)
 			{
@@ -387,9 +472,6 @@ void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
 
 void CMapGenerator::ChangeTileData(Vector2 tileIndex, TILE_STATE tileState)
 {
-	// 데이터가 있는지 없는지 확인 후, 이미 있는 데이터라면 바뀐 정보로 갱신한다.
-	// 데이터 추가...
-
 	m_TileData[(int)tileIndex.x][(int)tileIndex.y] = tileState;
 }
 
@@ -403,13 +485,13 @@ void CMapGenerator::UpdateTileStateData()
 	std::vector<Vector2> vecLakeTile;
 	std::vector<Vector2> vecForestTile;
 
-	// 전체 타일정보를 체크해서 저장
+	// 전체 타일정보를 체크해서 분류 별로 한번 더 저장
 	for (int x = 0; x < m_MapSizeX; ++x)
 	{
 		for (int y = 0; y < m_MapSizeY; ++y)
 		{
 			TILE_STATE currentTileState = m_TileData[x][y];
-			
+
 			switch (currentTileState)
 			{
 			case LAND:
@@ -445,4 +527,5 @@ void CMapGenerator::UpdateTileStateData()
 
 void CMapGenerator::CreateRandom()
 {
+
 }

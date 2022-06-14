@@ -1,3 +1,4 @@
+#include <set>
 #include "Scene/SceneResource.h"
 #include "TileFinder.h"
 #include "MapGenerator.h"
@@ -16,6 +17,36 @@ CTileFinder::~CTileFinder()
 {
 }
 
+int CTileFinder::Check_NearSeaTile8(int indexX, int indexY)
+{
+	int wallCount = 0;
+	int MapSizeX = m_pOwner->GetMapSizeX();
+	int MapSizeY = m_pOwner->GetMapSizeY();
+
+
+	for (int nearX = indexX - 1; nearX <= indexX + 1; nearX++)
+	{
+		for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
+		{
+			// 맵 범위 체크
+			if (nearX >= 0 && nearX < MapSizeX && nearY >= 0 && nearY < MapSizeY)
+			{
+				if (nearX != MapSizeX || nearY != MapSizeY)
+				{
+					wallCount += m_pOwner->GetTileData()[nearX][nearY];
+				}
+			}
+
+			else
+			{
+				wallCount++;
+			}
+		}
+	}
+
+	return wallCount;
+}
+
 int CTileFinder::Check_NearTileState8(int indexX, int indexY, TILE_STATE checkTileState)
 {
 	int tileCount = 0;
@@ -27,7 +58,12 @@ int CTileFinder::Check_NearTileState8(int indexX, int indexY, TILE_STATE checkTi
 	{
 		for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
 		{
-			if (nearX != indexX && nearY != indexY)
+			if (nearX == indexX && nearY == indexY)
+			{
+				continue;
+			}
+
+			else
 			{
 				if (Check_TileState(nearX, nearY, checkTileState))
 					++tileCount;
@@ -113,11 +149,13 @@ int CTileFinder::CompareWith_NearTileState8(int indexX, int indexY)
 	{
 		for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
 		{
-			if (nearX != indexX && nearY != indexY)
+			if (nearX == indexX && nearY == indexY)
 			{
-				if (!CompareWith_TileState(indexX, indexY, nearX, nearY))
-					++tileCount;
+				continue;
 			}
+
+			if (!CompareWith_TileState(indexX, indexY, nearX, nearY))
+				++tileCount;
 		}
 	}
 
@@ -188,7 +226,7 @@ bool CTileFinder::CompareWith_TileState(Vector2 srcIndex, Vector2 destIndex)
 }
 
 
-std::vector<Vector2> CTileFinder::GetNearTileState8(int indexX, int indexY, TILE_STATE checkTileState)
+std::vector<Vector2> CTileFinder::Get_NearTileState8(int indexX, int indexY, TILE_STATE checkTileState)
 {
 	std::vector<Vector2> vecTileIndex;
 
@@ -210,7 +248,7 @@ std::vector<Vector2> CTileFinder::GetNearTileState8(int indexX, int indexY, TILE
 	return vecTileIndex;
 }
 
-std::vector<Vector2> CTileFinder::GetNearTileState4(int indexX, int indexY, TILE_STATE checkTileState)
+std::vector<Vector2> CTileFinder::Get_NearTileState4(int indexX, int indexY, TILE_STATE checkTileState)
 {
 	std::vector<Vector2> vecTileIndex;
 
@@ -244,14 +282,74 @@ std::vector<Vector2> CTileFinder::GetNearTileState4(int indexX, int indexY, TILE
 	return vecTileIndex;
 }
 
-std::vector<Vector2> CTileFinder::GetNearTileState4(Vector2 Index, TILE_STATE checkTileState)
+std::vector<Vector2> CTileFinder::Get_NearTileState4(Vector2 Index, TILE_STATE checkTileState)
 {
-	std::vector<Vector2> result = GetNearTileState4((int)Index.x, (int)Index.x, checkTileState);
+	std::vector<Vector2> result = Get_NearTileState4((int)Index.x, (int)Index.x, checkTileState);
+	return result;
+}
+
+std::vector<Vector2> CTileFinder::Get_NearTileIndex8(int indexX, int indexY)
+{
+	std::vector<Vector2> vecTileIndex;
+
+	int MapSizeX = m_pOwner->GetMapSizeX();
+	int MapSizeY = m_pOwner->GetMapSizeY();
+
+	for (int nearX = indexX - 1; nearX <= indexX + 1; nearX++)
+	{
+		for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
+		{
+			if (nearX != indexX && nearY != indexY)
+			{
+					vecTileIndex.push_back(Vector2(nearX, nearY));
+			}
+		}
+	}
+
+	return vecTileIndex;
+}
+
+std::vector<Vector2> CTileFinder::Get_NearTileIndex8(Vector2 Index)
+{
+	std::vector<Vector2> result = Get_NearTileIndex8((int)Index.x, (int)Index.x);
 
 	return result;
 }
 
-std::vector<Vector2> CTileFinder::GetAreaBorder(TILE_STATE checkTileState)
+std::vector<Vector2> CTileFinder::Get_NearTileIndex4(int indexX, int indexY)
+{
+	std::vector<Vector2> vecTileIndex;
+
+	for (int nearX = indexX - 1; nearX <= indexX + 1; ++nearX)
+	{
+		if (nearX == indexX || !IsExistTile(nearX, indexY))
+		{
+			continue;
+		}
+
+		vecTileIndex.push_back(Vector2(nearX, indexY));
+	}
+
+	for (int nearY = indexY - 1; nearY <= indexY + 1; nearY++)
+	{
+		if (nearY == indexY || !IsExistTile(indexX, nearY))
+		{
+			continue;
+		}
+
+		vecTileIndex.push_back(Vector2(indexX, nearY));
+	}
+
+	return vecTileIndex;
+}
+
+std::vector<Vector2> CTileFinder::Get_NearTileIndex4(Vector2 Index)
+{
+	std::vector<Vector2> result = Get_NearTileIndex4((int)Index.x, (int)Index.x);
+	return result;
+}
+
+std::vector<Vector2> CTileFinder::Get_AreaBorder(TILE_STATE checkTileState)
 {
 	std::vector<Vector2> vecResult;
 
@@ -264,7 +362,7 @@ std::vector<Vector2> CTileFinder::GetAreaBorder(TILE_STATE checkTileState)
 		for (size_t i = 0; i < tileStateData[checkTileState].size(); ++i)
 		{
 			// 하나라도 주변 타일의 TILE_STATE가 다르다면 가장자리로 간주한다.
-			if (CompareWith_NearTileState8(tileStateData[checkTileState][i]) > 1)
+			if (CompareWith_NearTileState8(tileStateData[checkTileState][i]) > 0)
 			{
 				vecResult.push_back(tileStateData[checkTileState][i]);
 			}
@@ -274,6 +372,52 @@ std::vector<Vector2> CTileFinder::GetAreaBorder(TILE_STATE checkTileState)
 	return vecResult;
 }
 
+std::vector<Vector2> CTileFinder::Get_OutlineTiles(std::vector<Vector2> tiles)
+{
+	std::vector<Vector2> vecOutLine;
+
+	// 해당 타일들을 감싸는 테두리 타일을 원하는 두께 만큼 리턴 
+	// 8방향을 조사해서 
+	// 1. 인자로 들어온 타일이 아니어야하고,
+	// 2. 중복이 되면 안됨.
+	
+	// 이미 저장된 타일일 경우 지나감.
+	std::set<std::pair<float, float>> setNearTileIndex;
+	std::set<std::pair<float, float>> setTiles;
+
+	// 인자로 들어온 타일의 인덱스를 전부 저장함
+	for (size_t i = 0; i < tiles.size(); ++i)
+	{
+		setTiles.insert(std::make_pair(tiles[i].x, tiles[i].y));
+	}
+
+	for (auto iter = setTiles.begin(); iter != setTiles.end(); ++iter)
+	{
+		// 인자로 들어온 타일중에 하나라면 생략
+		Vector2 currentIndex = { iter->first,iter->second };
+		std::vector<Vector2> nearTileIndex8 = Get_NearTileIndex8(currentIndex);
+
+		for (size_t k = 0; k < nearTileIndex8.size(); ++k)
+		{
+			Vector2 nearIndex = { nearTileIndex8[k].x , nearTileIndex8[k].y };
+			auto TileIter = setTiles.find(std::pair<float, float>(nearIndex.x, nearIndex.y));
+			
+			// 이미 있는거 아니면 넣기
+			if (TileIter != setTiles.end())
+			{
+				Vector2 Index = { nearTileIndex8[k].x,nearTileIndex8[k].y };
+				setNearTileIndex.insert(std::make_pair((int)Index.x, (int)Index.y));
+			}
+		}
+	}
+	
+	for (auto iter = setTiles.begin(); iter != setTiles.end(); ++iter)
+	{
+		vecOutLine.push_back(Vector2(iter->first, iter->second));
+	}
+
+	return vecOutLine;
+}
 
 bool CTileFinder::IsExistTile(int indexX, int indexY)
 {
@@ -285,13 +429,13 @@ bool CTileFinder::IsExistTile(int indexX, int indexY)
 
 bool CTileFinder::IsExistTile(Vector2 tileIndex)
 {
-	bool result = true;
+	bool result = false;
 	Vector2 MapSize = m_pOwner->GetMapSize();
 
-	if (tileIndex.x >= 0 && tileIndex.x < MapSize.x &&
-		tileIndex.y >= 0 && tileIndex.y < MapSize.y)
+	if (tileIndex.x >= 0 && (tileIndex.x < MapSize.x) &&
+		tileIndex.y >= 0 && (tileIndex.y < MapSize.y))
 	{
-		result = false;
+		result = true;
 	}
 
 	return result;

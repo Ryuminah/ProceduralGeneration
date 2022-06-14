@@ -30,7 +30,6 @@ private:
 	// 각 타일들을 LAND_State별로 분류해놓음
 	// 매 생성단계가 끝난 후 재 분류
 	std::unordered_map<TILE_STATE, std::vector<Vector2>> m_TileStateData;
-
 	std::vector<std::vector<TILE_STATE>> m_TileData;
 
 public:
@@ -41,13 +40,14 @@ public:
 	virtual void GenerateWorld(TILE_STATE _landState);
 	virtual void GenerateVegetation(TILE_STATE _landState);
 
-public:
+private:
 	void GenerateBase();
 	void GenerateLand();
 	void GenerateSea();
 	void GenerateCoast();
 	void GenerateLake();
 	void GenerateForest();
+	void ClearAll();
 
 	///////////////////////////////////// Private /////////////////////////////////////
 private:
@@ -61,7 +61,7 @@ private:
 
 	// TileData
 	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);		// 타일 정보를 갱신하며 이미지를 교체함
-	void ChangeTileData(Vector2 tileIndex, TILE_STATE tileState);
+	void ChangeTileData(Vector2 tileIndex, TILE_STATE tileState);		
 
 	// 타일 데이터를 전부 갱신한다.
 	void UpdateTileStateData();

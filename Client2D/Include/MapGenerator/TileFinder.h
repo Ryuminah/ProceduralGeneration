@@ -19,6 +19,8 @@ private:
 
 private:
 	// 주변 타일 중 checkTileState 타일의 갯수를 반환
+	int Check_NearSeaTile8(int indexX, int indexY);
+
 	int Check_NearTileState8(int indexX, int indexY, TILE_STATE checkTileState);
 	int Check_NearTileState8(Vector2 TileIndex, TILE_STATE checkTileState);
 
@@ -40,18 +42,38 @@ private:
 	bool CompareWith_TileState(Vector2 srcIndex , Vector2 destIndex);
 
 private:
-	// 주변 타일의 TILE_State를 조사해 인덱스를 가져옴
-	std::vector<Vector2> GetNearTileState8(int indexX, int indexY, TILE_STATE checkTileState);
-	std::vector<Vector2> GetNearTileState4(int indexX, int indexY, TILE_STATE checkTileState);
-	std::vector<Vector2> GetNearTileState4(Vector2 Index, TILE_STATE checkTileState);
+	// 주변 타일의 TILE_State를 조사해 해당 TILE_STATE의 인덱스를 가져옴
+	// 모든 Get 함수는 데이터가 항상 갱신되고 있는 있는 m_TileState를 기반으로 제작할 것
+	std::vector<Vector2> Get_NearTileState8(int indexX, int indexY, TILE_STATE checkTileState);
+	std::vector<Vector2> Get_NearTileState4(int indexX, int indexY, TILE_STATE checkTileState);
+	std::vector<Vector2> Get_NearTileState4(Vector2 Index, TILE_STATE checkTileState);
+
+	std::vector<Vector2> Get_NearTileIndex8(int indexX, int indexY);
+	std::vector<Vector2> Get_NearTileIndex8(Vector2 Index);
+	std::vector<Vector2> Get_NearTileIndex4(int indexX, int indexY);
+	std::vector<Vector2> Get_NearTileIndex4(Vector2 Index);
+
 
 	// Area의 가장자리를 return 해줌
-	std::vector<Vector2> GetAreaBorder(TILE_STATE checkTileState);
-	std::vector<Vector2> Select_Border(TILE_STATE checkTileState);
+	std::vector<Vector2> Get_AreaBorder(TILE_STATE checkTileState);
+
+	// 해당 타일들을 감싸는 테두리 타일을 리턴
+	std::vector<Vector2> Get_OutlineTiles(std::vector<Vector2> tiles);
+
+
+	//std::vector<Vector2> Select_Border(TILE_STATE checkTileState);		// 이거 뭐만들려고 했던거더라 ,,,?
 
 
 	// 맵 안에 존재하는 타일인지
 	bool IsExistTile(int indexX, int indexY);
 	bool IsExistTile(Vector2 tileIndex);
+
+public:
+	void SetOwner(class CMapGenerator* pMapGenerator)
+	{
+		m_pOwner = pMapGenerator;
+	}
 };
+
+
 
