@@ -34,7 +34,7 @@ CEngine::CEngine()
 	m_OnLogFPS = false;
 	m_GlobalCBuffer = nullptr;
 	m_Start = false;
-	m_Editor = false;
+	m_Editor = true;
 }
 
 CEngine::~CEngine()

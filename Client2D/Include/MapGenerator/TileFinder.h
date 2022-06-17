@@ -57,9 +57,16 @@ private:
 
 	// Area의 가장자리를 return 해줌
 	std::vector<Vector2> Get_AreaBorder(TILE_STATE checkTileState);
+	std::vector<Vector2> Get_AreaBorder(std::vector<Vector2> areaIndex);
+	std::vector<Vector2> Get_AreaBorder(std::vector<Vector2> areaIndex, TILE_STATE checkTileState);
+
 
 	// 해당 타일들을 감싸는 테두리 타일을 리턴
 	std::vector<Vector2> Get_OutlineTiles(std::vector<Vector2> tiles);
+
+	// For Search
+	// 어떤 타일 묶음안에 해당 인덱스가 존재하는지 
+	bool Find_TileIndex(Vector2 srcIndex, std::vector<Vector2> destTiles);
 
 
 	//std::vector<Vector2> Select_Border(TILE_STATE checkTileState);		// 이거 뭐만들려고 했던거더라 ,,,?

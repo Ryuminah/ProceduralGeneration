@@ -27,17 +27,16 @@ CClientManager::~CClientManager()
 
 bool CClientManager::Init()
 {
-    //CEngine::GetInst()->OnDebugLog();
-    //CEngine::GetInst()->OnLogFPS(true);
-    if (!CMapGeneratorManager::GetInst()->Init())
+	CEngine::GetInst()->OnDebugLog();
+	CreateKey();
+
+	if (!CMapGeneratorManager::GetInst()->Init())
 		return false;
 
-    CreateKey();
-    CreateCollision();
-    // 마우스 거슬려서 없애버렷
-    //CreateMouse();
 
-    return true;
+	CSceneManager::GetInst()->SetSceneMode<CMainScene>();
+
+	return true;
 }
 
 void CClientManager::CreateMouse()
@@ -92,6 +91,12 @@ void CClientManager::CreateKey()
     CInput::GetInst()->CreateKey("1", '1');
     CInput::GetInst()->CreateKey("2", '2');
     CInput::GetInst()->CreateKey("3", '3');
+    CInput::GetInst()->CreateKey("4", '4');
+    CInput::GetInst()->CreateKey("5", '5');
+    CInput::GetInst()->CreateKey("6", '6');
+    CInput::GetInst()->CreateKey("7", '7');
+
+
 }
 
 void CClientManager::CreateCollision()
@@ -116,5 +121,4 @@ void CClientManager::CreateCollision()
     CCollisionManager::GetInst()->SetProfileChannelState("MonsterAttack", Collision_Channel::Custom2,
         Collision_Interaction::Ignore);
 
-    CSceneManager::GetInst()->SetSceneMode<CMainScene>();
 }

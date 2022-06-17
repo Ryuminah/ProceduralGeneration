@@ -43,6 +43,7 @@ private:
 	void GenerateLand(float DeltaTime);
 	void GenerateCoast(float DeltaTime);
 	void GenerateForest(float DeltaTime);
+	void GenerateLake(float DeltaTime);
 	void Clear(float DeltaTime);
 
 private:

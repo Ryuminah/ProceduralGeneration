@@ -70,6 +70,8 @@ bool CRandomMap::Init()
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("1", KT_Down, this, &CRandomMap::GenerateLand);
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("2", KT_Down, this, &CRandomMap::GenerateCoast);
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("3", KT_Down, this, &CRandomMap::GenerateForest);
+	CInput::GetInst()->AddKeyCallback<CRandomMap>("4", KT_Down, this, &CRandomMap::GenerateLake);
+
 	CInput::GetInst()->AddKeyCallback<CRandomMap>("Enter", KT_Down, this, &CRandomMap::Clear);
 
 
@@ -115,6 +117,11 @@ void CRandomMap::GenerateCoast(float DeltaTime)
 void CRandomMap::GenerateForest(float DeltaTime)
 {
 	m_MapGenerator->GenerateWorld(TILE_STATE::FOREST);
+}
+
+void CRandomMap::GenerateLake(float DeltaTime)
+{
+	m_MapGenerator->GenerateWorld(TILE_STATE::LAKE);
 }
 
 void CRandomMap::GenerateBase(float DeltaTime)

@@ -17,6 +17,5 @@ public:
 private:
     void CreateMaterial();
     void CreateAnimationSequence2D();
-    void CreateParticle();
 };
 

@@ -19,7 +19,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ int       nCmdShow)
 {
     if (!CEngine::GetInst()->Init(TEXT("Procedural Map Generation"), TEXT("Procedural Map Generation"), hInstance, IDI_ICON1, IDI_ICON1,
-        1280, 720))
+        1920, 1080))
     {
         CEngine::DestroyInst();
         return 0;

@@ -32,6 +32,10 @@ private:
 	int m_ForestMaxX;
 	int m_ForestMaxY;
 
+	int m_LakeMinX;
+	int m_LakeMinY;
+	int m_LakeMaxX;
+	int m_LakeMaxY;
 
 	// 각 타일들을 LAND_State별로 분류해놓음
 	// 매 생성단계가 끝난 후 재 분류
@@ -52,6 +56,7 @@ private:
 	void GenerateCoast();
 	void GenerateLake();
 	void GenerateForest();
+	
 	void ClearAll();
 
 	///////////////////////////////////// Private /////////////////////////////////////
@@ -65,7 +70,7 @@ private:
 	void CreateRandom();
 
 	// TileData
-	void ChangeTileState(Vector2 tileIndex, TILE_STATE tileState);		// 타일 정보를 갱신하며 이미지를 교체함
+	void ChangeTileStateImage(Vector2 tileIndex, TILE_STATE tileState);		// 타일 정보를 갱신하며 이미지를 교체함
 	void ChangeTileData(Vector2 tileIndex, TILE_STATE tileState);		
 
 	// 타일 데이터를 전부 갱신한다.
@@ -73,8 +78,10 @@ private:
 
 	// 랜덤 알고리즘 짱구좀 굴려서 함수화 시키기...
 
-///////////////////////////////////// Get, Set /////////////////////////////////////
+private:
+	void DebugFunctionTime(void(CMapGenerator::*pFunc)());
 
+///////////////////////////////////// Get, Set /////////////////////////////////////
 public:
 	int GetMapSizeX()
 	{

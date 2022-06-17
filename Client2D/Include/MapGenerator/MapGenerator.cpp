@@ -13,9 +13,10 @@ CMapGenerator::CMapGenerator() :
 	m_IsGenerateWorldEnd(false),
 	m_pRandomMap(nullptr),
 	m_pTileFinder(nullptr),
-	m_MapSizeX(50), m_MapSizeY(50),
-	m_OutLineX(2), m_OutLineY(2),
-	m_ForestMinX(7), m_ForestMinY(8), m_ForestMaxX(15), m_ForestMaxY(16)
+	m_MapSizeX(60), m_MapSizeY(60),
+	m_OutLineX(3), m_OutLineY(3),
+	m_ForestMinX(7), m_ForestMinY(8), m_ForestMaxX(15), m_ForestMaxY(16),
+	m_LakeMinX(5), m_LakeMinY(3), m_LakeMaxX(8), m_LakeMaxY(5)
 
 {
 }
@@ -41,7 +42,7 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	m_pRandomMap->SetRootComponent(pMapComponent);
 
 	// Tile들을 생성한다.
-	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_pRandomMap->m_MapSizeX, m_pRandomMap->m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
+	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_MapSizeX, m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
 	m_pTileFinder = new CTileFinder(this);
 
 	return true;
@@ -49,6 +50,11 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 
 void CMapGenerator::GenerateWorld(TILE_STATE _tileState)
 {
+	if (m_IsGenerateWorldEnd && (_tileState != TILE_STATE::CLEAR))
+	{
+		return;
+	}
+
 	switch (_tileState)
 	{
 	case TILE_STATE::BASE:
@@ -98,6 +104,7 @@ void CMapGenerator::GenerateBase()
 {
 	// 기본 맵 생성 로직
 	// 시드값을 이용해서 맵의 기반을 만듦
+	m_TileData.clear();
 
 	CEngine::GetInst()->OnDebugLog();
 	m_IsGenerateWorldEnd = false;
@@ -118,7 +125,7 @@ void CMapGenerator::GenerateBase()
 	{
 		for (int y = 0; y < m_MapSizeY; ++y)
 		{
-			ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
+			ChangeTileStateImage(Vector2(x, y), TILE_STATE::LAND);
 		}
 	}
 
@@ -140,8 +147,8 @@ void CMapGenerator::GenerateBase()
 			Vector2 LineStart = Vector2(x, y);
 			Vector2 LineEnd = Vector2(m_MapSizeX - 1 - x, y);
 
-			ChangeTileState(LineStart, TILE_STATE::SEA);
-			ChangeTileState(LineEnd, TILE_STATE::SEA);
+			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
+			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
 		}
 	}
 
@@ -152,8 +159,8 @@ void CMapGenerator::GenerateBase()
 			Vector2 LineStart = Vector2(x, y);
 			Vector2 LineEnd = Vector2(x, m_MapSizeY - 1 - y);
 
-			ChangeTileState(LineStart, TILE_STATE::SEA);
-			ChangeTileState(LineEnd, TILE_STATE::SEA);
+			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
+			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
 		}
 	}
 }
@@ -182,7 +189,7 @@ void CMapGenerator::GenerateLand()
 
 				if (NearSeaCount < 4)
 				{
-					ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
+					ChangeTileStateImage(Vector2(x, y), TILE_STATE::LAND);
 				}
 			}
 		}
@@ -204,7 +211,7 @@ void CMapGenerator::GenerateCoast()
 	{
 		Vector2 CoastTile = vecLandTile[i];
 
-		ChangeTileState(CoastTile, TILE_STATE::COAST);
+		ChangeTileStateImage(CoastTile, TILE_STATE::COAST);
 		vecNewCoastTile.push_back(CoastTile);
 	}
 
@@ -281,12 +288,48 @@ void CMapGenerator::GenerateCoast()
 		--RandomTileCount;
 	}
 
-	//m_AllTileStateData.insert(std::pair<TILE_State, std::vector<Vector2>>(TILE_State::COAST, vecCoastTile));
 }
 
 void CMapGenerator::GenerateLake()
 {
-	// 호수 타일 생성
+	// 숲 지형에 생성되므로, 숲이 존재하지 않는다면 함수 종료
+	int ForestTilesCount = m_TileStateData[TILE_STATE::FOREST].size();
+
+	if (ForestTilesCount == 0)
+	{
+		return;
+	}
+
+	int Index = 0;
+	int randomCount = 2;
+
+	int LakeX = (rand() % m_LakeMaxX) + m_LakeMinX;
+	int LakeY = (rand() % m_LakeMaxY) + m_LakeMinY;
+
+	// 숲 시작지점의 인덱스를 랜덤으로 고름
+	int startIndex = rand() % ForestTilesCount;
+	Vector2 LakeStart = m_TileStateData[TILE_STATE::FOREST][startIndex];
+
+	// 숲의 마지막 지점
+	Vector2 LakeEnd;
+	LakeEnd.x = LakeStart.x + LakeX;
+	LakeEnd.y = LakeStart.y + LakeY;
+
+	// 사각형의 숲 만들기
+	std::vector<Vector2> vecLakeTile;
+	for (int x = LakeStart.x; x < LakeEnd.x; ++x)
+	{
+		for (int y = LakeStart.y; y < LakeEnd.y; ++y)
+		{
+			// 호수는 숲 영역에만 생성한다
+			if (m_pTileFinder->IsExistTile(x, y) &&
+				m_pTileFinder->Check_TileState(x, y, TILE_STATE::FOREST))
+			{
+				ChangeTileStateImage(Vector2(x, y), TILE_STATE::LAKE);
+				vecLakeTile.push_back(Vector2(x, y));
+			}
+		}
+	}
 }
 
 void CMapGenerator::GenerateForest()
@@ -322,63 +365,51 @@ void CMapGenerator::GenerateForest()
 		for (int y = forestStart.y; y < forestEnd.y; ++y)
 		{
 			// 땅 타일일 경우에만 숲을 추가한다
-			if (x >= 0 && x < m_MapSizeX &&
-				y >= 0 && y < m_MapSizeY &&
-				m_TileData[x][y] == TILE_STATE::LAND)
+			if (m_pTileFinder->IsExistTile(x,y) &&
+				m_pTileFinder->Check_TileState(x,y,TILE_STATE::LAND))
 			{
-				ChangeTileState(Vector2(x, y), TILE_STATE::FOREST);
+				ChangeTileStateImage(Vector2(x, y), TILE_STATE::FOREST);
 				vecForestTile.push_back(Vector2(x, y));
 			}
 		}
 	}
 
-	//UpdateTileStateData()
-	// 외곽 스무딩
-	// Outline을 모아서 뜬 ,,,
+	// 방금 추가한 숲에 대해서만 외곽을 가져온다.
+	std::vector<Vector2> vecSmoothTile = m_pTileFinder->Get_AreaBorder(vecForestTile, TILE_STATE::FOREST);
+	std::vector<Vector2> vecOutlineTile = m_pTileFinder->Get_OutlineTiles(vecForestTile);
 
-	//std::vector<Vector2> vecSmoothTile = m_pTileFinder->Get_AreaBorder(TILE_STATE::FOREST);
-	//std::vector<Vector2> vecOutlineTile = m_pTileFinder->Get_OutlineTiles(vecSmoothTile);
+	
+	for (size_t i = 0; i < vecOutlineTile.size(); ++i)
+	{
+		// 테두리 중 숲 타일이 아니라면 경계의 아웃라인으로 간주하고 스무딩 라인으로 추가한다.
+		if (m_pTileFinder->Check_TileState(vecOutlineTile[i], TILE_STATE::LAND))
+		{
+			vecSmoothTile.push_back(vecOutlineTile[i]);
+		}
+	}
 
-	//for (size_t i = 0; i < vecOutlineTile.size(); ++i)
-	//{
-	//	// 테두리 중 숲 타일이 아니라면 경계의 아웃라인으로 간주하고 스무딩 라인으로 추가한다.
-	//	if (!m_pTileFinder->Check_TileState(vecOutlineTile[i], TILE_STATE::FOREST))
-	//	{
-	//		vecSmoothTile.push_back(vecOutlineTile[i]);
-	//	}
-	//}
+	for (size_t i = 0; i < vecSmoothTile.size(); ++i)
+	{
+		bool changeForest = rand() % 2;
 
-	//for (size_t i = 0; i < vecSmoothTile.size(); ++i)
-	//{
-	//	bool changeForest  = rand() % 1;
+		if (!changeForest)
+		{
+			ChangeTileStateImage(vecSmoothTile[i], TILE_STATE::LAND);
 
-	//	switch (changeForest)
-	//	{
-	//	case true:
-	//		ChangeTileState(vecSmoothTile[i], TILE_STATE::FOREST);
-	//		break;
+		}
 
-	//	case false:
-	//		ChangeTileState(vecSmoothTile[i], TILE_STATE::LAND);
-	//		break;
+		else
+		{
+			ChangeTileStateImage(vecSmoothTile[i], TILE_STATE::FOREST);
+		}
+	}
 
-	//	default:
-	//		break;
-	//	}
-	//}
+
 }
 
 void CMapGenerator::ClearAll()
 {
 	m_TileData.clear();
-
-	/*for (int x = 0; x < m_MapSizeX; ++x)
-	{
-		for (int y = 0; y < m_MapSizeY; ++y)
-		{
-			ChangeTileData(Vector2(x, y), TILE_STATE::LAND);
-		}
-	}*/
 
 	GenerateBase();
 }
@@ -419,7 +450,7 @@ void CMapGenerator::CellularAutomata()
 		Vector2 TileIndex = MapIndex[RandomSeed];
 
 		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-		ChangeTileState(TileIndex, TILE_STATE::SEA);
+		ChangeTileStateImage(TileIndex, TILE_STATE::SEA);
 
 		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
 		auto iterEnd = MapIndex.end();
@@ -437,7 +468,10 @@ void CMapGenerator::CellularAutomata()
 	// 1. 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 횟수 
 	// 2. 각 레벨의 타일 상태를 전부 저장한 후 중간중간 확정 되기 전까지 맵의 상태를 볼 수 있도록 한다 .. .. . . .
 	//
-	SmoothMap();
+	for (size_t i = 0; i < 3; i++)
+	{
+		SmoothMap();
+	}
 }
 
 void CMapGenerator::SmoothMap()
@@ -451,20 +485,20 @@ void CMapGenerator::SmoothMap()
 			if (NearSeaCount > 4)
 			{
 				// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
-				ChangeTileState(Vector2(x, y), TILE_STATE::SEA);
+				ChangeTileStateImage(Vector2(x, y), TILE_STATE::SEA);
 			}
 
 			else if (NearSeaCount < 4)
 			{
 				// 해당 부분의 타일만 UV좌표를 변경 (땅으로 변경)
-				ChangeTileState(Vector2(x, y), TILE_STATE::LAND);
+				ChangeTileStateImage(Vector2(x, y), TILE_STATE::LAND);
 			}
 		}
 	}
 }
 
 
-void CMapGenerator::ChangeTileState(Vector2 tileIndex, TILE_STATE tileState)
+void CMapGenerator::ChangeTileStateImage(Vector2 tileIndex, TILE_STATE tileState)
 {
 	if (!m_pTileFinder->IsExistTile(tileIndex))
 	{
@@ -534,6 +568,19 @@ void CMapGenerator::UpdateTileStateData()
 		m_TileStateData[tileState] = allTileState[i];
 		//m_TileStateData.insert({ tileState , allTileState[i] });
 	}
+}
+
+void CMapGenerator::DebugFunctionTime(void(CMapGenerator::*pFunc)())
+{
+	clock_t start = clock();
+
+	//(*pFunc)();
+
+	clock_t end = clock();
+	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
+	char buffer[BUFSIZ];
+	sprintf_s(buffer, "%f", clockTime);
+	CEngine::GetInst()->AddDebugLog(buffer);
 }
 
 void CMapGenerator::CreateRandom()

@@ -113,7 +113,7 @@ int CTileFinder::Check_NearTileState4(int indexX, int indexY, TILE_STATE checkTi
 
 int CTileFinder::Check_NearTileState4(Vector2 Index, TILE_STATE checkTileState)
 {
-	int result = Check_NearTileState4((int)Index.x, (int)Index.x, checkTileState);
+	int result = Check_NearTileState4((int)Index.x, (int)Index.y, checkTileState);
 
 	return result;
 }
@@ -134,7 +134,7 @@ bool CTileFinder::Check_TileState(int indexX, int indexY, TILE_STATE checkTileSt
 
 bool CTileFinder::Check_TileState(Vector2 Index, TILE_STATE checkTileState)
 {
-	bool result = Check_TileState((int)Index.x, (int)Index.x, checkTileState);
+	bool result = Check_TileState((int)Index.x, (int)Index.y, checkTileState);
 
 	return result;
 }
@@ -285,7 +285,7 @@ std::vector<Vector2> CTileFinder::Get_NearTileState4(int indexX, int indexY, TIL
 
 std::vector<Vector2> CTileFinder::Get_NearTileState4(Vector2 Index, TILE_STATE checkTileState)
 {
-	std::vector<Vector2> result = Get_NearTileState4((int)Index.x, (int)Index.x, checkTileState);
+	std::vector<Vector2> result = Get_NearTileState4((int)Index.x, (int)Index.y, checkTileState);
 	return result;
 }
 
@@ -312,7 +312,7 @@ std::vector<Vector2> CTileFinder::Get_NearTileIndex8(int indexX, int indexY)
 
 std::vector<Vector2> CTileFinder::Get_NearTileIndex8(Vector2 Index)
 {
-	std::vector<Vector2> result = Get_NearTileIndex8((int)Index.x, (int)Index.x);
+	std::vector<Vector2> result = Get_NearTileIndex8((int)Index.x, (int)Index.y);
 
 	return result;
 }
@@ -346,7 +346,7 @@ std::vector<Vector2> CTileFinder::Get_NearTileIndex4(int indexX, int indexY)
 
 std::vector<Vector2> CTileFinder::Get_NearTileIndex4(Vector2 Index)
 {
-	std::vector<Vector2> result = Get_NearTileIndex4((int)Index.x, (int)Index.x);
+	std::vector<Vector2> result = Get_NearTileIndex4((int)Index.x, (int)Index.y);
 	return result;
 }
 
@@ -354,9 +354,9 @@ std::vector<Vector2> CTileFinder::Get_AreaBorder(TILE_STATE checkTileState)
 {
 	std::vector<Vector2> vecResult;
 
-	// 여기 수정하기 수정하기 수정하기수정하기 별백개
-	std::unordered_map<TILE_STATE, std::vector<Vector2>> tileStateData;
+	// 항상 갱신되는 TileData를 기준으로 Area를 탐색해야함
 	std::vector<std::vector<TILE_STATE>> vecTileData = m_pOwner->GetTileData();
+	std::vector<Vector2> tileStateData;
 
 	for (int x = 0; x < m_pOwner->GetMapSizeX(); ++x)
 	{
@@ -364,21 +364,164 @@ std::vector<Vector2> CTileFinder::Get_AreaBorder(TILE_STATE checkTileState)
 		{
 			if (vecTileData[x][y] == checkTileState)
 			{
-				//tileS
+				tileStateData.push_back(Vector2(float(x), float(y)));
 			}
 		}
 	}
 
-	// 해당 TILE_STATE가 존재할 경우 영역의 가장자리를 체크하여 인덱스를 반환한다.
-	if (tileStateData.end() != tileStateData.find(checkTileState))
+	// 해당 Area가 존재할 경우
+	if (tileStateData.size() > 0)
 	{
-		for (size_t i = 0; i < tileStateData[checkTileState].size(); ++i)
+		for (size_t i = 0; i < tileStateData.size(); ++i)
 		{
-			// 하나라도 주변 타일의 TILE_STATE가 다르다면 가장자리로 간주한다.
-			if (CompareWith_NearTileState8(tileStateData[checkTileState][i]) > 0)
+			if (CompareWith_NearTileState4(tileStateData[i]) > 0)
 			{
-				vecResult.push_back(tileStateData[checkTileState][i]);
+				vecResult.push_back(tileStateData[i]);
 			}
+		}
+	}
+
+	return vecResult;
+}
+
+std::vector<Vector2> CTileFinder::Get_AreaBorder(std::vector<Vector2> areaIndex)
+{
+	std::vector<Vector2> vecResult;
+	std::set<std::pair<float, float>> setAreaIndex;		// 탐색을 위하여 ...
+
+	// x,y의 최대 최솟값을 구한다
+	Vector2 minIndex = {m_pOwner->GetMapSize()};
+	Vector2 maxIndex = {0.f,0.f};
+
+	for (size_t i = 0; i < areaIndex.size(); ++i)
+	{
+		Vector2 currentIndex = areaIndex[i];
+		setAreaIndex.insert(std::make_pair(areaIndex[i].x, areaIndex[i].y));
+
+		// 최솟값
+		if (currentIndex.x < minIndex.x)
+		{
+			minIndex.x = currentIndex.x;
+		}
+
+		else if (currentIndex.x > maxIndex.x)
+		{
+			maxIndex.x = currentIndex.x;
+		}
+
+		// 최솟값
+		if (currentIndex.y < minIndex.y)
+		{
+			minIndex.y = currentIndex.y;
+		}
+
+		else if (currentIndex.y > maxIndex.y)
+		{
+			maxIndex.y = currentIndex.y;
+		}
+	}
+
+	// 세로 가장자리
+	// 플롯으로 갈겨버린 이유는 어차피 정수라서 귀찮아서 , ,, ,, ,ㅠ
+	for (float x = minIndex.x; x <= maxIndex.x; ++x)
+	{
+		float minY = maxIndex.y;
+		float maxY = minIndex.y;
+
+		for (float y = minIndex.y; y <= maxIndex.y; ++y)
+		{
+			auto findIter = setAreaIndex.find(std::make_pair(x, y));
+
+			// 존재하는 타일이라면
+			if (findIter != setAreaIndex.end())
+			{
+				Vector2 compareIndex = Vector2(findIter->first, findIter->second);
+
+				if (compareIndex.y < minY)
+				{
+					minY = compareIndex.y;
+				}
+
+				else if (compareIndex.y > maxY)
+				{
+					maxY = compareIndex.y;
+				}
+			}
+
+			else
+			{
+				int a = 0;
+			}
+		}
+
+		Vector2 heightMinIndex = { x, minY };
+		Vector2 heightMaxIndex = { x, maxY };
+		Vector2 heightIndex[2] = { heightMinIndex ,heightMaxIndex };
+
+		for (int i = 0; i < 2; ++i)
+		{
+			if (!Find_TileIndex(heightIndex[i], vecResult))
+			{
+				vecResult.push_back(heightIndex[i]);
+			}
+		}
+	}
+
+
+	// 가로 가장자리
+	for (float y = minIndex.y; y <= maxIndex.y; ++y)
+	{
+		float minX = maxIndex.x;
+		float maxX = minIndex.x;
+
+		for (float x = minIndex.x; x <= maxIndex.x; ++x)
+		{
+			auto findIter = setAreaIndex.find(std::make_pair(x, y));
+
+			// 존재하는 타일이라면
+			if (findIter != setAreaIndex.end())
+			{
+				Vector2 compareIndex = Vector2(findIter->first, findIter->second);
+
+				if (compareIndex.x < minX)
+				{
+					minX = compareIndex.x;
+				}
+
+				else if (compareIndex.x > maxX)
+				{
+					maxX = compareIndex.x;
+				}
+			}
+		}
+
+		Vector2 widthMinIndex = { minX, y};
+		Vector2 widthMaxIndex = { maxX, y};
+		Vector2 widthIndex[2] = { widthMinIndex,widthMaxIndex };
+
+
+		for (int i = 0; i < 2; ++i)
+		{
+			if (!Find_TileIndex(widthIndex[i], vecResult))
+			{
+				vecResult.push_back(widthIndex[i]);
+			}
+		}
+	}
+
+	return vecResult;
+}
+
+std::vector<Vector2> CTileFinder::Get_AreaBorder(std::vector<Vector2> areaIndex, TILE_STATE checkTileState)
+{
+	std::vector<Vector2> vecResult;
+
+	// 해당 Area가 존재할 경우
+	for (size_t i = 0; i < areaIndex.size(); ++i)
+	{
+		if (CompareWith_NearTileState4(areaIndex[i]) > 0)
+		{
+			vecResult.push_back(areaIndex[i]);
 		}
 	}
 
@@ -398,38 +541,41 @@ std::vector<Vector2> CTileFinder::Get_OutlineTiles(std::vector<Vector2> tiles)
 	std::set<std::pair<float, float>> setNearTileIndex;
 	std::set<std::pair<float, float>> setTiles;
 
-	// 인자로 들어온 타일의 인덱스를 전부 저장함
-	for (size_t i = 0; i < tiles.size(); ++i)
-	{
-		setTiles.insert(std::make_pair(tiles[i].x, tiles[i].y));
-	}
+	std::vector<Vector2> vecBorderTiles = Get_AreaBorder(tiles);
 
-	for (auto iter = setTiles.begin(); iter != setTiles.end(); ++iter)
+	for (size_t i = 0; i < vecBorderTiles.size(); ++i)
 	{
-		// 인자로 들어온 타일중에 하나라면 생략
-		Vector2 currentIndex = { iter->first,iter->second };
-		std::vector<Vector2> nearTileIndex8 = Get_NearTileIndex8(currentIndex);
+		std::vector<Vector2> nearTileIndex = Get_NearTileIndex4(vecBorderTiles[i]);
 
-		for (size_t k = 0; k < nearTileIndex8.size(); ++k)
+		for (size_t j = 0; j < nearTileIndex.size(); j++)
 		{
-			Vector2 nearIndex = { nearTileIndex8[k].x , nearTileIndex8[k].y };
-			auto TileIter = setTiles.find(std::pair<float, float>(nearIndex.x, nearIndex.y));
-			
-			// 이미 있는거 아니면 넣기
-			if (TileIter != setTiles.end())
+			if (!Find_TileIndex(nearTileIndex[j], tiles)&&
+				!Find_TileIndex(nearTileIndex[j], vecOutLine))
 			{
-				Vector2 Index = { nearTileIndex8[k].x,nearTileIndex8[k].y };
-				setNearTileIndex.insert(std::make_pair((int)Index.x, (int)Index.y));
+				vecOutLine.push_back(nearTileIndex[j]);
 			}
 		}
-	}
-	
-	for (auto iter = setTiles.begin(); iter != setTiles.end(); ++iter)
-	{
-		vecOutLine.push_back(Vector2(iter->first, iter->second));
+		
 	}
 
 	return vecOutLine;
+}
+
+bool CTileFinder::Find_TileIndex(Vector2 srcIndex, std::vector<Vector2> destTiles)
+{
+	// 탐색 속도 비교
+	bool result = false;
+
+	// 같은 영역으로 묶여있다면 TILE_STATE가 달라도 경계로 판단하지 않는다.
+	for (size_t i = 0; i < destTiles.size(); ++i)
+	{
+		if (destTiles[i] == srcIndex)
+		{
+			result = true;
+		}
+	}
+	
+	return result;
 }
 
 bool CTileFinder::IsExistTile(int indexX, int indexY)
