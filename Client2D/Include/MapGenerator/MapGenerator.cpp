@@ -132,7 +132,8 @@ void CMapGenerator::GenerateBase()
 	clock_t start = clock(); // 시작 시 간 저장
 
 	// 맵 자동화 알고리즘
-	CellularAutomata();
+	//CellularAutomata();
+	UpdgradeCellularAutomata();
 
 	clock_t end = clock();
 	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
@@ -233,9 +234,8 @@ void CMapGenerator::GenerateCoast()
 
 			// 맵 범위 이내의 타일이 모래가 아니라면 저장한다
 			if ((nearX >= 0 && nearX < m_MapSizeX) &&
-				m_TileData[nearX][currentSandTile.y])
+				m_TileData[nearX][currentSandTile.y] != TILE_STATE::COAST)
 			{
-				m_TileData[nearX][currentSandTile.y] != TILE_STATE::COAST;
 				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(nearX, currentSandTile.y)));
 
 				++keyIndex;
@@ -251,9 +251,8 @@ void CMapGenerator::GenerateCoast()
 
 			// 맵 범위 체크
 			if ((nearY >= 0 && nearY < m_MapSizeY) &&
-				m_TileData[currentSandTile.x][nearY])
+				m_TileData[currentSandTile.x][nearY] != TILE_STATE::COAST)
 			{
-				m_TileData[currentSandTile.x][nearY] != TILE_STATE::COAST;
 				mapRandomSandTile.insert(std::pair<int, Vector2>(keyIndex, Vector2(currentSandTile.x, nearY)));
 				++keyIndex;
 			}
@@ -463,6 +462,71 @@ void CMapGenerator::CellularAutomata()
 
 	}
 
+	// 맵을 분할해서 인덱스를 저장한뒤, 각각 랜덤을 수행한다. (크기가 커질수록 연산량이 많아지는 것을 제한.)
+
+	// Smooth Map
+	// 스무딩 강도를 정할 수 있게 한다. Min / Normal /Max
+	// 1. 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 횟수 
+	// 2. 각 레벨의 타일 상태를 전부 저장한 후 중간중간 확정 되기 전까지 맵의 상태를 볼 수 있도록 한다 .. .. . . .
+	//
+	for (size_t i = 0; i < 3; i++)
+	{
+		SmoothMap();
+	}
+}
+
+void CMapGenerator::UpdgradeCellularAutomata()
+{
+	// 맵 크기만큼 리스트나 맵에 저장해놓고
+	// 당첨 번호의 노드를 삭제
+	std::random_device randomDevice;
+	std::mt19937_64 gen(randomDevice());
+
+	std::unordered_map<int, Vector2> MapIndex;
+	std::set<int> MapIndexKey;				
+	std::vector<Vector2> vecRandomIndex;
+
+	int Index = 0;
+
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			MapIndex[Index] = Vector2((float)x, (float)y);
+			MapIndexKey.insert(Index);
+			++Index;
+		}
+	}
+
+	int selectIndex = 0;
+	int mapSize = m_MapSizeX * m_MapSizeY;
+	
+	
+	// 이래도 결국 쏠린당.
+	for (int i = 0; i < mapSize; ++i)
+	{
+		if (MapIndex.size() == 0)
+		{
+			break;
+		}
+
+		std::uniform_int_distribution<int> dist(0, MapIndex.size());
+		selectIndex = dist(randomDevice);
+		vecRandomIndex.push_back(MapIndex[selectIndex]);
+
+		MapIndex.erase(selectIndex);
+	}
+
+	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.60f;
+	int RandomSeed = 0;
+
+	for (int i = 0; i < RandomTileCount; ++i)
+	{
+		ChangeTileStateImage(vecRandomIndex[i], TILE_STATE::SEA);
+	}
+
+	// 맵을 분할해서 인덱스를 저장한뒤, 각각 랜덤을 수행한다. (크기가 커질수록 연산량이 많아지는 것을 제한.)
+
 	// Smooth Map
 	// 스무딩 강도를 정할 수 있게 한다. Min / Normal /Max
 	// 1. 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 횟수 
@@ -505,7 +569,6 @@ void CMapGenerator::ChangeTileStateImage(Vector2 tileIndex, TILE_STATE tileState
 		return;
 	}
 
-	// 외부에서 접근해서 그런지 왤케 느려졌누;
 	// CTile 저장하고 있는것도 고려하기.. . . (속도 차이 비교할 것)
 	CTile* pTile = m_pRandomMap->m_MapComponent->GetTile(tileIndex * TILE_SIZE_SMALL);
 	pTile->SetFrameStart(tileState * TILE_SIZE_SMALL, 0.f);

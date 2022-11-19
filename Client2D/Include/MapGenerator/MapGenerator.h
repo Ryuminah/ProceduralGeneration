@@ -63,6 +63,8 @@ private:
 private:
 	// Algorithm
 	void CellularAutomata();
+	void UpdgradeCellularAutomata();
+
 
 	// 옵션들도 각자의 기능을 가진 클래스로 빼야할지도
 	void PerformSmootingLevel(OPTION_LEVEL smoothingLevel);
