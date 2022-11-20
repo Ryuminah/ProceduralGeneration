@@ -13,11 +13,12 @@ CDebugLogWindow::~CDebugLogWindow()
 bool CDebugLogWindow::Init()
 {
 	CIMGUIButton* ClearButton = AddWidget<CIMGUIButton>("Clear");
+	ClearButton->SetSize(50.f, 30.f);
 
 	ClearButton->SetClickCallback<CDebugLogWindow>(this, &CDebugLogWindow::ClearButton);
 
 	m_Console = AddWidget<CIMGUIConsole>("Console");
-
+	
 	m_Console->SetMaxHistory(300);
 
 	return true;

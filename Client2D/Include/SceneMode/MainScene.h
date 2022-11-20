@@ -11,6 +11,9 @@ protected:
     CMainScene();
     virtual ~CMainScene();
 
+private:
+    class CGenerateWindow* m_GenerateWindow;
+
 public:
     virtual bool Init();
 

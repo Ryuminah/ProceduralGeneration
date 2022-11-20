@@ -2,9 +2,6 @@
 #include "MainScene.h"
 #include "Scene/Scene.h"
 #include "../Object/Player2D.h"
-#include "../Object/Teemo.h"
-#include "../Object/PixelCollisionTest.h"
-#include "../Object/TestParticle.h"
 #include "Scene/SceneResource.h"
 #include "Render/RenderManager.h"
 #include "../UI/MainHUDWidget.h"
@@ -13,7 +10,8 @@
 #include "../MapGenerator/RandomMap.h"
 #include "../MapGenerator/MapEnum.h"
 #include "../Object/ImageObject.h"
-
+#include "../GenerateWindow.h"
+#include "IMGUIManager.h"
 
 CMainScene::CMainScene()
 {
@@ -34,8 +32,11 @@ bool CMainScene::Init()
 	CRandomMap* RandomMap = m_pScene->SpawnObject<CRandomMap>("RandomMap");
 	RandomMap->SetRelativePos(0.f, 0.f, 0.01f);
 
-	CMapCamera* pPlayer = m_pScene->SpawnObject<CMapCamera>("MapCamera");
+	CMapCamera* pCamera = m_pScene->SpawnObject<CMapCamera>("MapCamera");
 	
+	m_GenerateWindow = (CGenerateWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow("GenerateWindow");
+	m_GenerateWindow->Open();
+
 	return true;
 }
 

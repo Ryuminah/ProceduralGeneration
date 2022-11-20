@@ -174,9 +174,8 @@ void CMapGenerator::GenerateLand()
 	// 옵션을 전부 멤버 변수로. . . 추가 .. .
 
 	// 물타일의 주변 타일이 땅이면 땅으로 채운다..
-
-	// 
 	// 주변 타일 4개이상 땅이면 땅으로 바꿈 (최대한 땅으로 바꿈)
+
 	int InnerTileLineX = m_MapSizeX - m_OutLineX;
 	int InnerTileLineY = m_MapSizeY - m_OutLineY;
 
@@ -259,7 +258,7 @@ void CMapGenerator::GenerateCoast()
 		}
 	}
 
-	// 랜덤으로 뽑아서 . .. . . 샌드 타일 만들기
+	//  Sand Tile 만들기
 	std::random_device randomDevice;
 	std::mt19937_64 gen(randomDevice());
 

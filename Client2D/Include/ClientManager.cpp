@@ -9,6 +9,7 @@
 #include "UI/MouseWidget.h"
 #include "Resource/ResourceManager.h"
 #include "MapGenerator/MapGeneratorManager.h"
+#include "GenerateWindow.h"
 #include "MapGenerator/GenerateOptionManager.h"
 
 #include "SceneMode/StartScene.h"
@@ -27,12 +28,14 @@ CClientManager::~CClientManager()
 
 bool CClientManager::Init()
 {
-	CEngine::GetInst()->OnDebugLog();
+    // Debug창을 띄우는 코드
+	//CEngine::GetInst()->OnDebugLog();
 	CreateKey();
 
 	if (!CMapGeneratorManager::GetInst()->Init())
 		return false;
 
+    CIMGUIManager::GetInst()->AddWindow<CGenerateWindow>("GenerateWindow");
 
 	CSceneManager::GetInst()->SetSceneMode<CMainScene>();
 
