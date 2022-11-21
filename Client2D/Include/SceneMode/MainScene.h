@@ -12,7 +12,7 @@ protected:
     virtual ~CMainScene();
 
 private:
-    class CGenerateWindow* m_GenerateWindow;
+    //class CGenerateWindow* m_GenerateWindow;
 
 public:
     virtual bool Init();

@@ -219,6 +219,7 @@
     <ClInclude Include="IMGUIListBox.h" />
     <ClInclude Include="IMGUIManager.h" />
     <ClInclude Include="IMGUISameLine.h" />
+    <ClInclude Include="IMGUITable.h" />
     <ClInclude Include="IMGUIText.h" />
     <ClInclude Include="IMGUITextInput.h" />
     <ClInclude Include="IMGUIWidget.h" />
@@ -350,6 +351,7 @@
     <ClCompile Include="IMGUIListBox.cpp" />
     <ClCompile Include="IMGUIManager.cpp" />
     <ClCompile Include="IMGUISameLine.cpp" />
+    <ClCompile Include="IMGUITable.cpp" />
     <ClCompile Include="IMGUIText.cpp" />
     <ClCompile Include="IMGUITextInput.cpp" />
     <ClCompile Include="IMGUIWidget.cpp" />

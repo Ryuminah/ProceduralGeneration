@@ -14,6 +14,7 @@ CIMGUIComboBox::~CIMGUIComboBox()
 bool CIMGUIComboBox::Init()
 {
 	m_PrevViewName = m_Name;
+	m_Flag = ImGuiComboFlags_::ImGuiComboFlags_None;
 
 	return true;
 }
@@ -52,5 +53,6 @@ void CIMGUIComboBox::Render()
 
 	if (m_Font)
 		ImGui::PopFont();
+
 }
 

@@ -13,6 +13,8 @@ public:
 private:
 	class CRandomMap* m_pRandomMap;
 	class CTileFinder* m_pTileFinder;
+	class CGenerateWindow* m_GenerateWindow;
+
 
 	// 옵션들을 전부 저장해놓고 (imgui에서 값 받아오기)
 	//해당 옵션 설정이 필요한 타이밍에 PerformOptionLevel 수행하m
@@ -42,12 +44,16 @@ private:
 	std::unordered_map<TILE_STATE, std::vector<Vector2>> m_TileStateData;
 	std::vector<std::vector<TILE_STATE>> m_TileData;
 
+private:
+	TILE_STATE currentTileState;
+
 public:
 	bool Init(class CRandomMap* pRandomMap);
 
 public:
 	virtual void GenerateWorld(TILE_STATE _landState);
 	virtual void GenerateVegetation(TILE_STATE _landState);
+	void GenerateWorld();
 
 private:
 	void GenerateBase();
@@ -70,6 +76,7 @@ private:
 	void PerformSmootingLevel(OPTION_LEVEL smoothingLevel);
 	void SmoothMap();
 	void CreateRandom();
+	void ResetWorld();
 
 	// TileData
 	void ChangeTileStateImage(Vector2 tileIndex, TILE_STATE tileState);		// 타일 정보를 갱신하며 이미지를 교체함
@@ -108,5 +115,10 @@ public:
 	std::unordered_map<TILE_STATE, std::vector<Vector2>> GetTileStateData()
 	{
 		return m_TileStateData;
+	}
+
+	void SetCurrentTileState(TILE_STATE tileState)
+	{
+		currentTileState = tileState;
 	}
 };

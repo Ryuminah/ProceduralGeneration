@@ -34,8 +34,8 @@ bool CMainScene::Init()
 
 	CMapCamera* pCamera = m_pScene->SpawnObject<CMapCamera>("MapCamera");
 	
-	m_GenerateWindow = (CGenerateWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow("GenerateWindow");
-	m_GenerateWindow->Open();
+	//m_GenerateWindow = (CGenerateWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow("GenerateWindow");
+	//m_GenerateWindow->Open();
 
 	return true;
 }

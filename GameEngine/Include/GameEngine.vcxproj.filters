@@ -654,6 +654,9 @@
     <ClInclude Include="ThreadNavigation.h">
       <Filter>01. Engine\10. Thread</Filter>
     </ClInclude>
+    <ClInclude Include="IMGUITable.h">
+      <Filter>01. Engine\09. IMGUI\03. Widget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -1036,6 +1039,9 @@
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>01. Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUITable.cpp">
+      <Filter>01. Engine\09. IMGUI\03. Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

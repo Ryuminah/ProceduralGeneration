@@ -8,6 +8,8 @@
 #include "Engine.h"
 #include "Timer.h"
 #include "Input.h"
+#include "IMGUIManager.h"
+#include "../GenerateWindow.h"
 
 CMapGenerator::CMapGenerator() :
 	m_IsGenerateWorldEnd(false),
@@ -36,7 +38,6 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	// GenerateOption 생성
 	//CGenerateOptionManager::GetInst()->CreateGenerateOption("Base");
 
-	// CMapGenerator에서 RandomMap 객체의 맵을 생성해준다. (엔진 뜯어고칠 시간이 없어서 ㅠ)
 	CTileMapComponent* pMapComponent = m_pRandomMap->CreateSceneComponent<CTileMapComponent>("RandomMap");
 	m_pRandomMap->m_MapComponent = pMapComponent;
 	m_pRandomMap->SetRootComponent(pMapComponent);
@@ -44,6 +45,13 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	// Tile들을 생성한다.
 	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_MapSizeX, m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
 	m_pTileFinder = new CTileFinder(this);
+
+	m_GenerateWindow = (CGenerateWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow("GenerateWindow");
+	m_GenerateWindow->SetGenerateOwner(this);
+	m_GenerateWindow->Open();
+
+	currentTileState = TILE_STATE::CLEAR;
+	ResetWorld();
 
 	return true;
 }
@@ -99,36 +107,18 @@ void CMapGenerator::GenerateVegetation(TILE_STATE _landState)
 	// 랜덤으로 갖다 때려박아버려 , , ,,
 }
 
+void CMapGenerator::GenerateWorld()
+{
+	GenerateWorld(currentTileState);
+}
+
 // Member Function
 void CMapGenerator::GenerateBase()
 {
 	// 기본 맵 생성 로직
 	// 시드값을 이용해서 맵의 기반을 만듦
-	m_TileData.clear();
 
 	CEngine::GetInst()->OnDebugLog();
-	m_IsGenerateWorldEnd = false;
-
-	for (int x = 0; x < m_MapSizeX; ++x)
-	{
-		std::vector<TILE_STATE> tileData;
-
-		for (int y = 0; y < m_MapSizeY; ++y)
-		{
-			tileData.push_back(TILE_STATE::LAND);
-		}
-
-		m_TileData.push_back(tileData);
-	}
-
-	for (int x = 0; x < m_MapSizeX; ++x)
-	{
-		for (int y = 0; y < m_MapSizeY; ++y)
-		{
-			ChangeTileStateImage(Vector2(x, y), TILE_STATE::LAND);
-		}
-	}
-
 	clock_t start = clock(); // 시작 시 간 저장
 
 	// 맵 자동화 알고리즘
@@ -408,8 +398,7 @@ void CMapGenerator::GenerateForest()
 void CMapGenerator::ClearAll()
 {
 	m_TileData.clear();
-
-	GenerateBase();
+	ResetWorld();
 }
 
 void CMapGenerator::CellularAutomata()
@@ -477,13 +466,13 @@ void CMapGenerator::CellularAutomata()
 void CMapGenerator::UpdgradeCellularAutomata()
 {
 	// 맵 크기만큼 리스트나 맵에 저장해놓고
-	// 당첨 번호의 노드를 삭제
+		// 당첨 번호의 노드를 삭제
 	std::random_device randomDevice;
 	std::mt19937_64 gen(randomDevice());
 
 	std::unordered_map<int, Vector2> MapIndex;
-	std::set<int> MapIndexKey;				
-	std::vector<Vector2> vecRandomIndex;
+	std::set<int> MapIndexKey;				// 키를 저장해놓음
+	std::vector<Vector2> RandomIndex;
 
 	int Index = 0;
 
@@ -497,40 +486,46 @@ void CMapGenerator::UpdgradeCellularAutomata()
 		}
 	}
 
-	int selectIndex = 0;
-	int mapSize = m_MapSizeX * m_MapSizeY;
-	
-	
-	// 이래도 결국 쏠린당.
-	for (int i = 0; i < mapSize; ++i)
-	{
-		if (MapIndex.size() == 0)
-		{
-			break;
-		}
-
-		std::uniform_int_distribution<int> dist(0, MapIndex.size());
-		selectIndex = dist(randomDevice);
-		vecRandomIndex.push_back(MapIndex[selectIndex]);
-
-		MapIndex.erase(selectIndex);
-	}
-
-	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.60f;
+	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.52f;
+	int TileHalfCount = RandomTileCount * 0.2f;
 	int RandomSeed = 0;
 
-	for (int i = 0; i < RandomTileCount; ++i)
+	while (RandomTileCount)
 	{
-		ChangeTileStateImage(vecRandomIndex[i], TILE_STATE::SEA);
+		// seed값을 이용하여 타일을 랜덤한 위치에 생성
+		// 남은 타일의 갯수 중 인덱스 선정
+
+		// 절반 이상은 뒤의 당첨확률을 높임
+		if (RandomTileCount >= TileHalfCount)
+		{
+			int offset = MapIndex.size() * 0.5f;
+			std::uniform_int_distribution<int> dist(offset, MapIndex.size());
+			RandomSeed = dist(randomDevice);
+		}
+
+		else
+		{
+			std::uniform_int_distribution<int> dist(0, MapIndex.size());
+			RandomSeed = dist(randomDevice);
+		}
+
+		Vector2 TileIndex = MapIndex[RandomSeed];
+
+		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+		ChangeTileStateImage(TileIndex, TILE_STATE::SEA);
+
+		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
+		auto iterEnd = MapIndex.end();
+		MapIndex[RandomSeed] = (--iterEnd)->second;
+		MapIndex.erase(iterEnd);
+
+		--RandomTileCount;
+
+		// Fixed to the right
+
 	}
 
-	// 맵을 분할해서 인덱스를 저장한뒤, 각각 랜덤을 수행한다. (크기가 커질수록 연산량이 많아지는 것을 제한.)
 
-	// Smooth Map
-	// 스무딩 강도를 정할 수 있게 한다. Min / Normal /Max
-	// 1. 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 횟수 
-	// 2. 각 레벨의 타일 상태를 전부 저장한 후 중간중간 확정 되기 전까지 맵의 상태를 볼 수 있도록 한다 .. .. . . .
-	//
 	for (size_t i = 0; i < 3; i++)
 	{
 		SmoothMap();
@@ -648,4 +643,29 @@ void CMapGenerator::DebugFunctionTime(void(CMapGenerator::*pFunc)())
 void CMapGenerator::CreateRandom()
 {
 
+}
+
+void CMapGenerator::ResetWorld()
+{
+	m_IsGenerateWorldEnd = false;
+	
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		std::vector<TILE_STATE> tileData;
+
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			tileData.push_back(TILE_STATE::LAND);
+		}
+
+		m_TileData.push_back(tileData);
+	}
+
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			ChangeTileStateImage(Vector2(x, y), TILE_STATE::LAND);
+		}
+	}
 }
