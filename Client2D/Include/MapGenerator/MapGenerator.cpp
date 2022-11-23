@@ -50,18 +50,28 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	m_GenerateWindow->SetGenerateOwner(this);
 	m_GenerateWindow->Open();
 
-	currentTileState = TILE_STATE::CLEAR;
+	m_CurrentTileState = TILE_STATE::CLEAR;
 	ResetWorld();
+
+	return true;
+}
+
+bool CMapGenerator::Start()
+{
+	//m_RandomMap의 Start에서 호출
+	GenerateWorld(TILE_STATE::CLEAR);
 
 	return true;
 }
 
 void CMapGenerator::GenerateWorld(TILE_STATE _tileState)
 {
-	if (m_IsGenerateWorldEnd && (_tileState != TILE_STATE::CLEAR))
+	if (m_IsGenerateWorldEnd)
 	{
 		return;
 	}
+
+	m_CurrentTileState = _tileState;
 
 	switch (_tileState)
 	{
@@ -104,12 +114,11 @@ void CMapGenerator::GenerateVegetation(TILE_STATE _landState)
 
 	// 현재까지 생성된 타일 정보를 기반으로 
 	// 식생을 생성한다.
-	// 랜덤으로 갖다 때려박아버려 , , ,,
 }
 
 void CMapGenerator::GenerateWorld()
 {
-	GenerateWorld(currentTileState);
+	GenerateWorld(m_CurrentTileState);
 }
 
 // Member Function
@@ -445,9 +454,6 @@ void CMapGenerator::CellularAutomata()
 		MapIndex.erase(iterEnd);
 
 		--RandomTileCount;
-
-		// Fixed to the right
-
 	}
 
 	// 맵을 분할해서 인덱스를 저장한뒤, 각각 랜덤을 수행한다. (크기가 커질수록 연산량이 많아지는 것을 제한.)
@@ -457,7 +463,7 @@ void CMapGenerator::CellularAutomata()
 	// 1. 최대 강도까지의 횟수(더이상 맵에 변화가 없을때까지) 를 체크한 후 횟수 
 	// 2. 각 레벨의 타일 상태를 전부 저장한 후 중간중간 확정 되기 전까지 맵의 상태를 볼 수 있도록 한다 .. .. . . .
 	//
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < 4; i++)
 	{
 		SmoothMap();
 	}
@@ -487,7 +493,7 @@ void CMapGenerator::UpdgradeCellularAutomata()
 	}
 
 	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.52f;
-	int TileHalfCount = RandomTileCount * 0.2f;
+	int TileHalfCount = RandomTileCount * 0.8f;
 	int RandomSeed = 0;
 
 	while (RandomTileCount)
@@ -520,13 +526,10 @@ void CMapGenerator::UpdgradeCellularAutomata()
 		MapIndex.erase(iterEnd);
 
 		--RandomTileCount;
-
-		// Fixed to the right
-
 	}
 
 
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < 5; ++i)
 	{
 		SmoothMap();
 	}

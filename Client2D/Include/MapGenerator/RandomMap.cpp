@@ -31,7 +31,7 @@ void CRandomMap::Start()
 {
 	CGameObject::Start();
 
-	//GenerateMapBase();
+	m_MapGenerator->Start();
 }
 
 bool CRandomMap::Init()

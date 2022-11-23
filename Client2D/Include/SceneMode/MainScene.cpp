@@ -33,9 +33,6 @@ bool CMainScene::Init()
 	RandomMap->SetRelativePos(0.f, 0.f, 0.01f);
 
 	CMapCamera* pCamera = m_pScene->SpawnObject<CMapCamera>("MapCamera");
-	
-	//m_GenerateWindow = (CGenerateWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow("GenerateWindow");
-	//m_GenerateWindow->Open();
 
 	return true;
 }

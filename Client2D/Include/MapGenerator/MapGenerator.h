@@ -45,16 +45,19 @@ private:
 	std::vector<std::vector<TILE_STATE>> m_TileData;
 
 private:
-	TILE_STATE currentTileState;
+	TILE_STATE m_CurrentTileState;
 
 public:
 	bool Init(class CRandomMap* pRandomMap);
+	bool Start();
 
 public:
 	virtual void GenerateWorld(TILE_STATE _landState);
 	virtual void GenerateVegetation(TILE_STATE _landState);
 	void GenerateWorld();
 
+
+	///////////////////////////////////// Private /////////////////////////////////////
 private:
 	void GenerateBase();
 	void GenerateLand();
@@ -62,15 +65,18 @@ private:
 	void GenerateCoast();
 	void GenerateLake();
 	void GenerateForest();
-	
 	void ClearAll();
 
-	///////////////////////////////////// Private /////////////////////////////////////
 private:
 	// Algorithm
 	void CellularAutomata();
+
+	// 맵을 분할해서 부분 별로 세포 자동화 알고리즘을 수행시키기
 	void UpdgradeCellularAutomata();
 
+	// 가로로 긴 맵과, 세로로 긴 맵의 유형을 제작.
+	void SetWidthMap();
+	void SetHeightMap();
 
 	// 옵션들도 각자의 기능을 가진 클래스로 빼야할지도
 	void PerformSmootingLevel(OPTION_LEVEL smoothingLevel);
@@ -119,6 +125,6 @@ public:
 
 	void SetCurrentTileState(TILE_STATE tileState)
 	{
-		currentTileState = tileState;
+		m_CurrentTileState = tileState;
 	}
 };

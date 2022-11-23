@@ -68,8 +68,6 @@ void CGenerateWindow::ComboBoxCallback(int SelectIndex, const char* Item)
 	m_SelectTileTypeIndex = SelectIndex;
 	std::string SelectName = Item;
 	
-	SelectIndex -= 1;
-
 	if (SelectName == "Base")
 	{
 		m_CurrentGenerator->SetCurrentTileState(TILE_STATE::BASE);
