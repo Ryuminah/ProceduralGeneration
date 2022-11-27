@@ -12,7 +12,6 @@ public:
 	AGenerateOption();
 	virtual ~AGenerateOption();
 
-	// 이 함수 호출 시점 . . .. 
 	virtual void PerformOptionLevel();
 
 public:

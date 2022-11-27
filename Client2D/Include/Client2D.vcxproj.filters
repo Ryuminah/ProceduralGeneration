@@ -141,6 +141,9 @@
     <ClCompile Include="GenerateWindow.cpp">
       <Filter>ProceduralGeneration\UI</Filter>
     </ClCompile>
+    <ClCompile Include="GenerateOptionWindow.cpp">
+      <Filter>ProceduralGeneration\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -237,6 +240,9 @@
       <Filter>ProceduralGeneration\MapGenerator</Filter>
     </ClInclude>
     <ClInclude Include="GenerateWindow.h">
+      <Filter>ProceduralGeneration\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GenerateOptionWindow.h">
       <Filter>ProceduralGeneration\UI</Filter>
     </ClInclude>
   </ItemGroup>

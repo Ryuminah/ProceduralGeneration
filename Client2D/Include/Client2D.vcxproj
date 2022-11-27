@@ -164,6 +164,7 @@
     <ClCompile Include="Animation2D\Anim_Image.cpp" />
     <ClCompile Include="Animation2D\PlayerAnimation2D.cpp" />
     <ClCompile Include="ClientManager.cpp" />
+    <ClCompile Include="GenerateOptionWindow.cpp" />
     <ClCompile Include="GenerateWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapGenerator\GenerateOptionManager.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Animation2D\Anim_Image.h" />
     <ClInclude Include="Animation2D\PlayerAnimation2D.h" />
     <ClInclude Include="ClientManager.h" />
+    <ClInclude Include="GenerateOptionWindow.h" />
     <ClInclude Include="GenerateWindow.h" />
     <ClInclude Include="MapGenerator\GenerateOptionManager.h" />
     <ClInclude Include="MapGenerator\IMapGenerator.h" />

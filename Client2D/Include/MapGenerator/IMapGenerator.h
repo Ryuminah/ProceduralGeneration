@@ -2,6 +2,7 @@
 #include <GameEngine.h>
 #include "MapEnum.h"
 
+// Use Observer
 class IMapGenerator
 {
 private:
