@@ -39,6 +39,7 @@ private:
 	int m_LakeMaxX;
 	int m_LakeMaxY;
 
+	MAPBASE_SHAPE m_MapbaseShape;
 	// 각 타일들을 LAND_State별로 분류해놓음
 	// 매 생성단계가 끝난 후 재 분류
 	std::unordered_map<TILE_STATE, std::vector<Vector2>> m_TileStateData;
@@ -72,11 +73,12 @@ private:
 	void CellularAutomata();
 
 	// 맵을 분할해서 부분 별로 세포 자동화 알고리즘을 수행시키기
-	void UpdgradeCellularAutomata();
+	void UpgradeCellularAutomata();
 
 	// 가로로 긴 맵과, 세로로 긴 맵의 유형을 제작.
-	void SetWidthMap();
-	void SetHeightMap();
+	void CreateDefaultMap();
+	void CreateWidthMap();
+	void CreateHeightMap();
 
 	// 옵션들도 각자의 기능을 가진 클래스로 빼야할지도
 	void PerformSmootingLevel(OPTION_LEVEL smoothingLevel);

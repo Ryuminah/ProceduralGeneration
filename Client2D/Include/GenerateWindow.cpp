@@ -65,38 +65,37 @@ void CGenerateWindow::CreateGenerateComboBox()
 void CGenerateWindow::ComboBoxCallback(int SelectIndex, const char* Item)
 {
 	// 각 타일의 상태를 변경할 수 있는 Editing 기능까지 제작하기.
-	m_SelectTileTypeIndex = SelectIndex;
 	std::string SelectName = Item;
 	
 	if (SelectName == "Base")
 	{
-		m_CurrentGenerator->SetCurrentTileState(TILE_STATE::BASE);
+		m_SelectTileState = TILE_STATE::BASE;
 	}
 
 	else if (SelectName == "Land")
 	{
-		m_CurrentGenerator->SetCurrentTileState(TILE_STATE::LAND);
+		m_SelectTileState = TILE_STATE::LAND;
 	}
 
 	else if (SelectName == "Coast")
 	{
-		m_CurrentGenerator->SetCurrentTileState(TILE_STATE::COAST);
+		m_SelectTileState = TILE_STATE::COAST;
 	}
 
 	else if (SelectName == "Forest")
 	{
-		m_CurrentGenerator->SetCurrentTileState(TILE_STATE::FOREST);
+		m_SelectTileState = TILE_STATE::FOREST;
 	}
 
 	else if (SelectName == "Lake")
 	{
-		m_CurrentGenerator->SetCurrentTileState(TILE_STATE::LAKE);
+		m_SelectTileState = TILE_STATE::LAKE;
 	}
 }
 
 void CGenerateWindow::Button_GenerateCallBack()
 {
-	m_CurrentGenerator->GenerateWorld();
+	m_CurrentGenerator->GenerateWorld(m_SelectTileState);
 }
 
 // 나중에 이부분 일관성 있게 수정하기

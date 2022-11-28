@@ -1,5 +1,7 @@
 #pragma once
 #include "IMGUIWindow.h"
+#include "MapGenerator/MapEnum.h"
+
 //#include "MapGenerator/"
 
 class CGenerateWindow :
@@ -15,7 +17,7 @@ public:
 
 private:
 	class CIMGUIComboBox* m_TileTypeComboBox;
-	int m_SelectTileTypeIndex;
+	TILE_STATE m_SelectTileState;
 
 	class CIMGUIListBox* m_TileTypeListBox;
 

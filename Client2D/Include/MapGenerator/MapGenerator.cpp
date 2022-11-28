@@ -51,6 +51,7 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	m_GenerateWindow->Open();
 
 	m_CurrentTileState = TILE_STATE::CLEAR;
+	m_MapbaseShape = MAPBASE_SHAPE::HEIGHT;
 	ResetWorld();
 
 	return true;
@@ -111,7 +112,6 @@ void CMapGenerator::GenerateVegetation(TILE_STATE _landState)
 		return;
 	}
 
-
 	// 현재까지 생성된 타일 정보를 기반으로 
 	// 식생을 생성한다.
 }
@@ -124,44 +124,22 @@ void CMapGenerator::GenerateWorld()
 // Member Function
 void CMapGenerator::GenerateBase()
 {
-	// 기본 맵 생성 로직
-	// 시드값을 이용해서 맵의 기반을 만듦
-
-	CEngine::GetInst()->OnDebugLog();
-	clock_t start = clock(); // 시작 시 간 저장
-
-	// 맵 자동화 알고리즘
-	//CellularAutomata();
-	UpdgradeCellularAutomata();
-
-	clock_t end = clock();
-	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
-	char buffer[BUFSIZ];
-	sprintf_s(buffer, "%f", clockTime);
-	CEngine::GetInst()->AddDebugLog(buffer);
-
-	for (int x = 0; x < m_OutLineX; ++x)
+	switch (m_MapbaseShape)
 	{
-		for (int y = 0; y < m_MapSizeY; ++y)
-		{
-			Vector2 LineStart = Vector2(x, y);
-			Vector2 LineEnd = Vector2(m_MapSizeX - 1 - x, y);
+	case MAPBASE_SHAPE::DEFAULT:
+		CreateDefaultMap();
+		break;
 
-			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
-			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
-		}
-	}
+	case MAPBASE_SHAPE::WIDTH:
+		CreateWidthMap();
+		break;
 
-	for (int y = 0; y < m_OutLineY; ++y)
-	{
-		for (int x = 0; x < m_MapSizeX; ++x)
-		{
-			Vector2 LineStart = Vector2(x, y);
-			Vector2 LineEnd = Vector2(x, m_MapSizeY - 1 - y);
+	case MAPBASE_SHAPE::HEIGHT:
+		CreateHeightMap();
+		break;
 
-			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
-			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
-		}
+	default:
+		break;
 	}
 }
 
@@ -392,7 +370,6 @@ void CMapGenerator::GenerateForest()
 		if (!changeForest)
 		{
 			ChangeTileStateImage(vecSmoothTile[i], TILE_STATE::LAND);
-
 		}
 
 		else
@@ -469,7 +446,7 @@ void CMapGenerator::CellularAutomata()
 	}
 }
 
-void CMapGenerator::UpdgradeCellularAutomata()
+void CMapGenerator::UpgradeCellularAutomata()
 {
 	// 맵 크기만큼 리스트나 맵에 저장해놓고
 		// 당첨 번호의 노드를 삭제
@@ -493,7 +470,134 @@ void CMapGenerator::UpdgradeCellularAutomata()
 	}
 
 	int RandomTileCount = (m_MapSizeX * m_MapSizeY) * 0.52f;
-	int TileHalfCount = RandomTileCount * 0.8f;
+	int TileHalfCount = RandomTileCount * 0.85f;
+	int RandomSeed = 0;
+
+	while (RandomTileCount)
+	{
+		// seed값을 이용하여 타일을 랜덤한 위치에 생성
+		// 남은 타일의 갯수 중 인덱스 선정
+
+		// 절반 이상은 뒤의 당첨확률을 높임
+		if (RandomTileCount >= TileHalfCount)
+		{
+			int offset = MapIndex.size() * 0.6f;
+			std::uniform_int_distribution<int> dist(offset, MapIndex.size());
+			RandomSeed = dist(randomDevice);
+		}
+
+		else
+		{
+			std::uniform_int_distribution<int> dist(0, MapIndex.size());
+			RandomSeed = dist(randomDevice);
+		}
+
+		Vector2 TileIndex = MapIndex[RandomSeed];
+
+		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+		ChangeTileStateImage(TileIndex, TILE_STATE::SEA);
+
+		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
+		auto iterEnd = MapIndex.end();
+		MapIndex[RandomSeed] = (--iterEnd)->second;
+		MapIndex.erase(iterEnd);
+
+		--RandomTileCount;
+	}
+
+
+	for (size_t i = 0; i < 5; ++i)
+	{
+		SmoothMap();
+	}
+}
+
+void CMapGenerator::CreateDefaultMap()
+{
+	// 기본 맵 생성 로직
+	// 시드값을 이용해서 맵의 기반을 만듦
+
+	CEngine::GetInst()->OnDebugLog();
+	clock_t start = clock(); // 시작 시 간 저장
+
+	// 맵 자동화 알고리즘
+	//CellularAutomata();
+	UpgradeCellularAutomata();
+
+	clock_t end = clock();
+	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
+	char buffer[BUFSIZ];
+	sprintf_s(buffer, "%f", clockTime);
+	CEngine::GetInst()->AddDebugLog(buffer);
+
+	for (int x = 0; x < m_OutLineX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			Vector2 LineStart = Vector2(x, y);
+			Vector2 LineEnd = Vector2(m_MapSizeX - 1 - x, y);
+
+			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
+			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
+		}
+	}
+
+	for (int y = 0; y < m_OutLineY; ++y)
+	{
+		for (int x = 0; x < m_MapSizeX; ++x)
+		{
+			Vector2 LineStart = Vector2(x, y);
+			Vector2 LineEnd = Vector2(x, m_MapSizeY - 1 - y);
+
+			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
+			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
+		}
+	}
+}
+
+void CMapGenerator::CreateWidthMap()
+{
+	// 기본 맵 생성 로직
+	// 시드값을 이용해서 맵의 기반을 만듦
+
+	CEngine::GetInst()->OnDebugLog();
+	clock_t start = clock(); // 시작 시 간 저장
+
+	// 맵 크기만큼 리스트나 맵에 저장해놓고
+	// 당첨 번호의 노드를 삭제
+	std::random_device randomDevice;
+	std::mt19937_64 gen(randomDevice());
+
+	std::unordered_map<int, Vector2> MapIndex;
+	std::set<int> MapIndexKey;				// 키를 저장해놓음
+	std::vector<Vector2> RandomIndex;
+
+	int Index = 0;
+	int offsetY = (m_MapSizeY * 0.4f) * 0.5f;
+
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = 0; y < offsetY; ++y)
+		{
+			Vector2 index = Vector2((float)x, (float)y);
+			Vector2 indexBottom = Vector2((float)x, m_MapSizeY - y );
+
+			ChangeTileStateImage(index, TILE_STATE::SEA);
+			ChangeTileStateImage(indexBottom, TILE_STATE::SEA);
+		}
+	}
+
+	for (int x = 0; x < m_MapSizeX; ++x)
+	{
+		for (int y = offsetY; y < m_MapSizeY -offsetY ; ++y)
+		{
+			MapIndex[Index] = Vector2((float)x, (float)y);
+			++Index;
+		}
+	}
+	 
+	int RandomTileCount = (m_MapSizeX * (m_MapSizeY - offsetY)) * 0.4f;
+	int TileHalfCount = RandomTileCount * 0.7f;
 	int RandomSeed = 0;
 
 	while (RandomTileCount)
@@ -528,10 +632,142 @@ void CMapGenerator::UpdgradeCellularAutomata()
 		--RandomTileCount;
 	}
 
+	for (size_t i = 0; i < 5; ++i)
+	{
+		SmoothMap();
+	}
+
+	clock_t end = clock();
+	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
+	char buffer[BUFSIZ];
+	sprintf_s(buffer, "%f", clockTime);
+	CEngine::GetInst()->AddDebugLog(buffer);
+
+	for (int x = 0; x < m_OutLineX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			Vector2 LineStart = Vector2(x, y);
+			Vector2 LineEnd = Vector2(m_MapSizeX - 1 - x, y);
+
+			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
+			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
+		}
+	}
+
+	//for (int y = 0; y < m_OutLineY; ++y)
+	//{
+	//	for (int x = 0; x < m_MapSizeX; ++x)
+	//	{
+	//		Vector2 LineStart = Vector2(x, y);
+	//		Vector2 LineEnd = Vector2(x, m_MapSizeY - 1 - y);
+
+	//		ChangeTileStateImage(LineStart, TILE_STATE::SEA);
+	//		ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
+	//	}
+	//}
+}
+
+void CMapGenerator::CreateHeightMap()
+{
+	// 기본 맵 생성 로직
+	// 시드값을 이용해서 맵의 기반을 만듦
+
+	CEngine::GetInst()->OnDebugLog();
+	clock_t start = clock(); // 시작 시 간 저장
+
+	// 맵 크기만큼 리스트나 맵에 저장해놓고
+	// 당첨 번호의 노드를 삭제
+	std::random_device randomDevice;
+	std::mt19937_64 gen(randomDevice());
+
+	std::unordered_map<int, Vector2> MapIndex;
+	std::set<int> MapIndexKey;				// 키를 저장해놓음
+	std::vector<Vector2> RandomIndex;
+
+	int Index = 0;
+	int offsetX = (m_MapSizeX * 0.4f) * 0.5f;
+
+	for (int x = 0; x < offsetX; ++x)
+	{
+		for (int y = 0; y < m_MapSizeY; ++y)
+		{
+			Vector2 index = Vector2((float)x, (float)y);
+			Vector2 indexBottom = Vector2((float)m_MapSizeX - x,y);
+
+			ChangeTileStateImage(index, TILE_STATE::SEA);
+			ChangeTileStateImage(indexBottom, TILE_STATE::SEA);
+		}
+	}
+
+	for (int y = 0; y < m_MapSizeY; ++y)
+	{
+		for (int x = offsetX; x < m_MapSizeX - offsetX; ++x)
+		{
+			MapIndex[Index] = Vector2((float)x, (float)y);
+			++Index;
+		}
+	}
+
+	int RandomTileCount = ((m_MapSizeX - offsetX) * m_MapSizeY) * 0.4f;
+
+	// 곱하는 수가 커질 수록 적은 양의 타일을 골고루 분포시킨다
+	int TileHalfCount = RandomTileCount * 0.8f;
+	int RandomSeed = 0;
+
+	while (RandomTileCount)
+	{
+		// 절반 이상은 뒤의 당첨확률을 높임
+		std::uniform_int_distribution<int> dist(0, MapIndex.size());
+		RandomSeed = dist(randomDevice);
+
+		if (RandomTileCount >= TileHalfCount)
+		{
+			int offset = MapIndex.size() * 0.5f;
+			std::uniform_int_distribution<int> dist(offset, MapIndex.size() );
+			RandomSeed = dist(randomDevice);
+		}
+
+		else
+		{
+			std::uniform_int_distribution<int> dist(0, MapIndex.size());
+			RandomSeed = dist(randomDevice);
+		}
+
+		Vector2 TileIndex = MapIndex[RandomSeed];
+
+		// 해당 부분의 타일만 UV좌표를 변경 (물로 변경)
+		ChangeTileStateImage(TileIndex, TILE_STATE::SEA);
+
+		// 랜덤 인덱스의 value를 End로 교체, 가장 마지막 값 삭제
+		auto iterEnd = MapIndex.end();
+		MapIndex[RandomSeed] = (--iterEnd)->second;
+		MapIndex.erase(iterEnd);
+
+		--RandomTileCount;
+	}
 
 	for (size_t i = 0; i < 5; ++i)
 	{
 		SmoothMap();
+	}
+
+	clock_t end = clock();
+	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;
+	char buffer[BUFSIZ];
+	sprintf_s(buffer, "%f", clockTime);
+	CEngine::GetInst()->AddDebugLog(buffer);
+
+	for (int y = 0; y < m_OutLineY; ++y)
+	{
+		for (int x = 0; x < m_MapSizeX; ++x)
+		{
+			Vector2 LineStart = Vector2(x, y);
+			Vector2 LineEnd = Vector2(x, m_MapSizeY - 1 - y);
+
+			ChangeTileStateImage(LineStart, TILE_STATE::SEA);
+			ChangeTileStateImage(LineEnd, TILE_STATE::SEA);
+		}
 	}
 }
 

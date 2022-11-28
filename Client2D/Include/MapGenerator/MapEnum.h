@@ -13,7 +13,7 @@ enum TILE_STATE
 };
 
 // °í¹Î
-enum VEGETATION_State
+enum VEGETATION_STATE
 {
 
 };
@@ -24,4 +24,11 @@ enum class OPTION_LEVEL
 	MIN,
 	NORMAL,
 	MAX
+};
+
+enum class MAPBASE_SHAPE
+{
+	DEFAULT = 0,
+	WIDTH,
+	HEIGHT
 };
