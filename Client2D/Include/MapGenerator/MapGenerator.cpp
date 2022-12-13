@@ -15,7 +15,7 @@ CMapGenerator::CMapGenerator() :
 	m_IsGenerateWorldEnd(false),
 	m_pRandomMap(nullptr),
 	m_pTileFinder(nullptr),
-	m_MapSizeX(60), m_MapSizeY(60),
+	m_MapSizeX(70), m_MapSizeY(50),
 	m_OutLineX(3), m_OutLineY(3),
 	m_ForestMinX(7), m_ForestMinY(8), m_ForestMaxX(15), m_ForestMaxY(16),
 	m_LakeMinX(5), m_LakeMinY(3), m_LakeMaxX(8), m_LakeMaxY(5)
@@ -42,6 +42,11 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	m_pRandomMap->m_MapComponent = pMapComponent;
 	m_pRandomMap->SetRootComponent(pMapComponent);
 
+	// RandomMap의 MapSize 정보를 가져옴.
+	//m_pRandomMap->m_MapSizeX;
+	//m_pRandomMap->m_MapSizeY;
+
+
 	// Tile들을 생성한다.
 	pMapComponent->CreateTile<CTile>(Tile_Shape::Rect, m_MapSizeX, m_MapSizeY, Vector2(TILE_SIZE_SMALL, TILE_SIZE_SMALL));
 	m_pTileFinder = new CTileFinder(this);
@@ -51,7 +56,7 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	m_GenerateWindow->Open();
 
 	m_CurrentTileState = TILE_STATE::CLEAR;
-	m_MapbaseShape = MAPBASE_SHAPE::HEIGHT;
+	m_MapbaseShape = MAPBASE_SHAPE::WIDTH;
 	ResetWorld();
 
 	return true;
