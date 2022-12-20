@@ -40,9 +40,6 @@ void CGenerateWindow::CreateGenerateComboBox()
 	CIMGUIText* Text = AddWidget<CIMGUIText>("¸Ê »ý¼ºÇÏ±â");
 	Text->SetFont("DefaultFont");
 
-	//CIMGUILabel* Label = AddWidget<CIMGUILabel>("X", 30.f, 20.f);
-	//Label->SetText("X");
-
 	m_TileTypeComboBox = AddWidget<CIMGUIComboBox>("WorldList", 100.f, 100.f);
 	
 	m_TileTypeComboBox->AddItem("Base");

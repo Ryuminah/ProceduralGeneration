@@ -15,7 +15,7 @@ CMapGenerator::CMapGenerator() :
 	m_IsGenerateWorldEnd(false),
 	m_pRandomMap(nullptr),
 	m_pTileFinder(nullptr),
-	m_MapSizeX(70), m_MapSizeY(50),
+	m_MapSizeX(50), m_MapSizeY(50),
 	m_OutLineX(3), m_OutLineY(3),
 	m_ForestMinX(7), m_ForestMinY(8), m_ForestMaxX(15), m_ForestMaxY(16),
 	m_LakeMinX(5), m_LakeMinY(3), m_LakeMaxX(8), m_LakeMaxY(5)
@@ -56,7 +56,7 @@ bool CMapGenerator::Init(CRandomMap* pRandomMap)
 	m_GenerateWindow->Open();
 
 	m_CurrentTileState = TILE_STATE::CLEAR;
-	m_MapbaseShape = MAPBASE_SHAPE::WIDTH;
+	m_MapbaseShape = MAPBASE_SHAPE::DEFAULT;
 	ResetWorld();
 
 	return true;
@@ -526,8 +526,8 @@ void CMapGenerator::CreateDefaultMap()
 	clock_t start = clock(); // 시작 시 간 저장
 
 	// 맵 자동화 알고리즘
-	//CellularAutomata();
-	UpgradeCellularAutomata();
+	CellularAutomata();
+	//UpgradeCellularAutomata();
 
 	clock_t end = clock();
 	double clockTime = (double)(end - start) / CLOCKS_PER_SEC;

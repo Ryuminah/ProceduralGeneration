@@ -21,8 +21,6 @@ private:
 
 	class CIMGUIListBox* m_TileTypeListBox;
 
-	// 현재 맵
-	// 맵 저장하고 불러오기까지 제작 가능할까?
 private:
 	class CMapGenerator* m_CurrentGenerator;
 
